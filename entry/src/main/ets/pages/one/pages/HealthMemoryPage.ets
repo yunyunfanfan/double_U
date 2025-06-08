@@ -1,45 +1,9 @@
 import { BaseNavigation } from 'JhCommon';
 import { router } from '@kit.ArkUI';
 import { preferences } from '@kit.ArkData';
+import { HealthDataService, HealthDataSummary, StoredHealthData, AdditionalHealthInfo } from '../../../services/HealthDataService';
 
 ///个性化健康记忆页面
-
-// 存储的健康数据结构
-class StoredHealthData {
-  timestamp: string = '';
-  type: string = '';
-  value: string = '';
-  unit: string = '';
-  additionalInfo: AdditionalHealthInfo = new AdditionalHealthInfo();
-
-  constructor(timestamp: string, type: string, value: string, unit: string, additionalInfo?: AdditionalHealthInfo) {
-    this.timestamp = timestamp;
-    this.type = type;
-    this.value = value;
-    this.unit = unit;
-    if (additionalInfo) {
-      this.additionalInfo = additionalInfo;
-    }
-  }
-
-  toString(): string {
-    return `StoredHealthData{timestamp: ${this.timestamp}, type: ${this.type}, value: ${this.value}, unit: ${this.unit}}`;
-  }
-}
-
-class AdditionalHealthInfo {
-  sleepTime: string = '';
-  wakeTime: string = '';
-  minValue: string = '';
-  maxValue: string = '';
-  avgValue: string = '';
-
-  constructor() {}
-
-  toString(): string {
-    return `AdditionalHealthInfo{sleepTime: ${this.sleepTime}, wakeTime: ${this.wakeTime}, avgValue: ${this.avgValue}}`;
-  }
-}
 
 // 分析结果类
 class HealthAnalysisResult {
@@ -140,21 +104,16 @@ export struct HealthMemoryPage {
 
   private preferencesHelper: preferences.Preferences | null = null;
   private dailyDataMap: Map<string, DailyHealthData> = new Map();
+  private healthDataService: HealthDataService = HealthDataService.getInstance();
 
   aboutToAppear(): void {
-    this.currentHealthData = new HealthData(
-      getContext(this).resourceManager.getStringSync($r('app.string.default_steps_value_57382946')),
-      getContext(this).resourceManager.getStringSync($r('app.string.default_heart_rate_value_39284751')),
-      getContext(this).resourceManager.getStringSync($r('app.string.default_sleep_value_75839462')),
-      getContext(this).resourceManager.getStringSync($r('app.string.default_calories_value_18475936')),
-      getContext(this).resourceManager.getStringSync($r('app.string.default_oxygen_value_62938475'))
-    );
     this.initializeHealthMemorySystem();
   }
 
   private async initializeHealthMemorySystem(): Promise<void> {
     try {
       await this.initPreferences();
+      await this.loadRealTimeHealthData(); // 加载实时健康数据
       await this.loadHealthDataFromStorage();
       await this.processHealthDataIntoMemories();
       this.isLoading = false;
@@ -174,6 +133,32 @@ export struct HealthMemoryPage {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : '未知存储错误';
       throw new Error(`存储系统初始化失败: ${errorMessage}`);
+    }
+  }
+
+  private async loadRealTimeHealthData(): Promise<void> {
+    try {
+      const healthSummary = await this.healthDataService.getLatestHealthData();
+      // 将汇总数据转换为HealthData格式
+      this.currentHealthData = new HealthData(
+        healthSummary.steps,
+        healthSummary.heartRate,
+        healthSummary.sleep,
+        healthSummary.calories,
+        healthSummary.bloodOxygen,
+        healthSummary.mood
+      );
+      console.log('[HealthMemoryPage] 实时健康数据加载完成:', JSON.stringify(this.currentHealthData));
+    } catch (error) {
+      console.error('[HealthMemoryPage] 加载实时健康数据失败:', error);
+      // 如果实时数据加载失败，使用默认值
+      this.currentHealthData = new HealthData(
+        getContext(this).resourceManager.getStringSync($r('app.string.default_steps_value_57382946')),
+        getContext(this).resourceManager.getStringSync($r('app.string.default_heart_rate_value_39284751')),
+        getContext(this).resourceManager.getStringSync($r('app.string.default_sleep_value_75839462')),
+        getContext(this).resourceManager.getStringSync($r('app.string.default_calories_value_18475936')),
+        getContext(this).resourceManager.getStringSync($r('app.string.default_oxygen_value_62938475'))
+      );
     }
   }
 
@@ -219,6 +204,7 @@ export struct HealthMemoryPage {
         }
       } catch (error) {
         // 跳过错误记录
+        console.warn('[HealthMemoryPage] 跳过错误记录:', error);
       }
     });
   }

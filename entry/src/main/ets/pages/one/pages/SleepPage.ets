@@ -240,29 +240,6 @@ export struct SleepPage {
             offsetY: 4
           })
 
-          // 时间范围选择器
-          Row() {
-            ForEach(this.timeRanges, (range: string) => {
-              Text(range)
-                .fontSize(14)
-                .fontColor(this.selectedTimeRange === range ? '#34A853' : '#666666')
-                .fontWeight(this.selectedTimeRange === range ? FontWeight.Bold : FontWeight.Normal)
-                .padding({ left: 16, right: 16, top: 8, bottom: 8 })
-                .backgroundColor(this.selectedTimeRange === range ? '#E6F4EA' : '#F5F5F5')
-                .borderRadius(20)
-                .border({
-                  width: this.selectedTimeRange === range ? 2 : 1,
-                  color: this.selectedTimeRange === range ? '#34A853' : '#E0E0E0',
-                  style: BorderStyle.Solid
-                })
-                .onClick(() => {
-                  this.selectedTimeRange = range;
-                })
-            })
-          }
-          .width('90%')
-          .justifyContent(FlexAlign.SpaceAround)
-
           // 睡眠阶段卡片
           Column() {
             Text(getContext(this).resourceManager.getStringSync($r('app.string.sleep_phases_title_62938475')))

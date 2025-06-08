@@ -161,29 +161,6 @@ export struct CaloriesPage {
             offsetY: 4
           })
 
-          // 时间范围选择器
-          Row() {
-            ForEach(this.getTimeRanges(), (range: string) => {
-              Text(range)
-                .fontSize(14)
-                .fontColor(this.selectedTimeRange === range ? '#FBBC05' : '#666666')
-                .fontWeight(this.selectedTimeRange === range ? FontWeight.Bold : FontWeight.Normal)
-                .padding({ left: 16, right: 16, top: 8, bottom: 8 })
-                .backgroundColor(this.selectedTimeRange === range ? '#FEF7E0' : '#F5F5F5')
-                .borderRadius(20)
-                .border({
-                  width: this.selectedTimeRange === range ? 2 : 1,
-                  color: this.selectedTimeRange === range ? '#FBBC05' : '#E0E0E0',
-                  style: BorderStyle.Solid
-                })
-                .onClick(() => {
-                  this.selectedTimeRange = range;
-                })
-            })
-          }
-          .width('90%')
-          .justifyContent(FlexAlign.SpaceAround)
-
           // 热量消耗明细
           Column() {
             Text(getContext(this).resourceManager.getStringSync($r('app.string.calorie_details_title_18475936')))

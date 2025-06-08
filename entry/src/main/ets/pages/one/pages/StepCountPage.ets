@@ -70,11 +70,9 @@ export struct StepCountPage {
     this.distance = `0${getContext(this).resourceManager.getStringSync($r('app.string.km_unit_57382946'))}`;
     this.calories = `0${getContext(this).resourceManager.getStringSync($r('app.string.kcal_unit_39284751'))}`;
 
+    // 只保留本周选项
     this.timeRanges = [
-      getContext(this).resourceManager.getStringSync($r('app.string.today_range_57382946')),
-      getContext(this).resourceManager.getStringSync($r('app.string.week_range_39284751')),
-      getContext(this).resourceManager.getStringSync($r('app.string.month_range_75839462')),
-      getContext(this).resourceManager.getStringSync($r('app.string.year_range_18475936'))
+      getContext(this).resourceManager.getStringSync($r('app.string.week_range_39284751'))
     ];
 
     this.weekDays = [
@@ -381,60 +379,81 @@ export struct StepCountPage {
             .width('90%').padding(30).backgroundColor('#FFFFFF').borderRadius(20)
             .shadow({ radius: 12, color: 'rgba(0,0,0,0.08)', offsetX: 0, offsetY: 4 })
 
-            // 时间范围
-            Row() {
-              ForEach(this.timeRanges, (range: string) => {
-                Text(range)
-                  .fontSize(14)
-                  .fontColor(this.selectedTimeRange === range ? '#4285F4' : '#666666')
-                  .fontWeight(this.selectedTimeRange === range ? FontWeight.Bold : FontWeight.Normal)
-                  .padding({ left: 16, right: 16, top: 8, bottom: 8 })
-                  .backgroundColor(this.selectedTimeRange === range ? '#E8F0FE' : '#F5F5F5')
-                  .borderRadius(20)
-                  .border({
-                    width: this.selectedTimeRange === range ? 2 : 1,
-                    color: this.selectedTimeRange === range ? '#4285F4' : '#E0E0E0'
-                  })
-                  .onClick(() => {
-                    this.selectedTimeRange = range;
-                  })
-              })
-            }
-            .width('90%').justifyContent(FlexAlign.SpaceAround)
-
-            // 步数记录
+            // 本周步数记录
             Column() {
-              Text(getContext(this).resourceManager.getStringSync($r('app.string.step_records_title_62938475')))
-                .fontSize(18).fontWeight(FontWeight.Medium)
-                .textAlign(TextAlign.Start).width('100%').margin({ bottom: 15 })
+              Row() {
+                Text('📊').fontSize(20).margin({ right: 8 })
+                Text('本周步数记录')
+                  .fontSize(20).fontWeight(FontWeight.Bold).fontColor('#333333')
+                Blank()
+                if (this.weeklyAvg > 0) {
+                  Column() {
+                    Text(`${this.weeklyAvg}`).fontSize(14).fontWeight(FontWeight.Bold).fontColor('#4285F4')
+                    Text('日均').fontSize(12).fontColor('#666666')
+                  }
+                }
+              }
+              .width('100%').margin({ bottom: 20 }).alignItems(VerticalAlign.Center)
 
               if (this.stepRecords.length === 0) {
-                Column({ space: 16 }) {
-                  Text('👟').fontSize(48)
+                Column({ space: 20 }) {
+                  Text('👟').fontSize(56)
                   Text(getContext(this).resourceManager.getStringSync($r('app.string.no_step_data_62938475')))
                     .fontSize(18).fontColor('#666666')
                   Button(getContext(this).resourceManager.getStringSync($r('app.string.refresh_data_button_84739261')))
                     .onClick(() => this.refreshStepData())
-                    .backgroundColor('#4285F4').fontColor(Color.White).borderRadius(20).height(40)
+                    .backgroundColor('#4285F4').fontColor(Color.White).borderRadius(25).height(48).width(160)
                 }
-                .width('100%').height(200).justifyContent(FlexAlign.Center)
+                .width('100%').height(220).justifyContent(FlexAlign.Center)
               } else {
-                Column({ space: 8 }) {
+                Column({ space: 12 }) {
+                  // 表头
+                  Row() {
+                    Text('日期').fontSize(14).fontWeight(FontWeight.Bold).fontColor('#666666').width('35%')
+                    Text('步数').fontSize(14).fontWeight(FontWeight.Bold).fontColor('#666666').width('35%').textAlign(TextAlign.Center)
+                    Text('距离').fontSize(14).fontWeight(FontWeight.Bold).fontColor('#666666').width('30%').textAlign(TextAlign.End)
+                  }
+                  .width('100%').padding({ top: 8, bottom: 8, left: 20, right: 20 })
+                  .backgroundColor('#F0F0F0').borderRadius(10)
+
                   ForEach(this.stepRecords, (record: StepRecord, index: number) => {
                     Row() {
-                      Text(record.time).fontSize(16).fontColor('#333333').width('30%')
-                      Text(`${record.value} ${getContext(this).resourceManager.getStringSync($r('app.string.steps_unit_39475829'))}`).fontSize(16).fontColor('#4285F4')
-                        .fontWeight(FontWeight.Medium).width('40%').textAlign(TextAlign.Center)
-                      Text(record.distance).fontSize(16).fontColor('#666666').width('30%').textAlign(TextAlign.End)
+                      Column() {
+                        Text(record.time.split('(')[0]).fontSize(16).fontColor('#333333').fontWeight(FontWeight.Medium)
+                        if (record.time.includes('(')) {
+                          Text('今天').fontSize(12).fontColor('#4285F4').margin({ top: 2 })
+                        }
+                      }
+                      .width('35%').alignItems(HorizontalAlign.Start)
+
+                      Column() {
+                        Text(`${record.value}`).fontSize(18).fontColor('#4285F4').fontWeight(FontWeight.Bold)
+                        Text(getContext(this).resourceManager.getStringSync($r('app.string.steps_unit_39475829')))
+                          .fontSize(12).fontColor('#999999').margin({ top: 2 })
+                      }
+                      .width('35%').alignItems(HorizontalAlign.Center)
+
+                      Text(record.distance).fontSize(14).fontColor('#666666').width('30%').textAlign(TextAlign.End)
                     }
-                    .width('100%').padding({ top: 12, bottom: 12, left: 16, right: 16 })
-                    .backgroundColor(index % 2 === 0 ? '#F8F9FA' : '#FFFFFF').borderRadius(8)
+                    .width('100%').padding({ top: 16, bottom: 16, left: 20, right: 20 })
+                    .backgroundColor('#FFFFFF')
+                    .borderRadius(12)
+                    .border({
+                      width: record.time.includes('(') ? 2 : 1,
+                      color: record.time.includes('(') ? '#4285F4' : '#E8E8E8'
+                    })
+                    .shadow({
+                      radius: record.time.includes('(') ? 8 : 4,
+                      color: record.time.includes('(') ? 'rgba(66, 133, 244, 0.15)' : 'rgba(0,0,0,0.05)',
+                      offsetX: 0,
+                      offsetY: 2
+                    })
                   })
                 }
               }
             }
-            .width('90%').backgroundColor('#FFFFFF').borderRadius(15).padding(20)
-            .shadow({ radius: 8, color: 'rgba(0,0,0,0.06)', offsetX: 0, offsetY: 3 })
+            .width('90%').backgroundColor('#FAFAFA').borderRadius(20).padding(25)
+            .shadow({ radius: 12, color: 'rgba(0,0,0,0.08)', offsetX: 0, offsetY: 4 })
           }
           .padding({ left: 16, right: 16, bottom: 20 })
         }
