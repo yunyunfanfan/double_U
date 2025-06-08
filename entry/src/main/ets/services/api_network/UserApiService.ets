@@ -5,6 +5,20 @@ export interface RegisterRequest {
   username: string;
   password: string;
 }
+export interface HealthOverviewData {
+  steps: number;
+  avg_heart_rate: number;
+  sleep_score: number;
+  active_calories: number;
+  blood_oxygen: number;
+  current_mood: number;
+}
+
+export interface HealthOverviewResponse {
+  success: boolean;
+  data?: HealthOverviewData;
+  message?: string;
+}
 export interface HealthDataRequest {
   user_id: number;
   record_date?: string;
@@ -128,8 +142,79 @@ export interface CheckExistsResponse {
   exists: boolean;
 }
 
+// 添加健康数据汇总类
+export class HealthDataSummary {
+  steps: string;
+  heartRate: string;
+  bloodOxygen: string;
+  sleep: string;
+  calories: string;
+  mood: string;
+
+  constructor(steps: string, heartRate: string, bloodOxygen: string, sleep: string, calories: string, mood: string) {
+    this.steps = steps;
+    this.heartRate = heartRate;
+    this.bloodOxygen = bloodOxygen;
+    this.sleep = sleep;
+    this.calories = calories;
+    this.mood = mood;
+  }
+}
+
 export class UserApiService {
   private baseUrl: string = 'http://172.23.171.45:5000/api';
+
+  // 在UserApiService类中添加以下方法
+  private currentUserId: number = 1;
+
+  setCurrentUserId(userId: number): void {
+    this.currentUserId = userId;
+    console.info(`[健康数据服务] 设置当前用户ID: ${userId}`);
+  }
+
+  async getLatestHealthData(): Promise<HealthDataSummary> {
+    try {
+      console.info(`[健康数据服务] 开始获取用户${this.currentUserId}的最新健康数据`);
+
+      // 先尝试调用overview接口，获取HealthOverviewResponse类型
+      let overviewResponse = await this.getCurrentHealthData(this.currentUserId);
+      console.info(`[健康数据服务] Overview接口返回:`, JSON.stringify(overviewResponse));
+
+      if (overviewResponse.success && overviewResponse.data) {
+        let data: HealthOverviewData = overviewResponse.data;
+
+        console.info(`[健康数据服务] 健康数据获取成功:`, JSON.stringify(data));
+
+        return new HealthDataSummary(
+          `${data.steps}步`,
+          `${data.avg_heart_rate}bpm`,
+          `${data.blood_oxygen}%`,
+          `${data.sleep_score}分`,
+          `${data.active_calories}Kcal`,
+          this.getMoodText(data.current_mood || 5)
+        );
+      } else {
+        console.error('[健康数据服务] 获取健康数据失败:', overviewResponse.message);
+        return this.getDefaultHealthData();
+      }
+    } catch (error) {
+      console.error('[健康数据服务] 获取健康数据异常:', error);
+      return this.getDefaultHealthData();
+    }
+  }
+
+  private getMoodText(moodValue: number): string {
+    if (moodValue >= 8) return '很好';
+    if (moodValue >= 6) return '良好';
+    if (moodValue >= 4) return '一般';
+    if (moodValue >= 2) return '较差';
+    return '很差';
+  }
+
+  private getDefaultHealthData(): HealthDataSummary {
+    console.info('[健康数据服务] 使用默认健康数据');
+    return new HealthDataSummary('0步', '0bpm', '0%', '0分', '0Kcal', '一般');
+  }
 
   async register(phone: string, username: string, password: string): Promise<RegisterResponse> {
     const httpRequest = http.createHttp();
@@ -368,20 +453,20 @@ export class UserApiService {
   }
 
   async getStepsRanking(): Promise<StepsRankingResponse> {
-    const httpRequest = http.createHttp();
+    let httpRequest = http.createHttp();
 
     try {
-      const response = await httpRequest.request(`${this.baseUrl}/steps-ranking`, {
+      let response = await httpRequest.request(`${this.baseUrl}/steps-ranking`, {
         method: http.RequestMethod.GET,
         connectTimeout: 10000,
         readTimeout: 10000
       });
 
-      const responseText: string = response.result as string;
-      const result: StepsRankingResponse = JSON.parse(responseText) as StepsRankingResponse;
+      let responseText: string = response.result as string;
+      let result: StepsRankingResponse = JSON.parse(responseText) as StepsRankingResponse;
       return result;
     } catch (error) {
-      const errorResponse: StepsRankingResponse = {
+      let errorResponse: StepsRankingResponse = {
         success: false
       };
       return errorResponse;
@@ -481,6 +566,33 @@ export class UserApiService {
         message: '网络连接失败'
       };
       return errorResponse;
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+  async getCurrentHealthData(userId: number): Promise<HealthOverviewResponse> {
+    let httpRequest = http.createHttp();
+
+    try {
+      console.info(`[健康数据服务] 开始获取用户${userId}的当前健康数据`);
+
+      let response = await httpRequest.request(`${this.baseUrl}/overview/${userId}`, {
+        method: http.RequestMethod.GET,
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      let responseText: string = response.result as string;
+      let result: HealthOverviewResponse = JSON.parse(responseText) as HealthOverviewResponse;
+
+      console.info(`[健康数据服务] 健康数据获取完成:`, JSON.stringify(result));
+      return result;
+    } catch (error) {
+      console.error(`[健康数据服务] 获取健康数据失败:`, error);
+      return {
+        success: false,
+        message: '网络连接失败'
+      };
     } finally {
       httpRequest.destroy();
     }

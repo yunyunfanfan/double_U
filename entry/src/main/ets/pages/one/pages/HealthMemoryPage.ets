@@ -1,9 +1,15 @@
 import { BaseNavigation } from 'JhCommon';
 import { router } from '@kit.ArkUI';
-import { preferences } from '@kit.ArkData';
-import { HealthDataService, HealthDataSummary, StoredHealthData, AdditionalHealthInfo } from '../../../services/HealthDataService';
+import { userApiService, HealthDataResponse, HealthDataRequest } from '../../../services/api_network/UserApiService';
+import { JhAESPreferencesUtils, kUserDefault_UserInfo } from 'JhCommon';
 
 ///个性化健康记忆页面
+
+interface UserInfo {
+  userId?: string;
+  userName?: string;
+  phone?: string;
+}
 
 // 分析结果类
 class HealthAnalysisResult {
@@ -67,28 +73,46 @@ class MemoryItem {
 class DailyHealthData {
   date: string = '';
   steps: string = '0';
-  heartRate: string = '';
-  sleepHours: string = '';
-  calories: string = '';
-  oxygenLevel: string = '';
-  mood: string = '';
+  heartRate: string = '0';
+  sleepMinutes: number = 0; // 存储分钟数
+  activeCalories: number = 0; // 活动热量
+  metabolismCalories: number = 0; // 代谢热量
+  oxygenLevel: string = '0';
+  mood: string = '5';
   stepGoal: string = '0';
-  records: StoredHealthData[] = [];
+  recordCount: number = 0;
 
   constructor(date: string) {
     this.date = date;
-    this.heartRate = getContext(this).resourceManager.getStringSync($r('app.string.default_heart_rate_value_39284751'));
-    this.sleepHours = getContext(this).resourceManager.getStringSync($r('app.string.default_sleep_value_75839462'));
-    this.calories = getContext(this).resourceManager.getStringSync($r('app.string.default_calories_value_18475936'));
-    this.oxygenLevel = getContext(this).resourceManager.getStringSync($r('app.string.default_oxygen_value_62938475'));
   }
 
   toString(): string {
-    return `DailyHealthData{date: ${this.date}, recordCount: ${this.records.length}, steps: ${this.steps}}`;
+    return `DailyHealthData{date: ${this.date}, recordCount: ${this.recordCount}, steps: ${this.steps}}`;
   }
 
   getRecordCount(): number {
-    return this.records.length;
+    return this.recordCount;
+  }
+
+  // 获取格式化的睡眠时间
+  getFormattedSleepHours(): string {
+    if (this.sleepMinutes <= 0) return '0小时';
+    let hours: number = Math.floor(this.sleepMinutes / 60);
+    let minutes: number = this.sleepMinutes % 60;
+    if (minutes > 0) {
+      return `${hours}小时${minutes}分钟`;
+    }
+    return `${hours}小时`;
+  }
+
+  // 获取总热量
+  getTotalCalories(): number {
+    return this.activeCalories + this.metabolismCalories;
+  }
+
+  // 获取格式化的总热量
+  getFormattedCalories(): string {
+    return `${this.getTotalCalories()}千卡`;
   }
 }
 
@@ -101,25 +125,29 @@ export struct HealthMemoryPage {
   @State errorMessage: string = '';
   @State currentHealthData: HealthData = new HealthData('', '', '', '', '');
   @State updateCounter: number = 0;
+  @State userId: number = 0;
 
-  private preferencesHelper: preferences.Preferences | null = null;
   private dailyDataMap: Map<string, DailyHealthData> = new Map();
-  private healthDataService: HealthDataService = HealthDataService.getInstance();
 
   aboutToAppear(): void {
+    console.info('[健康记忆页面] ================ 健康记忆系统初始化开始 ================');
+    console.info('[健康记忆页面] 当前用户: gadz2021, 系统时间: 2025-06-08 13:43:32 UTC');
+    console.info('[健康记忆页面] 修复: 睡眠单位(分钟转小时)，热量计算(活动+代谢)');
     this.initializeHealthMemorySystem();
   }
 
   private async initializeHealthMemorySystem(): Promise<void> {
     try {
-      await this.initPreferences();
-      await this.loadRealTimeHealthData(); // 加载实时健康数据
-      await this.loadHealthDataFromStorage();
+      console.info('[系统初始化] ======== 健康记忆系统初始化开始 ========');
+      await this.getUserId();
+      await this.loadHealthDataFromDatabase();
       await this.processHealthDataIntoMemories();
       this.isLoading = false;
       this.updateCounter++;
+      console.info('[系统初始化] ======== 健康记忆系统初始化成功 ========');
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '未知系统错误';
+      let errorMessage = error instanceof Error ? error.message : '未知系统错误';
+      console.error(`[系统初始化] 健康记忆系统初始化失败: ${errorMessage}`);
       this.errorMessage = `数据加载失败: ${errorMessage}`;
       this.isLoading = false;
       this.updateCounter++;
@@ -127,176 +155,117 @@ export struct HealthMemoryPage {
     }
   }
 
-  private async initPreferences(): Promise<void> {
+  private async getUserId(): Promise<void> {
     try {
-      this.preferencesHelper = await preferences.getPreferences(getContext(), 'health_data');
+      console.info('[用户ID] === 开始获取用户ID ===');
+      let userInfo: UserInfo = await JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as UserInfo;
+      if (userInfo && userInfo.userId) {
+        this.userId = parseInt(userInfo.userId);
+        console.info(`[用户ID] === 获取到用户ID: ${this.userId} ===`);
+      } else {
+        console.warn('[用户ID] === 未找到用户信息，使用默认ID ===');
+        this.userId = 1;
+      }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '未知存储错误';
-      throw new Error(`存储系统初始化失败: ${errorMessage}`);
+      console.error(`[用户ID] === 获取用户ID异常: ${error} ===`);
+      this.userId = 1;
     }
   }
 
-  private async loadRealTimeHealthData(): Promise<void> {
+  private async loadHealthDataFromDatabase(): Promise<void> {
+    if (this.userId === 0) {
+      console.error('[健康数据] === 用户ID为0，跳过数据加载 ===');
+      return;
+    }
+
     try {
-      const healthSummary = await this.healthDataService.getLatestHealthData();
-      // 将汇总数据转换为HealthData格式
-      this.currentHealthData = new HealthData(
-        healthSummary.steps,
-        healthSummary.heartRate,
-        healthSummary.sleep,
-        healthSummary.calories,
-        healthSummary.bloodOxygen,
-        healthSummary.mood
-      );
-      console.log('[HealthMemoryPage] 实时健康数据加载完成:', JSON.stringify(this.currentHealthData));
+      console.info(`[健康数据] === 开始加载健康数据，用户ID: ${this.userId} ===`);
+      let healthResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 7);
+      console.info(`[健康数据] === 健康数据响应: ${JSON.stringify(healthResponse)} ===`);
+
+      if (healthResponse.success && healthResponse.data && healthResponse.data.length > 0) {
+        this.groupHealthDataByDate(healthResponse.data);
+        console.info(`[健康数据] === 健康数据处理完成，共${healthResponse.data.length}条记录 ===`);
+      } else {
+        console.warn('[健康数据] === 健康数据为空 ===');
+      }
     } catch (error) {
-      console.error('[HealthMemoryPage] 加载实时健康数据失败:', error);
-      // 如果实时数据加载失败，使用默认值
-      this.currentHealthData = new HealthData(
-        getContext(this).resourceManager.getStringSync($r('app.string.default_steps_value_57382946')),
-        getContext(this).resourceManager.getStringSync($r('app.string.default_heart_rate_value_39284751')),
-        getContext(this).resourceManager.getStringSync($r('app.string.default_sleep_value_75839462')),
-        getContext(this).resourceManager.getStringSync($r('app.string.default_calories_value_18475936')),
-        getContext(this).resourceManager.getStringSync($r('app.string.default_oxygen_value_62938475'))
-      );
+      console.error(`[健康数据] === 数据加载异常: ${error} ===`);
+      throw new Error(`网络请求失败: ${error}`);
     }
   }
 
-  private async loadHealthDataFromStorage(): Promise<void> {
-    try {
-      if (!this.preferencesHelper) {
-        throw new Error('存储系统未初始化，无法读取数据');
+  private groupHealthDataByDate(healthRecords: HealthDataRequest[]): void {
+    console.info(`[数据分组] === 开始按日期分组健康数据，共${healthRecords.length}条记录 ===`);
+
+    for (let i: number = 0; i < healthRecords.length; i++) {
+      let record: HealthDataRequest = healthRecords[i];
+      let dateStr: string = record.record_date || '';
+
+      if (!dateStr) {
+        console.warn(`[数据分组] === 跳过无日期记录: ${JSON.stringify(record)} ===`);
+        continue;
       }
 
-      const storedData = await this.preferencesHelper.get('health_records', '[]') as string;
-      const healthRecords: StoredHealthData[] = JSON.parse(storedData);
-
-      if (healthRecords.length === 0) {
-        return;
+      if (!this.dailyDataMap.has(dateStr)) {
+        let newDailyData: DailyHealthData = new DailyHealthData(dateStr);
+        this.dailyDataMap.set(dateStr, newDailyData);
       }
 
-      this.groupHealthDataByDate(healthRecords);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '未知数据错误';
-      throw new Error(`数据读取失败: ${errorMessage}`);
+      let dailyData: DailyHealthData = this.dailyDataMap.get(dateStr) as DailyHealthData;
+      this.updateDailyDataFromRecord(dailyData, record);
+      dailyData.recordCount++;
+
+      console.info(`[数据分组] === 处理日期${dateStr}的数据: ${dailyData.toString()} ===`);
     }
+
+    console.info(`[数据分组] === 数据分组完成，共${this.dailyDataMap.size}天的数据 ===`);
   }
 
-  private groupHealthDataByDate(healthRecords: StoredHealthData[]): void {
-    healthRecords.forEach((record: StoredHealthData) => {
-      try {
-        const timestampParts = record.timestamp.split(' ');
-        if (timestampParts.length === 0) {
-          throw new Error(`时间戳格式错误: ${record.timestamp}`);
-        }
+  private updateDailyDataFromRecord(dailyData: DailyHealthData, record: HealthDataRequest): void {
+    console.info(`[数据更新] === 更新日期${dailyData.date}的健康数据 ===`);
 
-        const dateStr = timestampParts[0];
+    dailyData.steps = (record.steps || 0).toString();
+    dailyData.heartRate = (record.current_heart_rate || 0).toString();
 
-        if (!this.dailyDataMap.has(dateStr)) {
-          const newDailyData = new DailyHealthData(dateStr);
-          this.dailyDataMap.set(dateStr, newDailyData);
-        }
+    // 睡眠时间：从分钟转换
+    dailyData.sleepMinutes = record.sleep_duration || 0;
+    console.info(`[数据更新] === 睡眠时间: ${dailyData.sleepMinutes}分钟 = ${dailyData.getFormattedSleepHours()} ===`);
 
-        const dailyData = this.dailyDataMap.get(dateStr);
-        if (dailyData) {
-          dailyData.records.push(record);
-          this.updateDailyDataByType(dailyData, record);
-        }
-      } catch (error) {
-        // 跳过错误记录
-        console.warn('[HealthMemoryPage] 跳过错误记录:', error);
-      }
-    });
-  }
+    // 热量：活动热量 + 代谢热量
+    dailyData.activeCalories = record.active_calories || 0;
+    dailyData.metabolismCalories = record.basic_metabolism_calories || 0;
+    console.info(`[数据更新] === 热量计算: 活动${dailyData.activeCalories} + 代谢${dailyData.metabolismCalories} = 总计${dailyData.getTotalCalories()}千卡 ===`);
 
-  private updateDailyDataByType(dailyData: DailyHealthData, record: StoredHealthData): void {
-    switch (record.type) {
-      case 'steps':
-        dailyData.steps = this.formatValue(record.value, record.unit);
-        break;
-      case 'heart_rate':
-        if (record.additionalInfo.avgValue) {
-          dailyData.heartRate = this.formatValue(record.additionalInfo.avgValue, record.unit);
-        } else {
-          dailyData.heartRate = this.formatValue(record.value, record.unit);
-        }
-        break;
-      case 'sleep':
-        if (record.additionalInfo.sleepTime && record.additionalInfo.wakeTime) {
-          dailyData.sleepHours = `${record.additionalInfo.sleepTime}-${record.additionalInfo.wakeTime}（${record.value}${record.unit}）`;
-        } else {
-          dailyData.sleepHours = this.formatValue(record.value, record.unit);
-        }
-        break;
-      case 'calories':
-        dailyData.calories = this.formatValue(record.value, record.unit);
-        break;
-      case 'blood_oxygen':
-        dailyData.oxygenLevel = this.formatValue(record.value, record.unit);
-        break;
-      case 'mood':
-        dailyData.mood = record.value;
-        break;
-      case 'step_goal':
-        dailyData.stepGoal = this.formatValue(record.value, record.unit);
-        break;
-      default:
-        break;
-    }
-  }
-
-  private formatValue(value: string, unit: string): string {
-    if (!value) {
-      return '0';
-    }
-
-    if (!unit) {
-      return value;
-    }
-
-    if (value.includes(unit)) {
-      return value;
-    }
-
-    const numValue = parseFloat(value);
-    if (!isNaN(numValue)) {
-      if (unit === '步' && numValue >= 1000) {
-        return `${numValue.toLocaleString()}${unit}`;
-      }
-      return `${value}${unit}`;
-    }
-
-    return `${value}${unit}`;
+    dailyData.oxygenLevel = (record.current_blood_oxygen || 0).toString();
+    dailyData.mood = (record.current_mood || 5).toString();
+    dailyData.stepGoal = (record.steps_goal || 10000).toString();
   }
 
   private async processHealthDataIntoMemories(): Promise<void> {
-    const memories: MemoryItem[] = [];
-    const sortedDates = Array.from(this.dailyDataMap.keys()).sort((a, b) => b.localeCompare(a));
-    const recentDates = sortedDates.slice(0, 7);
+    console.info('[记忆处理] === 开始处理健康数据为记忆 ===');
+    let memories: MemoryItem[] = [];
+    let sortedDates: string[] = Array.from(this.dailyDataMap.keys()).sort((a: string, b: string) => b.localeCompare(a));
+    let recentDates: string[] = sortedDates.slice(0, 7);
 
-    for (let i = 0; i < recentDates.length; i++) {
-      const date = recentDates[i];
-      const dailyData = this.dailyDataMap.get(date);
+    for (let i: number = 0; i < recentDates.length; i++) {
+      let date: string = recentDates[i];
+      let dailyData: DailyHealthData = this.dailyDataMap.get(date) as DailyHealthData;
 
       if (dailyData) {
-        const defaultSteps = getContext(this).resourceManager.getStringSync($r('app.string.default_steps_value_57382946'));
-        const defaultHeartRate = getContext(this).resourceManager.getStringSync($r('app.string.default_heart_rate_value_39284751'));
-        const defaultSleep = getContext(this).resourceManager.getStringSync($r('app.string.default_sleep_value_75839462'));
-        const defaultCalories = getContext(this).resourceManager.getStringSync($r('app.string.default_calories_value_18475936'));
-        const defaultOxygen = getContext(this).resourceManager.getStringSync($r('app.string.default_oxygen_value_62938475'));
-
-        const healthData = new HealthData(
-          dailyData.steps || defaultSteps,
-          dailyData.heartRate || defaultHeartRate,
-          dailyData.sleepHours || defaultSleep,
-          dailyData.calories || defaultCalories,
-          dailyData.oxygenLevel || defaultOxygen,
-          dailyData.mood,
-          dailyData.stepGoal
+        let healthData: HealthData = new HealthData(
+          `${dailyData.steps}步`,
+          `${dailyData.heartRate}bpm`,
+          dailyData.getFormattedSleepHours(),
+          dailyData.getFormattedCalories(),
+          `${dailyData.oxygenLevel}%`,
+          this.getMoodText(parseInt(dailyData.mood)),
+          `${dailyData.stepGoal}步`
         );
 
-        const memory = this.generateMemoryForDate(date, dailyData, healthData, i);
+        let memory: MemoryItem = this.generateMemoryForDate(date, dailyData, healthData, i);
         memories.push(memory);
+        console.info(`[记忆处理] === 生成记忆: ${memory.toString()} ===`);
       }
     }
 
@@ -305,29 +274,24 @@ export struct HealthMemoryPage {
     if (memories.length > 0) {
       this.currentHealthData = memories[0].healthData;
     } else {
-      const defaultSteps = getContext(this).resourceManager.getStringSync($r('app.string.default_steps_value_57382946'));
-      const defaultHeartRate = getContext(this).resourceManager.getStringSync($r('app.string.default_heart_rate_value_39284751'));
-      const defaultSleep = getContext(this).resourceManager.getStringSync($r('app.string.default_sleep_value_75839462'));
-      const defaultCalories = getContext(this).resourceManager.getStringSync($r('app.string.default_calories_value_18475936'));
-      const defaultOxygen = getContext(this).resourceManager.getStringSync($r('app.string.default_oxygen_value_62938475'));
-      this.currentHealthData = new HealthData(defaultSteps, defaultHeartRate, defaultSleep, defaultCalories, defaultOxygen);
+      this.currentHealthData = new HealthData('0步', '0bpm', '0小时', '0千卡', '0%', '一般', '10000步');
     }
+
+    console.info(`[记忆处理] === 记忆处理完成，共生成${memories.length}条记忆 ===`);
   }
 
   private generateMemoryForDate(date: string, dailyData: DailyHealthData, healthData: HealthData, dayIndex: number): MemoryItem {
-    const analysisResult = this.analyzeHealthData(dailyData);
-    const title = analysisResult.title;
-    const content = analysisResult.content;
-    return new MemoryItem(date, title, content, healthData);
+    let analysisResult: HealthAnalysisResult = this.analyzeHealthData(dailyData);
+    return new MemoryItem(date, analysisResult.title, analysisResult.content, healthData);
   }
 
   private analyzeHealthData(dailyData: DailyHealthData): HealthAnalysisResult {
-    const issues: string[] = [];
-    const achievements: string[] = [];
-    const suggestions: string[] = [];
+    let issues: string[] = [];
+    let achievements: string[] = [];
+    let suggestions: string[] = [];
 
-    const steps = parseInt(dailyData.steps.replace(/[^\d]/g, '')) || 0;
-    const stepGoal = parseInt(dailyData.stepGoal.replace(/[^\d]/g, '')) || 8000;
+    let steps: number = parseInt(dailyData.steps) || 0;
+    let stepGoal: number = parseInt(dailyData.stepGoal) || 8000;
 
     if (steps >= stepGoal) {
       achievements.push(`完成步数目标，走了${this.formatNumber(steps)}步`);
@@ -337,7 +301,7 @@ export struct HealthMemoryPage {
       issues.push(`步数不足，仅完成目标的${Math.round((steps / stepGoal) * 100)}%`);
     }
 
-    const heartRate = parseInt(dailyData.heartRate.replace(/[^\d]/g, '')) || 0;
+    let heartRate: number = parseInt(dailyData.heartRate) || 0;
     if (heartRate > 0) {
       if (heartRate >= 60 && heartRate <= 100) {
         achievements.push('心率正常稳定');
@@ -348,7 +312,10 @@ export struct HealthMemoryPage {
       }
     }
 
-    const sleepHours = parseFloat(dailyData.sleepHours.replace(/[^\d.]/g, '')) || 0;
+    // 睡眠分析：使用分钟数进行判断
+    let sleepHours: number = dailyData.sleepMinutes / 60;
+    console.info(`[睡眠分析] === 睡眠时间: ${dailyData.sleepMinutes}分钟 = ${sleepHours.toFixed(1)}小时 ===`);
+
     if (sleepHours >= 7) {
       achievements.push('睡眠时间充足');
     } else if (sleepHours >= 6) {
@@ -357,20 +324,22 @@ export struct HealthMemoryPage {
       issues.push('睡眠严重不足，影响健康');
     }
 
-    const calories = parseInt(dailyData.calories.replace(/[^\d]/g, '')) || 0;
-    if (calories >= 2000) {
-      achievements.push('运动热量消耗良好');
-    } else if (calories >= 1000) {
-      suggestions.push('适度运动消耗，可继续保持');
+    // 热量分析：使用总热量（活动+代谢）
+    let totalCalories: number = dailyData.getTotalCalories();
+    console.info(`[热量分析] === 总热量: ${totalCalories}千卡 (活动${dailyData.activeCalories} + 代谢${dailyData.metabolismCalories}) ===`);
+
+    if (totalCalories >= 2000) {
+      achievements.push('热量消耗良好');
+    } else if (totalCalories >= 1500) {
+      suggestions.push('热量消耗适中，可继续保持');
     }
 
-    if (dailyData.mood) {
-      if (dailyData.mood.includes('焦虑') || dailyData.mood.includes('压力')) {
-        issues.push('情绪状态需要关注');
-        suggestions.push('建议进行放松练习，如深呼吸或冥想');
-      } else if (dailyData.mood.includes('开心') || dailyData.mood.includes('愉快')) {
-        achievements.push('情绪状态良好');
-      }
+    let mood: number = parseInt(dailyData.mood) || 5;
+    if (mood >= 8) {
+      achievements.push('心情状态优秀');
+    } else if (mood <= 3) {
+      issues.push('心情状态较差，需要调节');
+      suggestions.push('建议进行放松练习，如深呼吸或冥想');
     }
 
     let title: string;
@@ -398,23 +367,26 @@ export struct HealthMemoryPage {
     return new HealthAnalysisResult(title, content);
   }
 
+  private getMoodText(mood: number): string {
+    if (mood >= 9) return '非常愉快';
+    if (mood >= 8) return '愉快';
+    if (mood >= 7) return '较好';
+    if (mood >= 6) return '一般偏好';
+    if (mood >= 5) return '一般';
+    if (mood >= 4) return '一般偏差';
+    if (mood >= 3) return '较差';
+    if (mood >= 2) return '很差';
+    return '极差';
+  }
+
   private formatNumber(num: number): string {
     return num.toLocaleString();
   }
 
   private loadDefaultMemories(): void {
-    const defaultSteps = getContext(this).resourceManager.getStringSync($r('app.string.default_steps_value_57382946'));
-    const defaultHeartRate = getContext(this).resourceManager.getStringSync($r('app.string.default_heart_rate_value_39284751'));
-    const defaultSleep = getContext(this).resourceManager.getStringSync($r('app.string.default_sleep_value_75839462'));
-    const defaultCalories = getContext(this).resourceManager.getStringSync($r('app.string.default_calories_value_18475936'));
-    const defaultOxygen = getContext(this).resourceManager.getStringSync($r('app.string.default_oxygen_value_62938475'));
-
-    const defaultHealthData = new HealthData(defaultSteps, defaultHeartRate, defaultSleep, defaultCalories, defaultOxygen);
-    const defaultTitle = getContext(this).resourceManager.getStringSync($r('app.string.default_memory_title_84739261'));
-    const defaultContent = getContext(this).resourceManager.getStringSync($r('app.string.default_memory_content_57382946'));
-
-    const defaultMemory = new MemoryItem('2025-05-30', defaultTitle, defaultContent, defaultHealthData);
-
+    console.info('[默认数据] === 加载默认健康记忆 ===');
+    let defaultHealthData: HealthData = new HealthData('0步', '0bpm', '0小时', '0千卡', '0%', '一般', '10000步');
+    let defaultMemory: MemoryItem = new MemoryItem('2025-06-08', '暂无数据', '暂无健康记忆数据，请稍后重试', defaultHealthData);
     this.memories = [defaultMemory];
     this.currentHealthData = defaultHealthData;
     this.selectedMemory = 0;
@@ -463,12 +435,12 @@ export struct HealthMemoryPage {
         .height(50)
         .color('#4285F4')
 
-      Text(getContext(this).resourceManager.getStringSync($r('app.string.loading_health_data_message_57284916')))
+      Text('正在加载健康数据...')
         .fontSize(16)
         .fontColor('#666666')
         .fontWeight(FontWeight.Medium)
 
-      Text(getContext(this).resourceManager.getStringSync($r('app.string.loading_health_subtitle_39475829')))
+      Text('当前用户: gadz2021, 加载中请稍候')
         .fontSize(14)
         .fontColor('#999999')
         .textAlign(TextAlign.Center)
@@ -488,7 +460,7 @@ export struct HealthMemoryPage {
       Text('⚠️')
         .fontSize(48)
 
-      Text(getContext(this).resourceManager.getStringSync($r('app.string.data_load_error_title_75163948')))
+      Text('数据加载失败')
         .fontSize(18)
         .fontColor('#EA4335')
         .fontWeight(FontWeight.Bold)
@@ -500,7 +472,7 @@ export struct HealthMemoryPage {
         .maxLines(3)
         .lineHeight(20)
 
-      Button(getContext(this).resourceManager.getStringSync($r('app.string.reload_button_text_18394756')))
+      Button('重新加载')
         .onClick(() => {
           this.isLoading = true;
           this.errorMessage = '';
@@ -540,7 +512,7 @@ export struct HealthMemoryPage {
       .backgroundColor(Color.Transparent)
       .margin({ left: 10 })
 
-      Text(getContext(this).resourceManager.getStringSync($r('app.string.personalized_health_memory_title_84729361')))
+      Text('个性化健康记忆')
         .fontSize(24)
         .fontWeight(FontWeight.Bold)
         .fontColor(Color.Black)
@@ -563,14 +535,14 @@ export struct HealthMemoryPage {
   buildHealthDataOverview() {
     Column({ space: 16 }) {
       Row() {
-        Text(getContext(this).resourceManager.getStringSync($r('app.string.health_overview_title_62847593')))
+        Text('健康数据概览')
           .fontSize(18)
           .fontWeight(FontWeight.Bold)
           .fontColor('#333333')
 
         Blank()
 
-        Text(getContext(this).resourceManager.getStringSync($r('app.string.realtime_data_label_57382946')))
+        Text('实时数据')
           .fontSize(12)
           .fontColor('#4285F4')
           .padding({ left: 8, right: 8, top: 4, bottom: 4 })
@@ -581,43 +553,20 @@ export struct HealthMemoryPage {
 
       // 第一行数据卡片
       Row({ space: 10 }) {
-        this.buildDataCard(
-          getContext(this).resourceManager.getStringSync($r('app.string.steps_label_39284751')),
-          this.currentHealthData.steps || getContext(this).resourceManager.getStringSync($r('app.string.default_steps_value_57382946')),
-          '#4285F4', '👟'
-        )
-        this.buildDataCard(
-          getContext(this).resourceManager.getStringSync($r('app.string.heart_rate_label_75839462')),
-          this.currentHealthData.heartRate || getContext(this).resourceManager.getStringSync($r('app.string.default_heart_rate_value_39284751')),
-          '#EA4335', '❤️'
-        )
-        this.buildDataCard(
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_label_18475936')),
-          this.currentHealthData.sleepHours || getContext(this).resourceManager.getStringSync($r('app.string.default_sleep_value_75839462')),
-          '#34A853', '😴'
-        )
+        this.buildDataCard('步数', this.currentHealthData.steps || '0步', '#4285F4', '👟')
+        this.buildDataCard('心率', this.currentHealthData.heartRate || '0bpm', '#EA4335', '❤️')
+        this.buildDataCard('睡眠', this.currentHealthData.sleepHours || '0小时', '#34A853', '😴')
       }
       .width('100%')
       .justifyContent(FlexAlign.SpaceBetween)
 
       // 第二行数据卡片
       Row({ space: 10 }) {
-        this.buildDataCard(
-          getContext(this).resourceManager.getStringSync($r('app.string.calories_label_62938475')),
-          this.currentHealthData.calories || getContext(this).resourceManager.getStringSync($r('app.string.default_calories_value_18475936')),
-          '#FBBC05', '🔥'
-        )
-        this.buildDataCard(
-          getContext(this).resourceManager.getStringSync($r('app.string.blood_oxygen_label_84739261')),
-          this.currentHealthData.oxygenLevel || getContext(this).resourceManager.getStringSync($r('app.string.default_oxygen_value_62938475')),
-          '#9C27B0', '🫁'
-        )
+        this.buildDataCard('热量', this.currentHealthData.calories || '0千卡', '#FBBC05', '🔥')
+        this.buildDataCard('血氧', this.currentHealthData.oxygenLevel || '0%', '#9C27B0', '🫁')
         // 情绪或目标卡片
         if (this.currentHealthData.mood) {
-          this.buildDataCard(
-            getContext(this).resourceManager.getStringSync($r('app.string.mood_label_57382946')),
-            this.currentHealthData.mood, '#FF9800', '😊'
-          )
+          this.buildDataCard('心情', this.currentHealthData.mood, '#FF9800', '😊')
         } else {
           // 空白占位，保持对齐
           Column()
@@ -689,14 +638,14 @@ export struct HealthMemoryPage {
   buildHealthMemoryCard() {
     Column({ space: 16 }) {
       Row() {
-        Text(getContext(this).resourceManager.getStringSync($r('app.string.health_memory_title_39284751')))
+        Text('健康记忆')
           .fontSize(18)
           .fontWeight(FontWeight.Bold)
           .fontColor('#333333')
 
         Blank()
 
-        Text(`${getContext(this).resourceManager.getStringSync($r('app.string.record_count_prefix_18475936'))}${this.memories.length}${getContext(this).resourceManager.getStringSync($r('app.string.record_count_suffix_75839462'))}`)
+        Text(`共${this.memories.length}条记录`)
           .fontSize(12)
           .fontColor('#999999')
           .padding({ left: 8, right: 8, top: 4, bottom: 4 })
@@ -710,12 +659,12 @@ export struct HealthMemoryPage {
           Text('📝')
             .fontSize(32)
 
-          Text(getContext(this).resourceManager.getStringSync($r('app.string.no_health_memory_title_62938475')))
+          Text('暂无健康记忆')
             .fontSize(16)
             .fontColor('#666666')
             .fontWeight(FontWeight.Medium)
 
-          Text(getContext(this).resourceManager.getStringSync($r('app.string.no_memory_subtitle_84739261')))
+          Text('健康数据记录后将自动生成个性化记忆')
             .fontSize(14)
             .fontColor('#999999')
             .textAlign(TextAlign.Center)
@@ -773,7 +722,7 @@ export struct HealthMemoryPage {
               .textOverflow({ overflow: TextOverflow.Ellipsis })
 
             Button() {
-              Text(getContext(this).resourceManager.getStringSync($r('app.string.view_details_button_57382946')))
+              Text('查看详情')
                 .fontSize(14)
                 .fontColor(index === this.selectedMemory ? '#FFFFFF' : '#4285F4')
                 .fontWeight(FontWeight.Medium)
@@ -822,7 +771,7 @@ export struct HealthMemoryPage {
   buildHealthAdviceCard() {
     Column({ space: 16 }) {
       Row() {
-        Text(getContext(this).resourceManager.getStringSync($r('app.string.today_advice_title_39284751')))
+        Text('今日健康建议')
           .fontSize(18)
           .fontWeight(FontWeight.Bold)
           .fontColor('#333333')
@@ -834,17 +783,17 @@ export struct HealthMemoryPage {
       }
       .width('100%')
 
-      Text(getContext(this).resourceManager.getStringSync($r('app.string.advice_intro_text_75839462')))
+      Text('基于您的健康数据，为您提供个性化建议：')
         .fontSize(14)
         .fontColor('#666666')
         .width('100%')
         .textAlign(TextAlign.Start)
 
       Column({ space: 12 }) {
-        this.buildAdviceItem(getContext(this).resourceManager.getStringSync($r('app.string.advice_steps_text_18475936')), '🚶‍♂️')
-        this.buildAdviceItem(getContext(this).resourceManager.getStringSync($r('app.string.advice_sleep_text_62938475')), '🛌')
-        this.buildAdviceItem(getContext(this).resourceManager.getStringSync($r('app.string.advice_water_text_84739261')), '💧')
-        this.buildAdviceItem(getContext(this).resourceManager.getStringSync($r('app.string.advice_exercise_text_57382946')), '🏃‍♂️')
+        this.buildAdviceItem('每日保持8000步以上的活动量', '🚶‍♂️')
+        this.buildAdviceItem('确保每晚7-8小时优质睡眠', '🛌')
+        this.buildAdviceItem('多喝水，保持身体水分平衡', '💧')
+        this.buildAdviceItem('适量运动，增强心肺功能', '🏃‍♂️')
       }
       .width('100%')
     }
@@ -879,21 +828,11 @@ export struct HealthMemoryPage {
   }
 
   private getDateLabel(index: number): string {
-    const labelKeys = [
-      'app.string.today_label_39284751',
-      'app.string.yesterday_label_75839462',
-      'app.string.day_before_yesterday_label_18475936',
-      'app.string.days_ago_3_label_62938475',
-      'app.string.days_ago_4_label_84739261',
-      'app.string.days_ago_5_label_57382946',
-      'app.string.days_ago_6_label_39284751'
-    ];
-
-    if (index < labelKeys.length) {
-      return getContext(this).resourceManager.getStringSync($r(labelKeys[index]));
+    let labels: string[] = ['今天', '昨天', '前天', '3天前', '4天前', '5天前', '6天前'];
+    if (index < labels.length) {
+      return labels[index];
     } else {
-      const daysAgoSuffix = getContext(this).resourceManager.getStringSync($r('app.string.days_ago_suffix_75839462'));
-      return `${index}${daysAgoSuffix}`;
+      return `${index}天前`;
     }
   }
 
@@ -911,52 +850,40 @@ export struct HealthMemoryPage {
 
   private getStatusText(title: string): string {
     if (title.includes('良好') || title.includes('优秀')) {
-      return getContext(this).resourceManager.getStringSync($r('app.string.status_excellent_18475936'));
+      return '优秀';
     } else if (title.includes('提醒') || title.includes('注意') || title.includes('异常')) {
-      return getContext(this).resourceManager.getStringSync($r('app.string.status_attention_62938475'));
+      return '需关注';
     } else if (title.includes('成就') || title.includes('达成')) {
-      return getContext(this).resourceManager.getStringSync($r('app.string.status_achievement_84739261'));
+      return '达成';
     } else {
-      return getContext(this).resourceManager.getStringSync($r('app.string.status_record_57382946'));
+      return '记录';
     }
   }
 
   // 显示健康记忆详情
   private showHealthMemoryDetail(item: MemoryItem, index: number): void {
-    const datePrefix = getContext(this).resourceManager.getStringSync($r('app.string.dialog_date_prefix_18475936'));
-    const detailsPrefix = getContext(this).resourceManager.getStringSync($r('app.string.dialog_details_prefix_62938475'));
-    const healthDataPrefix = getContext(this).resourceManager.getStringSync($r('app.string.dialog_health_data_prefix_84739261'));
-    const stepsLabel = getContext(this).resourceManager.getStringSync($r('app.string.steps_label_39284751'));
-    const heartRateLabel = getContext(this).resourceManager.getStringSync($r('app.string.heart_rate_label_75839462'));
-    const sleepLabel = getContext(this).resourceManager.getStringSync($r('app.string.sleep_label_18475936'));
-    const caloriesLabel = getContext(this).resourceManager.getStringSync($r('app.string.calories_label_62938475'));
-    const bloodOxygenLabel = getContext(this).resourceManager.getStringSync($r('app.string.blood_oxygen_label_84739261'));
-    const moodLabel = getContext(this).resourceManager.getStringSync($r('app.string.mood_label_57382946'));
-    const closeButton = getContext(this).resourceManager.getStringSync($r('app.string.dialog_close_button_39284751'));
-    const shareButton = getContext(this).resourceManager.getStringSync($r('app.string.dialog_share_button_75839462'));
-
-    let detailMessage = `${datePrefix} ${item.date}\n\n${detailsPrefix}${item.content}\n\n${healthDataPrefix}`;
-    detailMessage += `\n• ${stepsLabel}: ${item.healthData.steps}`;
-    detailMessage += `\n• ${heartRateLabel}: ${item.healthData.heartRate}`;
-    detailMessage += `\n• ${sleepLabel}: ${item.healthData.sleepHours}`;
-    detailMessage += `\n• ${caloriesLabel}: ${item.healthData.calories}`;
-    detailMessage += `\n• ${bloodOxygenLabel}: ${item.healthData.oxygenLevel}`;
+    let detailMessage: string = `日期: ${item.date}\n\n详情:${item.content}\n\n健康数据:`;
+    detailMessage += `\n• 步数: ${item.healthData.steps}`;
+    detailMessage += `\n• 心率: ${item.healthData.heartRate}`;
+    detailMessage += `\n• 睡眠: ${item.healthData.sleepHours}`;
+    detailMessage += `\n• 热量: ${item.healthData.calories}`;
+    detailMessage += `\n• 血氧: ${item.healthData.oxygenLevel}`;
 
     if (item.healthData.mood) {
-      detailMessage += `\n• ${moodLabel}: ${item.healthData.mood}`;
+      detailMessage += `\n• 心情: ${item.healthData.mood}`;
     }
 
     AlertDialog.show({
       title: item.title,
       message: detailMessage,
       primaryButton: {
-        value: closeButton,
+        value: '关闭',
         action: () => {
           // 关闭弹窗
         }
       },
       secondaryButton: {
-        value: shareButton,
+        value: '分享',
         action: () => {
           // TODO: 这里可以添加分享功能的具体实现
         }

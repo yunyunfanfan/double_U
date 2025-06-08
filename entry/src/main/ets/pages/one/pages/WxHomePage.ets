@@ -1,10 +1,13 @@
-///这是主页
-
 import { promptAction, router } from '@kit.ArkUI'
 import { BaseNavigation, JhProgressHUD, KColors } from 'JhCommon'
 import { WxHomeModel } from '../models/WxHomeModel'
 import { WxHomeCell } from '../widgets/WxHomeCell'
-import { HealthDataService, HealthDataSummary } from '../../../services/HealthDataService'
+import { userApiService, HealthDataSummary } from '../../../services/api_network/UserApiService'
+
+interface PopMenuItem {
+  text: string;
+  icon: Resource;
+}
 
 @Entry
 @Preview
@@ -13,9 +16,12 @@ export struct WxHomePage {
   @State dataArr: WxHomeModel[] = []
   @State healthDataSummary: HealthDataSummary = new HealthDataSummary('加载中...', '加载中...', '加载中...', '加载中...', '加载中...', '加载中...')
   scroller: ListScroller = new ListScroller()
-  private healthDataService: HealthDataService = HealthDataService.getInstance()
+  private healthDataService = userApiService
 
   aboutToAppear() {
+    console.log('[WxHomePage] 页面即将显示，设置用户ID');
+    // 设置当前用户ID（您可以从登录状态获取真实的用户ID）
+    this.healthDataService.setCurrentUserId(1);
     this.loadHealthData()
     // console.error('data', JSON.stringify(this.dataArr))
   }
@@ -38,22 +44,26 @@ export struct WxHomePage {
 
   async loadHealthData() {
     try {
+      console.log('[WxHomePage] 开始加载健康数据...');
       // 加载实时健康数据
       this.healthDataSummary = await this.healthDataService.getLatestHealthData()
+      console.log('[WxHomePage] 健康数据加载完成:', JSON.stringify(this.healthDataSummary));
       // 生成页面数据，使用实时健康数据
       this.dataArr = this.getData()
+      console.log('[WxHomePage] 页面数据生成完成，数据项数量:', this.dataArr.length);
     } catch (error) {
       console.error('[WxHomePage] 加载健康数据失败:', error)
       // 使用默认数据
-      this.healthDataSummary = new HealthDataSummary('0步', '0bpm', '0%', '0小时', '0Kcal', '正常')
+      this.healthDataSummary = new HealthDataSummary('0步', '0bpm', '0%', '0分', '0Kcal', '一般')
       this.dataArr = this.getData()
+      console.log('[WxHomePage] 使用默认健康数据');
     }
   }
 
   build() {
     Column() {
       BaseNavigation({
-        title: getContext(this).resourceManager.getStringSync($r('app.string.energy_assistant_title_847392615738294629384751952847392615')),
+        title: '健康助手',
         leftItem: {},
         bgColor: Color.Transparent,
         rightImgPath: $rawfile("images/第一页加号.png"),
@@ -114,7 +124,7 @@ export struct WxHomePage {
     }
     if (type == '1') {
       Row() {
-        Text(getContext(this).resourceManager.getStringSync($r('app.string.delete_text_629384751952847847392615738294751629384751952847')))
+        Text('删除')
           .fontSize(14)
           .fontWeight(400)
           .fontColor(Color.White)
@@ -124,14 +134,14 @@ export struct WxHomePage {
       .justifyContent(FlexAlign.Center)
       .backgroundColor(Color.Red)
       .onClick(() => {
-        JhProgressHUD.showToast(getContext(this).resourceManager.getStringSync($r('app.string.delete_text_629384751952847847392615738294751629384751952847')))
+        JhProgressHUD.showToast('删除')
         this.scroller.closeAllSwipeActions()
       })
     }
     if (type == '2') {
       Row() {
         Row() {
-          Text(getContext(this).resourceManager.getStringSync($r('app.string.mark_unread_text_847392615738294184759362847392847392615738294')))
+          Text('标记未读')
             .fontSize(14)
             .fontColor(Color.White)
         }
@@ -140,12 +150,12 @@ export struct WxHomePage {
         .justifyContent(FlexAlign.Center)
         .backgroundColor('#74736D')
         .onClick(() => {
-          JhProgressHUD.showToast(getContext(this).resourceManager.getStringSync($r('app.string.mark_unread_text_847392615738294184759362847392847392615738294')))
+          JhProgressHUD.showToast('标记未读')
           this.scroller.closeAllSwipeActions()
         })
 
         Row() {
-          Text(getContext(this).resourceManager.getStringSync($r('app.string.delete_text_629384751952847847392615738294751629384751952847')))
+          Text('删除')
             .fontSize(14)
             .fontWeight(400)
             .fontColor(Color.White)
@@ -155,7 +165,7 @@ export struct WxHomePage {
         .justifyContent(FlexAlign.Center)
         .backgroundColor(Color.Red)
         .onClick(() => {
-          JhProgressHUD.showToast(getContext(this).resourceManager.getStringSync($r('app.string.delete_text_629384751952847847392615738294751629384751952847')))
+          JhProgressHUD.showToast('删除')
           this.scroller.closeAllSwipeActions()
         })
       }
@@ -164,14 +174,14 @@ export struct WxHomePage {
       .justifyContent(FlexAlign.Center)
       .backgroundColor(Color.Red)
       .onClick(() => {
-        JhProgressHUD.showToast(getContext(this).resourceManager.getStringSync($r('app.string.delete_text_629384751952847847392615738294751629384751952847')))
+        JhProgressHUD.showToast('删除')
         this.scroller.closeAllSwipeActions()
       })
     }
     if (type == '3') {
       Row() {
         Row() {
-          Text(getContext(this).resourceManager.getStringSync($r('app.string.unfollow_text_573829461847392847392615738294751629384751952847')))
+          Text('取消关注')
             .fontSize(14)
             .fontColor(Color.White)
         }
@@ -180,12 +190,12 @@ export struct WxHomePage {
         .justifyContent(FlexAlign.Center)
         .backgroundColor('#74736D')
         .onClick(() => {
-          JhProgressHUD.showToast(getContext(this).resourceManager.getStringSync($r('app.string.unfollow_text_573829461847392847392615738294751629384751952847')))
+          JhProgressHUD.showToast('取消关注')
           this.scroller.closeAllSwipeActions()
         })
 
         Row() {
-          Text(getContext(this).resourceManager.getStringSync($r('app.string.delete_text_629384751952847847392615738294751629384751952847')))
+          Text('删除')
             .fontSize(14)
             .fontWeight(400)
             .fontColor(Color.White)
@@ -195,7 +205,7 @@ export struct WxHomePage {
         .justifyContent(FlexAlign.Center)
         .backgroundColor(Color.Red)
         .onClick(() => {
-          JhProgressHUD.showToast(getContext(this).resourceManager.getStringSync($r('app.string.delete_text_629384751952847847392615738294751629384751952847')))
+          JhProgressHUD.showToast('删除')
           this.scroller.closeAllSwipeActions()
         })
       }
@@ -204,7 +214,7 @@ export struct WxHomePage {
       .justifyContent(FlexAlign.Center)
       .backgroundColor(Color.Red)
       .onClick(() => {
-        JhProgressHUD.showToast(getContext(this).resourceManager.getStringSync($r('app.string.delete_text_629384751952847847392615738294751629384751952847')))
+        JhProgressHUD.showToast('删除')
         this.scroller.closeAllSwipeActions()
       })
     }
@@ -256,14 +266,14 @@ export struct WxHomePage {
       .justifyContent(FlexAlign.End)
 
       List() {
-        ForEach(this.getPopData(), (item: ESObject, index: number) => {
+        ForEach(this.getPopData(), (item: PopMenuItem, index: number) => {
           ListItem() {
             Row() {
               Blank().width(15)
-              Image(item['icon'] as Resource).width(28)
+              Image(item.icon).width(28)
               //这个大小直接控制的菜单栏图标大小
               Blank().width(15)
-              Text(item['text'] as string)
+              Text(item.text)
                 .fontColor(Color.White)
                 .fontSize(16)
             }
@@ -273,7 +283,7 @@ export struct WxHomePage {
           }
           .onClick(() => {
             promptAction.closeCustomDialog(this.customDialogId)
-            this.clickPopCell(item['text'] as string)
+            this.clickPopCell(item.text)
           })
         })
       }
@@ -294,15 +304,15 @@ export struct WxHomePage {
   //控制跳转
   clickCell(item: WxHomeModel) {
     console.log('点击cell', JSON.stringify(item))
-    const sportsRankingTitle: string = getContext(this).resourceManager.getStringSync($r('app.string.sports_ranking_title_573829461847392847392615738294751629'))
-    const healthMemoryTitle: string = getContext(this).resourceManager.getStringSync($r('app.string.health_memory_title_629384751952847847392615738294751629384'))
-    const heartRateTitle: string = getContext(this).resourceManager.getStringSync($r('app.string.heart_rate_title_573829461847392847392615738294751629384751'))
-    const bloodOxygenTitle: string = getContext(this).resourceManager.getStringSync($r('app.string.blood_oxygen_title_758394627184759629384751952847392847392'))
-    const stepAnalysisTitle: string = getContext(this).resourceManager.getStringSync($r('app.string.step_analysis_title_629384751952847847392615738294751629384'))
-    const sleepTitle: string = getContext(this).resourceManager.getStringSync($r('app.string.sleep_title_573829461847392847392615738294751629384751952'))
-    const caloriesTitle: string = getContext(this).resourceManager.getStringSync($r('app.string.calories_title_758394627184759629384751952847392847392615'))
-    const moodTitle: string = getContext(this).resourceManager.getStringSync($r('app.string.mood_title_629384751952847847392615738294751629384751952'))
-    const deepseekTitle: string = getContext(this).resourceManager.getStringSync($r('app.string.deepseek_assistant_title_758394627184759629384751952847392847'))
+    let sportsRankingTitle: string = '运动排行榜'
+    let healthMemoryTitle: string = '健康记忆'
+    let heartRateTitle: string = '心率'
+    let bloodOxygenTitle: string = '血氧'
+    let stepAnalysisTitle: string = '步数分析'
+    let sleepTitle: string = '睡眠'
+    let caloriesTitle: string = '热量'
+    let moodTitle: string = '心情'
+    let deepseekTitle: string = 'DeepSeek助手'
 
     if (item.title == sportsRankingTitle) {
       console.log('正在跳转到运动排行榜页面...')
@@ -336,10 +346,10 @@ export struct WxHomePage {
 
   clickPopCell(text: string) {
     console.log('点击', JSON.stringify(text))
-    const addMemberText: string = getContext(this).resourceManager.getStringSync($r('app.string.add_member_text_392847516293847184759362847392615738294847'))
-    const deepseekText: string = getContext(this).resourceManager.getStringSync($r('app.string.deepseek_text_758394627184759629384751952847392847392615738'))
-    const startGroupChatText: string = getContext(this).resourceManager.getStringSync($r('app.string.start_group_chat_text_573829461847392847392615738294751629384'))
-    const openMembershipText: string = getContext(this).resourceManager.getStringSync($r('app.string.open_membership_text_184759362847392573829461847392847392615'))
+    let addMemberText: string = '添加朋友'
+    let deepseekText: string = 'DeepSeek'
+    let startGroupChatText: string = '发起群聊'
+    let openMembershipText: string = '开通会员'
 
     if (text == addMemberText) {
       router.pushUrl({ url: 'pages/two/pages/WxAddFriendPage' })
@@ -357,65 +367,65 @@ export struct WxHomePage {
 
   // 这是控制文本
   getData(): WxHomeModel[] {
-    const dataArr: WxHomeModel[] = [
+    let dataArr: WxHomeModel[] = [
       {
-        'title': getContext(this).resourceManager.getStringSync($r('app.string.sports_ranking_title_573829461847392847392615738294751629')),
-        'subtitle': getContext(this).resourceManager.getStringSync($r('app.string.sports_ranking_subtitle_392847516293847184759362847392615738')),
+        'title': '运动排行榜',
+        'subtitle': '查看今日步数排行榜',
         'img': 'images/picture/bushu.png',
         'isNew': false,
         'type': '2',
       },
       {
-        'title': getContext(this).resourceManager.getStringSync($r('app.string.deepseek_assistant_title_758394627184759629384751952847392847')),
-        'subtitle': getContext(this).resourceManager.getStringSync($r('app.string.deepseek_assistant_subtitle_184759362847392573829461847392847392')),
+        'title': 'DeepSeek助手',
+        'subtitle': '智能健康咨询助手',
         'img': 'images/picture/ic_health_assistant.png',
         'isNew': true,
         'type': '2',
       },
       {
-        'title': getContext(this).resourceManager.getStringSync($r('app.string.health_memory_title_629384751952847847392615738294751629384')),
-        'subtitle': getContext(this).resourceManager.getStringSync($r('app.string.health_memory_subtitle_847392615738294184759362847392847392615')),
+        'title': '健康记忆',
+        'subtitle': '记录您的健康时光',
         'img': 'images/picture/jiyi.png',
         'isNew': false,
         'type': '3',
       },
       {
-        'title': getContext(this).resourceManager.getStringSync($r('app.string.heart_rate_title_573829461847392847392615738294751629384751')),
+        'title': '心率',
         'subtitle': this.healthDataSummary.heartRate, // 使用实时数据
         'img': 'images/picture/touxiang_1.png',
         'isNew': false,
         'type': '2',
       },
       {
-        'title': getContext(this).resourceManager.getStringSync($r('app.string.blood_oxygen_title_758394627184759629384751952847392847392')),
+        'title': '血氧',
         'subtitle': this.healthDataSummary.bloodOxygen, // 使用实时数据
         'img': 'images/picture/xueyang.png',
         'isNew': false,
         'type': '2',
       },
       {
-        'title': getContext(this).resourceManager.getStringSync($r('app.string.step_analysis_title_629384751952847847392615738294751629384')),
+        'title': '步数分析',
         'subtitle': this.healthDataSummary.steps, // 使用实时数据
         'img': 'images/picture/bushu.png',
         'isNew': false,
         'type': '2',
       },
       {
-        'title': getContext(this).resourceManager.getStringSync($r('app.string.sleep_title_573829461847392847392615738294751629384751952')),
+        'title': '睡眠',
         'subtitle': this.healthDataSummary.sleep, // 使用实时数据
         'img': 'images/picture/sleep.png',
         'isNew': false,
         'type': '2',
       },
       {
-        'title': getContext(this).resourceManager.getStringSync($r('app.string.calories_title_758394627184759629384751952847392847392615')),
+        'title': '热量',
         'subtitle': this.healthDataSummary.calories, // 使用实时数据
         'img': 'images/picture/reliang.png',
         'isNew': false,
         'type': '1',
       },
       {
-        'title': getContext(this).resourceManager.getStringSync($r('app.string.mood_title_629384751952847847392615738294751629384751952')),
+        'title': '心情',
         'subtitle': this.healthDataSummary.mood, // 使用实时数据
         'img': 'images/picture/xinqing.png',
         'isNew': false,
@@ -425,22 +435,22 @@ export struct WxHomePage {
     return dataArr;
   }
 
-  getPopData(): ESObject[] {
+  getPopData(): PopMenuItem[] {
     return [
       {
-        'text': getContext(this).resourceManager.getStringSync($r('app.string.start_group_chat_text_573829461847392847392615738294751629384')),
+        'text': '发起群聊',
         'icon': $rawfile('images/popMenus/ic_chat.png'),
       },
       {
-        'text': getContext(this).resourceManager.getStringSync($r('app.string.add_member_text_392847516293847184759362847392615738294847')),
+        'text': '添加朋友',
         'icon': $rawfile('images/popMenus/ic_add.png'),
       },
       {
-        'text': getContext(this).resourceManager.getStringSync($r('app.string.deepseek_text_758394627184759629384751952847392847392615738')),
+        'text': 'DeepSeek',
         'icon': $rawfile('images/popMenus/ic_scan.png'),
       },
       {
-        'text': getContext(this).resourceManager.getStringSync($r('app.string.open_membership_text_184759362847392573829461847392847392615')),
+        'text': '开通会员',
         'icon': $rawfile('images/popMenus/ic_pay.png'),
       },
     ];

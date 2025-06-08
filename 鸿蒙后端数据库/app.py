@@ -475,14 +475,29 @@ def get_realtime_data(user_id):
 def get_steps_ranking():
     try:
         today = datetime.now().strftime('%Y-%m-%d')
+        print(f"[{datetime.now()}] 获取步数排行榜请求，日期: {today}")
         
         conn = get_db_connection()
         
+        # 添加调试：查看今日所有health_data记录，使用TRIM和字符串比较
+        debug_data = conn.execute('''
+            SELECT user_id, username, record_date, steps 
+            FROM health_data h
+            JOIN users u ON h.user_id = u.id
+            WHERE TRIM(h.record_date, "'") = ?
+        ''', (today,)).fetchall()
+            
+        print(f"[{datetime.now()}] 今日health_data记录:")
+        for row in debug_data:
+            print(f"  用户ID: {row['user_id']}, 用户名: {row['username']}, 日期: {row['record_date']}, 步数: {row['steps']}")
+        
+        # 使用LEFT JOIN确保显示所有用户
         ranking = conn.execute('''
             SELECT u.username, COALESCE(h.steps, 0) as steps
             FROM users u
-            LEFT JOIN health_data h ON u.id = h.user_id AND h.record_date = ?
-            ORDER BY steps DESC
+            LEFT JOIN health_data h ON u.id = h.user_id AND TRIM(h.record_date, "'") = ?
+            ORDER BY COALESCE(h.steps, 0) DESC, u.username ASC
+            LIMIT 50
         ''', (today,)).fetchall()
         
         conn.close()
@@ -494,23 +509,29 @@ def get_steps_ranking():
                 'username': row['username'],
                 'steps': row['steps']
             })
+            print(f"[{datetime.now()}] 排行榜第{i+1}名: {row['username']}, {row['steps']}步")
+        
+        print(f"[{datetime.now()}] 排行榜查询完成，共{len(result)}名用户")
         
         return jsonify({'success': True, 'ranking': result})
         
     except Exception as e:
+        print(f"[{datetime.now()}] 获取排行榜异常: {e}")
         return jsonify({'success': False, 'message': f'获取失败: {str(e)}'}), 500
 
 @app.route('/api/overview/<int:user_id>', methods=['GET'])
 def get_overview(user_id):
     try:
         today = datetime.now().strftime('%Y-%m-%d')
+        print(f"[{datetime.now()}] 获取用户{user_id}的健康概览数据，日期: {today}")
         
         conn = get_db_connection()
         
+        # 修复：添加current_mood字段和TRIM处理
         overview = conn.execute('''
-            SELECT steps, avg_heart_rate, sleep_score, active_calories, current_blood_oxygen
+            SELECT steps, avg_heart_rate, sleep_score, active_calories, current_blood_oxygen, current_mood
             FROM health_data 
-            WHERE user_id = ? AND record_date = ?
+            WHERE user_id = ? AND TRIM(record_date, "'") = ?
         ''', (user_id, today)).fetchone()
         
         conn.close()
@@ -521,20 +542,25 @@ def get_overview(user_id):
                 'avg_heart_rate': overview['avg_heart_rate'] or 0,
                 'sleep_score': overview['sleep_score'] or 0,
                 'active_calories': overview['active_calories'] or 0,
-                'blood_oxygen': overview['current_blood_oxygen'] or 0
+                'blood_oxygen': overview['current_blood_oxygen'] or 0,
+                'current_mood': overview['current_mood'] or 5
             }
+            print(f"[{datetime.now()}] 健康概览数据查询成功: {result}")
         else:
             result = {
                 'steps': 0,
                 'avg_heart_rate': 0,
                 'sleep_score': 0,
                 'active_calories': 0,
-                'blood_oxygen': 0
+                'blood_oxygen': 0,
+                'current_mood': 5
             }
+            print(f"[{datetime.now()}] 用户{user_id}今日无健康数据，返回默认值")
         
         return jsonify({'success': True, 'data': result})
         
     except Exception as e:
+        print(f"[{datetime.now()}] 获取健康概览异常: {e}")
         return jsonify({'success': False, 'message': f'获取失败: {str(e)}'}), 500
 
 # 在现有接口后添加
