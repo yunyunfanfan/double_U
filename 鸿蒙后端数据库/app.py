@@ -58,11 +58,6 @@ def init_database():
             activity_calories REAL DEFAULT 0,
             basic_metabolism_calories REAL DEFAULT 0,
             current_mood INTEGER DEFAULT 5,
-            calm_percentage INTEGER DEFAULT 0,
-            anxiety_percentage INTEGER DEFAULT 0,
-            fatigue_percentage INTEGER DEFAULT 0,
-            joy_percentage INTEGER DEFAULT 0,
-            satisfaction_percentage INTEGER DEFAULT 0,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users (id),
             UNIQUE(user_id, record_date)
@@ -362,13 +357,13 @@ def save_health_data():
         values = []
         
         health_fields = [
-            'steps', 'steps_goal', 'distance', 'calories_burned',
-            'current_heart_rate', 'resting_heart_rate', 'min_heart_rate', 'avg_heart_rate', 'max_heart_rate',
-            'current_blood_oxygen', 'min_blood_oxygen', 'avg_blood_oxygen', 'max_blood_oxygen',
-            'sleep_score', 'sleep_duration', 'sleep_start_time', 'sleep_end_time',
-            'deep_sleep_duration', 'light_sleep_duration', 'rem_sleep_duration', 'awake_duration',
-            'active_calories', 'calories_goal', 'activity_calories', 'basic_metabolism_calories',
-            'current_mood', 'calm_percentage', 'anxiety_percentage', 'fatigue_percentage', 'joy_percentage', 'satisfaction_percentage'
+        'steps', 'steps_goal', 'distance', 'calories_burned',
+        'current_heart_rate', 'resting_heart_rate', 'min_heart_rate', 'avg_heart_rate', 'max_heart_rate',
+        'current_blood_oxygen', 'min_blood_oxygen', 'avg_blood_oxygen', 'max_blood_oxygen',
+        'sleep_score', 'sleep_duration', 'sleep_start_time', 'sleep_end_time',
+        'deep_sleep_duration', 'light_sleep_duration', 'rem_sleep_duration', 'awake_duration',
+        'active_calories', 'calories_goal', 'activity_calories', 'basic_metabolism_calories',
+        'current_mood'
         ]
         
         for field in health_fields:
@@ -445,17 +440,24 @@ def get_realtime_data(user_id):
     try:
         record_date = request.args.get('date', datetime.now().strftime('%Y-%m-%d'))
         data_type = request.args.get('type')
+        days = int(request.args.get('days', 1))
         
         conn = get_db_connection()
         
-        query = 'SELECT * FROM realtime_data WHERE user_id = ? AND record_date = ?'
-        params = [user_id, record_date]
+        if days > 1:
+            end_date = datetime.now().date()
+            start_date = end_date - timedelta(days=days-1)
+            query = 'SELECT * FROM realtime_data WHERE user_id = ? AND record_date BETWEEN ? AND ?'
+            params = [user_id, start_date.isoformat(), end_date.isoformat()]
+        else:
+            query = 'SELECT * FROM realtime_data WHERE user_id = ? AND record_date = ?'
+            params = [user_id, record_date]
         
         if data_type:
             query += ' AND data_type = ?'
             params.append(data_type)
         
-        query += ' ORDER BY time_stamp'
+        query += ' ORDER BY time_stamp DESC'
         
         realtime_data = conn.execute(query, params).fetchall()
         conn.close()

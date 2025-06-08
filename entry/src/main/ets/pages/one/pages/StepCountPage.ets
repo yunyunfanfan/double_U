@@ -14,6 +14,7 @@ interface UserInfo {
 class WeeklyStepData {
   date: string = '';
   steps: number = 0;
+  distance: number = 0;
 }
 
 class StepRecord {
@@ -45,34 +46,35 @@ export struct StepCountPage {
   @State distance: string = '';
   @State calories: string = '';
   @State stepRecords: StepRecord[] = [];
-  @State selectedTimeRange: string = '';
   @State isLoading: boolean = true;
   @State errorMessage: string = '';
   @State hasDataLoaded: boolean = false;
   @State userId: number = 0;
 
-  private timeRanges: string[] = [];
   private weekDays: string[] = [];
 
   aboutToAppear(): void {
-    this.selectedTimeRange = '本周';
+    console.info('=== 步数分析页面初始化开始 ===');
     this.distance = '0公里';
     this.calories = '0千卡';
 
-    this.timeRanges = ['今天', '本周', '本月', '今年'];
     this.weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 
+    console.info('=== 初始化设置完成，开始加载数据 ===');
     this.initializeStepSystem();
   }
 
   private async initializeStepSystem(): Promise<void> {
     try {
+      console.info('=== 开始初始化步数系统 ===');
       this.resetStepData();
       await this.getUserId();
       await this.loadHealthDataFromDatabase();
       this.isLoading = false;
+      console.info('=== 步数系统初始化完成 ===');
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '未知错误';
+      let errorMessage = error instanceof Error ? error.message : '未知错误';
+      console.error(`=== 初始化异常: ${errorMessage} ===`);
       this.errorMessage = `数据加载失败: ${errorMessage}`;
       this.isLoading = false;
       this.resetStepData();
@@ -80,6 +82,7 @@ export struct StepCountPage {
   }
 
   private resetStepData(): void {
+    console.info('=== 重置步数数据 ===');
     this.currentSteps = 0;
     this.dailyGoal = 0;
     this.weeklyAvg = 0;
@@ -91,94 +94,146 @@ export struct StepCountPage {
 
   private async getUserId(): Promise<void> {
     try {
-      const userInfo: UserInfo = await JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as UserInfo;
+      console.info('=== 开始获取用户ID ===');
+      let userInfo: UserInfo = await JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as UserInfo;
       if (userInfo && userInfo.userId) {
         this.userId = parseInt(userInfo.userId);
+        console.info(`=== 获取到用户ID: ${this.userId} ===`);
+      } else {
+        console.warn('=== 未找到用户信息，使用默认ID ===');
+        this.userId = 1;
       }
     } catch (error) {
+      console.error(`=== 获取用户ID异常: ${error} ===`);
       this.userId = 1;
     }
   }
 
   private async loadHealthDataFromDatabase(): Promise<void> {
     if (this.userId === 0) {
+      console.error('=== 用户ID为0，跳过数据加载 ===');
       return;
     }
 
     try {
-      const healthResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 7);
-      const weeklyResponse: HealthDataResponse = await userApiService.getWeeklySteps(this.userId);
+      console.info(`=== 开始加载健康数据，用户ID: ${this.userId} ===`);
+      let healthResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 7);
+      console.info(`=== 健康数据响应: ${JSON.stringify(healthResponse)} ===`);
 
       if (healthResponse.success && healthResponse.data && healthResponse.data.length > 0) {
-        const todayData = healthResponse.data[0];
+        let todayData = healthResponse.data[0];
+        console.info(`=== 今日数据: ${JSON.stringify(todayData)} ===`);
+
         this.currentSteps = todayData.steps || 0;
         this.dailyGoal = todayData.steps_goal || 10000;
         this.distance = `${todayData.distance || 0}公里`;
         this.calories = `${todayData.active_calories || 0}千卡`;
+
+        console.info(`=== 今日步数: ${this.currentSteps}, 目标: ${this.dailyGoal} ===`);
+      } else {
+        console.warn('=== 今日健康数据为空 ===');
       }
 
-      if (weeklyResponse.success && weeklyResponse.data) {
-        const weeklyStepData: WeeklyStepData[] = [];
-        for (let i = 0; i < weeklyResponse.data.length; i++) {
-          const item = weeklyResponse.data[i];
-          const stepData = new WeeklyStepData();
-          stepData.date = item.record_date || '';
+      if (healthResponse.success && healthResponse.data) {
+        console.info(`=== 开始处理周数据，数据长度: ${healthResponse.data.length} ===`);
+        let weeklyStepData: WeeklyStepData[] = [];
+
+        for (let i = 0; i < healthResponse.data.length; i++) {
+          let item = healthResponse.data[i];
+          let stepData = new WeeklyStepData();
+          let rawDate = item.record_date || '';
+          if (rawDate.startsWith("'") && rawDate.endsWith("'")) {
+            stepData.date = rawDate.slice(1, -1);
+          } else {
+            stepData.date = rawDate;
+          }
+          console.info(`=== 日期处理: ${rawDate} -> ${stepData.date} ===`);
           stepData.steps = item.steps || 0;
+          stepData.distance = item.distance || 0;
           weeklyStepData.push(stepData);
+
+          console.info(`=== 处理数据[${i}]: 日期=${stepData.date}, 步数=${stepData.steps} ===`);
         }
+
+        console.info(`=== 周数据处理完成，总计${weeklyStepData.length}条 ===`);
         this.generateWeeklyDisplayDataFromDatabase(weeklyStepData);
+      } else {
+        console.warn('=== 周数据为空或失败 ===');
       }
 
       this.hasDataLoaded = true;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '网络请求失败';
+      let errorMessage = error instanceof Error ? error.message : '网络请求失败';
+      console.error(`=== 数据加载异常: ${errorMessage} ===`);
       throw new Error(errorMessage);
     }
   }
 
   private generateWeeklyDisplayDataFromDatabase(weeklyData: WeeklyStepData[]): void {
-    const displayRecords: StepRecord[] = [];
-    const currentDate = new Date();
-    const currentWeekDay = currentDate.getDay();
+    console.info(`=== 开始生成周显示数据，输入数据: ${weeklyData.length}条 ===`);
 
+    let displayRecords: StepRecord[] = [];
+    let today = new Date();
+    let todayString = today.toISOString().split('T')[0];
     let totalSteps = 0;
     let validDays = 0;
 
-    for (let i = 0; i < 7; i++) {
-      const dayIndex = (currentWeekDay + 6 - i) % 7;
-      const dayName = this.weekDays[dayIndex];
+    console.info(`=== 今天日期: ${todayString} ===`);
+    console.info(`=== 可用数据列表: ===`);
+    weeklyData.forEach((data: WeeklyStepData, index: number) => {
+      console.info(`=== 数据[${index}]: ${data.date} -> ${data.steps}步 ===`);
+    });
 
-      const stepData = weeklyData.find((data: WeeklyStepData) => {
-        const dataDate = new Date(data.date);
-        return dataDate.getDay() === dayIndex;
+    for (let i = 1; i <= 6; i++) {
+      let targetDate = new Date();
+      targetDate.setDate(today.getDate() - i);
+      let targetDateString = targetDate.toISOString().split('T')[0];
+      let dayName = this.weekDays[targetDate.getDay()];
+
+      console.info(`=== 查找第${i}天数据，目标日期: ${targetDateString} (${dayName}) ===`);
+
+      let stepData = weeklyData.find((data: WeeklyStepData) => {
+        let match = data.date === targetDateString;
+        console.info(`=== 比较: ${data.date} === ${targetDateString} -> ${match} ===`);
+        return match;
       });
 
-      const steps = stepData ? stepData.steps : 0;
-      const isToday = dayIndex === currentWeekDay;
-      const displayName = isToday ? `${dayName}(今天)` : dayName;
+      let steps = stepData ? stepData.steps : 0;
+      let distance = stepData ? `${stepData.distance}公里` : '0公里';
+      console.info(`=== ${targetDateString}(${dayName}): 找到=${stepData ? '是' : '否'}, 步数=${steps} ===`);
+      let stepRecord = new StepRecord(dayName, steps, distance, dayName);
+      displayRecords.push(stepRecord);
 
-      const stepRecord = new StepRecord(
-        displayName,
-        steps,
-        `${(steps * 0.0008).toFixed(1)}公里`,
-        dayName
-      );
-
-      displayRecords.unshift(stepRecord);
+      if (steps > 0) {
+        totalSteps += steps;
+        validDays++;
+      }
     }
 
+    // 不需要reverse，保持原来的顺序就是周六到周一
     this.stepRecords = displayRecords;
 
-    const nonZeroSteps = this.stepRecords.filter((record: StepRecord) => record.value > 0);
+    console.info(`=== 最终记录数量: ${this.stepRecords.length} ===`);
+    this.stepRecords.forEach((record: StepRecord, index: number) => {
+      console.info(`=== 最终记录[${index}]: ${record.toString()} ===`);
+    });
+
+    this.weeklyAvg = validDays > 0 ? Math.round(totalSteps / validDays) : 0;
+    console.info(`=== 周平均步数: ${this.weeklyAvg} (总步数: ${totalSteps}, 有效天数: ${validDays}) ===`);
+
+    let nonZeroSteps = this.stepRecords.filter((record: StepRecord) => record.value > 0);
     if (nonZeroSteps.length > 0) {
-      const sum = nonZeroSteps.reduce((total: number, record: StepRecord) => total + record.value, 0);
+      let sum = nonZeroSteps.reduce((total: number, record: StepRecord) => total + record.value, 0);
       this.weeklyAvg = Math.round(sum / nonZeroSteps.length);
+      console.info(`=== 重新计算周平均: ${this.weeklyAvg} ===`);
     } else {
       this.weeklyAvg = 0;
+      console.warn('=== 无有效步数数据，周平均为0 ===');
     }
   }
 
   private refreshStepData(): void {
+    console.info('=== 用户触发数据刷新 ===');
     this.isLoading = true;
     this.errorMessage = '';
     this.initializeStepSystem();
@@ -186,7 +241,6 @@ export struct StepCountPage {
 
   build() {
     Column() {
-      // 导航栏
       Row() {
         Button({ type: ButtonType.Circle }) {
           Image($r('app.media.ic_back')).width(20).height(20)
@@ -235,7 +289,6 @@ export struct StepCountPage {
       } else {
         Scroll() {
           Column({ space: 20 }) {
-            // 今日步数显示
             Column() {
               Text(`今日步数 (${this.weekDays[new Date().getDay()]})`)
                 .fontSize(18).fontWeight(FontWeight.Medium).margin({ bottom: 20 }).fontColor('#333333')
@@ -271,28 +324,6 @@ export struct StepCountPage {
             .width('90%').padding(30).backgroundColor('#FFFFFF').borderRadius(20)
             .shadow({ radius: 12, color: 'rgba(0,0,0,0.08)', offsetX: 0, offsetY: 4 })
 
-            // 时间范围
-            Row() {
-              ForEach(this.timeRanges, (range: string) => {
-                Text(range)
-                  .fontSize(14)
-                  .fontColor(this.selectedTimeRange === range ? '#4285F4' : '#666666')
-                  .fontWeight(this.selectedTimeRange === range ? FontWeight.Bold : FontWeight.Normal)
-                  .padding({ left: 16, right: 16, top: 8, bottom: 8 })
-                  .backgroundColor(this.selectedTimeRange === range ? '#E8F0FE' : '#F5F5F5')
-                  .borderRadius(20)
-                  .border({
-                    width: this.selectedTimeRange === range ? 2 : 1,
-                    color: this.selectedTimeRange === range ? '#4285F4' : '#E0E0E0'
-                  })
-                  .onClick(() => {
-                    this.selectedTimeRange = range;
-                  })
-              })
-            }
-            .width('90%').justifyContent(FlexAlign.SpaceAround)
-
-            // 步数记录
             Column() {
               Text('步数记录')
                 .fontSize(18).fontWeight(FontWeight.Medium)

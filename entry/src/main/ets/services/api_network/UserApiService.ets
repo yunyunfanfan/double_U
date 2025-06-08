@@ -330,6 +330,43 @@ export class UserApiService {
     }
   }
 
+  async getRealtimeData(userId: number, dataType?: string, days?: number): Promise<RealtimeDataResponse> {
+    let httpRequest = http.createHttp();
+
+    try {
+      let url: string = `${this.baseUrl}/realtime-data/${userId}`;
+      let params: string[] = [];
+
+      if (dataType) {
+        params.push(`type=${dataType}`);
+      }
+      if (days) {
+        params.push(`days=${days}`);
+      }
+
+      if (params.length > 0) {
+        url += `?${params.join('&')}`;
+      }
+
+      let response = await httpRequest.request(url, {
+        method: http.RequestMethod.GET,
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      let responseText: string = response.result as string;
+      let result: RealtimeDataResponse = JSON.parse(responseText) as RealtimeDataResponse;
+      return result;
+    } catch (error) {
+      return {
+        success: false,
+        message: '网络连接失败'
+      };
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
   async getStepsRanking(): Promise<StepsRankingResponse> {
     const httpRequest = http.createHttp();
 
