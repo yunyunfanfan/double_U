@@ -1,8 +1,20 @@
 import { BaseNavigation } from 'JhCommon';
 import { router } from '@kit.ArkUI';
-import { preferences } from '@kit.ArkData';
+import { userApiService, HealthDataResponse } from '../../../services/api_network/UserApiService';
+import { JhAESPreferencesUtils, kUserDefault_UserInfo } from 'JhCommon';
 
 ///这是步数分析页面
+
+interface UserInfo {
+  userId?: string;
+  userName?: string;
+  phone?: string;
+}
+
+class WeeklyStepData {
+  date: string = '';
+  steps: number = 0;
+}
 
 class StepRecord {
   time: string = '';
@@ -24,29 +36,6 @@ class StepRecord {
   }
 }
 
-class StoredHealthData {
-  timestamp: string = '';
-  type: string = '';
-  value: string = '';
-  unit: string = '';
-  additionalInfo: HealthAdditionalInfo = new HealthAdditionalInfo();
-
-  constructor() {}
-
-  toString(): string {
-    return `StoredHealthData{type: ${this.type}, value: ${this.value}, category: ${this.additionalInfo.category}}`;
-  }
-}
-
-class HealthAdditionalInfo {
-  category: string = '';
-  dayOfWeek: string = '';
-  goalValue: string = '';
-  distance: string = '';
-
-  constructor() {}
-}
-
 @Entry
 @Component
 export struct StepCountPage {
@@ -60,32 +49,18 @@ export struct StepCountPage {
   @State isLoading: boolean = true;
   @State errorMessage: string = '';
   @State hasDataLoaded: boolean = false;
+  @State userId: number = 0;
 
   private timeRanges: string[] = [];
-  private preferencesHelper: preferences.Preferences | null = null;
   private weekDays: string[] = [];
 
   aboutToAppear(): void {
-    this.selectedTimeRange = getContext(this).resourceManager.getStringSync($r('app.string.week_range_39284751'));
-    this.distance = `0${getContext(this).resourceManager.getStringSync($r('app.string.km_unit_57382946'))}`;
-    this.calories = `0${getContext(this).resourceManager.getStringSync($r('app.string.kcal_unit_39284751'))}`;
+    this.selectedTimeRange = '本周';
+    this.distance = '0公里';
+    this.calories = '0千卡';
 
-    this.timeRanges = [
-      getContext(this).resourceManager.getStringSync($r('app.string.today_range_57382946')),
-      getContext(this).resourceManager.getStringSync($r('app.string.week_range_39284751')),
-      getContext(this).resourceManager.getStringSync($r('app.string.month_range_75839462')),
-      getContext(this).resourceManager.getStringSync($r('app.string.year_range_18475936'))
-    ];
-
-    this.weekDays = [
-      getContext(this).resourceManager.getStringSync($r('app.string.sunday_84739261')),
-      getContext(this).resourceManager.getStringSync($r('app.string.monday_84739261')),
-      getContext(this).resourceManager.getStringSync($r('app.string.tuesday_57382946')),
-      getContext(this).resourceManager.getStringSync($r('app.string.wednesday_39284751')),
-      getContext(this).resourceManager.getStringSync($r('app.string.thursday_75839462')),
-      getContext(this).resourceManager.getStringSync($r('app.string.friday_18475936')),
-      getContext(this).resourceManager.getStringSync($r('app.string.saturday_62938475'))
-    ];
+    this.timeRanges = ['今天', '本周', '本月', '今年'];
+    this.weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 
     this.initializeStepSystem();
   }
@@ -93,13 +68,12 @@ export struct StepCountPage {
   private async initializeStepSystem(): Promise<void> {
     try {
       this.resetStepData();
-      await this.initPreferences();
-      await this.loadStepDataFromStorage();
-      this.calculateWeeklyStats();
+      await this.getUserId();
+      await this.loadHealthDataFromDatabase();
       this.isLoading = false;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : '未知错误';
-      this.errorMessage = `${getContext(this).resourceManager.getStringSync($r('app.string.data_load_failed_prefix_75839462'))} ${errorMessage}`;
+      this.errorMessage = `数据加载失败: ${errorMessage}`;
       this.isLoading = false;
       this.resetStepData();
     }
@@ -109,173 +83,99 @@ export struct StepCountPage {
     this.currentSteps = 0;
     this.dailyGoal = 0;
     this.weeklyAvg = 0;
-    this.distance = `0${getContext(this).resourceManager.getStringSync($r('app.string.km_unit_57382946'))}`;
-    this.calories = `0${getContext(this).resourceManager.getStringSync($r('app.string.kcal_unit_39284751'))}`;
+    this.distance = '0公里';
+    this.calories = '0千卡';
     this.stepRecords = [];
     this.hasDataLoaded = false;
   }
 
-  private async initPreferences(): Promise<void> {
-    this.preferencesHelper = await preferences.getPreferences(getContext(), 'health_data');
+  private async getUserId(): Promise<void> {
+    try {
+      const userInfo: UserInfo = await JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as UserInfo;
+      if (userInfo && userInfo.userId) {
+        this.userId = parseInt(userInfo.userId);
+      }
+    } catch (error) {
+      this.userId = 1;
+    }
   }
 
-  private async loadStepDataFromStorage(): Promise<void> {
-    if (!this.preferencesHelper) {
+  private async loadHealthDataFromDatabase(): Promise<void> {
+    if (this.userId === 0) {
       return;
     }
 
     try {
-      const storedData = await this.preferencesHelper.get('health_records', '[]') as string;
+      const healthResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 7);
+      const weeklyResponse: HealthDataResponse = await userApiService.getWeeklySteps(this.userId);
 
-      if (storedData === '[]' || storedData.length === 0) {
-        return;
+      if (healthResponse.success && healthResponse.data && healthResponse.data.length > 0) {
+        const todayData = healthResponse.data[0];
+        this.currentSteps = todayData.steps || 0;
+        this.dailyGoal = todayData.steps_goal || 10000;
+        this.distance = `${todayData.distance || 0}公里`;
+        this.calories = `${todayData.active_calories || 0}千卡`;
       }
 
-      const healthRecords: StoredHealthData[] = JSON.parse(storedData);
-
-      const stepRecords = healthRecords.filter((record: StoredHealthData) =>
-      record.type === 'steps' || record.type === 'distance' || record.type === 'calories'
-      );
-
-      if (stepRecords.length === 0) {
-        return;
+      if (weeklyResponse.success && weeklyResponse.data) {
+        const weeklyStepData: WeeklyStepData[] = [];
+        for (let i = 0; i < weeklyResponse.data.length; i++) {
+          const item = weeklyResponse.data[i];
+          const stepData = new WeeklyStepData();
+          stepData.date = item.record_date || '';
+          stepData.steps = item.steps || 0;
+          weeklyStepData.push(stepData);
+        }
+        this.generateWeeklyDisplayDataFromDatabase(weeklyStepData);
       }
 
-      this.processStepRecords(stepRecords);
       this.hasDataLoaded = true;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '未知错误';
+      const errorMessage = error instanceof Error ? error.message : '网络请求失败';
+      throw new Error(errorMessage);
     }
   }
 
-  private processStepRecords(storedRecords: StoredHealthData[]): void {
+  private generateWeeklyDisplayDataFromDatabase(weeklyData: WeeklyStepData[]): void {
+    const displayRecords: StepRecord[] = [];
     const currentDate = new Date();
     const currentWeekDay = currentDate.getDay();
-    const todayWeekName = this.weekDays[currentWeekDay];
 
-    const weeklyStepData = new Map<string, number>();
-    const weeklyDistanceData = new Map<string, number>();
-    const weeklyCaloriesData = new Map<string, number>();
-    let currentGoal = 0;
-
-    storedRecords.forEach((record: StoredHealthData) => {
-      const dayOfWeek = record.additionalInfo?.dayOfWeek || '';
-      const category = record.additionalInfo?.category || '';
-
-      if (record.type === 'steps') {
-        const value = parseInt(record.value) || 0;
-
-        const isTodaySteps = this.isTodayStepsCategory(category);
-        const weekDayFromCategory = this.extractWeekDayFromCategory(category);
-
-        if (isTodaySteps && dayOfWeek === todayWeekName) {
-          this.currentSteps = value;
-          weeklyStepData.set(todayWeekName, value);
-        } else if (isTodaySteps && !dayOfWeek) {
-          this.currentSteps = value;
-          weeklyStepData.set(todayWeekName, value);
-        } else if (weekDayFromCategory) {
-          weeklyStepData.set(weekDayFromCategory, value);
-
-          if (weekDayFromCategory === todayWeekName) {
-            this.currentSteps = value;
-          }
-        } else if (dayOfWeek) {
-          weeklyStepData.set(dayOfWeek, value);
-
-          if (dayOfWeek === todayWeekName) {
-            this.currentSteps = value;
-          }
-        }
-
-        if (record.additionalInfo?.goalValue) {
-          const goalValue = parseInt(record.additionalInfo.goalValue) || 0;
-          if (goalValue > currentGoal) {
-            currentGoal = goalValue;
-          }
-        }
-      } else if (record.type === 'distance') {
-        const value = parseFloat(record.value) || 0;
-        if (dayOfWeek) {
-          weeklyDistanceData.set(dayOfWeek, value);
-
-          if (dayOfWeek === todayWeekName) {
-            this.distance = `${value}${getContext(this).resourceManager.getStringSync($r('app.string.km_unit_57382946'))}`;
-          }
-        }
-      } else if (record.type === 'calories') {
-        const value = parseInt(record.value) || 0;
-        if (dayOfWeek) {
-          weeklyCaloriesData.set(dayOfWeek, value);
-
-          if (dayOfWeek === todayWeekName) {
-            this.calories = `${value}${getContext(this).resourceManager.getStringSync($r('app.string.kcal_unit_39284751'))}`;
-          }
-        }
-      }
-    });
-
-    this.dailyGoal = currentGoal;
-    this.generateWeeklyDisplayData(weeklyStepData, weeklyDistanceData, currentWeekDay);
-  }
-
-  private isTodayStepsCategory(category: string): boolean {
-    const todayCategories = ['当日步数', '今日步数', '每日步数', '步数'];
-    return todayCategories.includes(category);
-  }
-
-  private extractWeekDayFromCategory(category: string): string {
-    const weekDayMap = new Map<string, string>([
-      ['周一步数', getContext(this).resourceManager.getStringSync($r('app.string.monday_84739261'))],
-      ['周二步数', getContext(this).resourceManager.getStringSync($r('app.string.tuesday_57382946'))],
-      ['周三步数', getContext(this).resourceManager.getStringSync($r('app.string.wednesday_39284751'))],
-      ['周四步数', getContext(this).resourceManager.getStringSync($r('app.string.thursday_75839462'))],
-      ['周五步数', getContext(this).resourceManager.getStringSync($r('app.string.friday_18475936'))],
-      ['周六步数', getContext(this).resourceManager.getStringSync($r('app.string.saturday_62938475'))],
-      ['周日步数', getContext(this).resourceManager.getStringSync($r('app.string.sunday_84739261'))],
-      ['上周六步数', getContext(this).resourceManager.getStringSync($r('app.string.saturday_62938475'))],
-      ['上周日步数', getContext(this).resourceManager.getStringSync($r('app.string.sunday_84739261'))]
-    ]);
-
-    return weekDayMap.get(category) || '';
-  }
-
-  private generateWeeklyDisplayData(stepData: Map<string, number>, distanceData: Map<string, number>, currentWeekDay: number): void {
-    const displayRecords: StepRecord[] = [];
     let totalSteps = 0;
     let validDays = 0;
 
     for (let i = 0; i < 7; i++) {
       const dayIndex = (currentWeekDay + 6 - i) % 7;
       const dayName = this.weekDays[dayIndex];
-      const steps = stepData.get(dayName) || 0;
-      const distance = distanceData.get(dayName) || 0;
 
+      const stepData = weeklyData.find((data: WeeklyStepData) => {
+        const dataDate = new Date(data.date);
+        return dataDate.getDay() === dayIndex;
+      });
+
+      const steps = stepData ? stepData.steps : 0;
       const isToday = dayIndex === currentWeekDay;
-      const todaySuffix = getContext(this).resourceManager.getStringSync($r('app.string.today_suffix_57382946'));
-      const displayName = isToday ? `${dayName}(${todaySuffix})` : dayName;
-      const kmUnit = getContext(this).resourceManager.getStringSync($r('app.string.km_unit_57382946'));
+      const displayName = isToday ? `${dayName}(今天)` : dayName;
 
       const stepRecord = new StepRecord(
         displayName,
         steps,
-        distance > 0 ? `${distance}${kmUnit}` : `0${kmUnit}`,
+        `${(steps * 0.0008).toFixed(1)}公里`,
         dayName
       );
 
       displayRecords.unshift(stepRecord);
-
-      if (steps > 0) {
-        totalSteps += steps;
-        validDays++;
-      }
     }
 
     this.stepRecords = displayRecords;
-    this.weeklyAvg = validDays > 0 ? Math.round(totalSteps / validDays) : 0;
-  }
 
-  private calculateWeeklyStats(): void {
+    const nonZeroSteps = this.stepRecords.filter((record: StepRecord) => record.value > 0);
+    if (nonZeroSteps.length > 0) {
+      const sum = nonZeroSteps.reduce((total: number, record: StepRecord) => total + record.value, 0);
+      this.weeklyAvg = Math.round(sum / nonZeroSteps.length);
+    } else {
+      this.weeklyAvg = 0;
+    }
   }
 
   private refreshStepData(): void {
@@ -300,7 +200,7 @@ export struct StepCountPage {
         })
         .width(40).height(40).backgroundColor(Color.Transparent).margin({ left: 10 })
 
-        Text(getContext(this).resourceManager.getStringSync($r('app.string.step_analysis_title_84729361')))
+        Text('步数分析')
           .fontSize(24).fontWeight(FontWeight.Bold).fontColor(Color.Black)
           .layoutWeight(1).textAlign(TextAlign.Center)
 
@@ -317,17 +217,17 @@ export struct StepCountPage {
       if (this.isLoading) {
         Column({ space: 20 }) {
           LoadingProgress().width(60).height(60).color('#4285F4')
-          Text(getContext(this).resourceManager.getStringSync($r('app.string.loading_steps_data_39284751')))
+          Text('正在加载步数数据...')
             .fontSize(18).fontColor('#333333')
         }
         .width('100%').layoutWeight(1).justifyContent(FlexAlign.Center).padding(40)
       } else if (this.errorMessage) {
         Column({ space: 20 }) {
           Text('👟').fontSize(64)
-          Text(getContext(this).resourceManager.getStringSync($r('app.string.load_failed_title_75839462')))
+          Text('加载失败')
             .fontSize(20).fontColor('#EA4335')
           Text(this.errorMessage).fontSize(14).fontColor('#666666').textAlign(TextAlign.Center)
-          Button(getContext(this).resourceManager.getStringSync($r('app.string.reload_button_18475936')))
+          Button('重新加载')
             .onClick(() => this.refreshStepData())
             .backgroundColor('#4285F4').fontColor(Color.White).borderRadius(12).height(44).width(140)
         }
@@ -337,7 +237,7 @@ export struct StepCountPage {
           Column({ space: 20 }) {
             // 今日步数显示
             Column() {
-              Text(`${getContext(this).resourceManager.getStringSync($r('app.string.today_steps_label_57284916'))} (${this.weekDays[new Date().getDay()]})`)
+              Text(`今日步数 (${this.weekDays[new Date().getDay()]})`)
                 .fontSize(18).fontWeight(FontWeight.Medium).margin({ bottom: 20 }).fontColor('#333333')
 
               Stack() {
@@ -353,7 +253,7 @@ export struct StepCountPage {
 
                 Column() {
                   Text(this.currentSteps.toString()).fontSize(36).fontWeight(FontWeight.Bold).fontColor('#4285F4')
-                  Text(getContext(this).resourceManager.getStringSync($r('app.string.steps_unit_39475829')))
+                  Text('步')
                     .fontSize(16).fontColor('#666666').margin({ top: 4 })
                   Text(`${this.dailyGoal > 0 ? Math.round((this.currentSteps / this.dailyGoal) * 100) : 0}%`)
                     .fontSize(14).fontColor('#999999').margin({ top: 8 })
@@ -362,19 +262,9 @@ export struct StepCountPage {
               .margin({ bottom: 30 })
 
               Row({ space: 20 }) {
-                this.buildStatCard(
-                  getContext(this).resourceManager.getStringSync($r('app.string.goal_label_75163948')),
-                  `${this.dailyGoal} ${getContext(this).resourceManager.getStringSync($r('app.string.steps_unit_39475829'))}`,
-                  '#4285F4', '🎯'
-                )
-                this.buildStatCard(
-                  getContext(this).resourceManager.getStringSync($r('app.string.distance_label_18394756')),
-                  this.distance, '#34A853', '📍'
-                )
-                this.buildStatCard(
-                  getContext(this).resourceManager.getStringSync($r('app.string.calories_label_62847593')),
-                  this.calories, '#EA4335', '🔥'
-                )
+                this.buildStatCard('目标', `${this.dailyGoal} 步`, '#4285F4', '🎯')
+                this.buildStatCard('距离', this.distance, '#34A853', '📍')
+                this.buildStatCard('热量', this.calories, '#EA4335', '🔥')
               }
               .width('100%').justifyContent(FlexAlign.SpaceAround)
             }
@@ -404,16 +294,16 @@ export struct StepCountPage {
 
             // 步数记录
             Column() {
-              Text(getContext(this).resourceManager.getStringSync($r('app.string.step_records_title_62938475')))
+              Text('步数记录')
                 .fontSize(18).fontWeight(FontWeight.Medium)
                 .textAlign(TextAlign.Start).width('100%').margin({ bottom: 15 })
 
               if (this.stepRecords.length === 0) {
                 Column({ space: 16 }) {
                   Text('👟').fontSize(48)
-                  Text(getContext(this).resourceManager.getStringSync($r('app.string.no_step_data_62938475')))
+                  Text('暂无步数数据')
                     .fontSize(18).fontColor('#666666')
-                  Button(getContext(this).resourceManager.getStringSync($r('app.string.refresh_data_button_84739261')))
+                  Button('刷新数据')
                     .onClick(() => this.refreshStepData())
                     .backgroundColor('#4285F4').fontColor(Color.White).borderRadius(20).height(40)
                 }
@@ -423,7 +313,7 @@ export struct StepCountPage {
                   ForEach(this.stepRecords, (record: StepRecord, index: number) => {
                     Row() {
                       Text(record.time).fontSize(16).fontColor('#333333').width('30%')
-                      Text(`${record.value} ${getContext(this).resourceManager.getStringSync($r('app.string.steps_unit_39475829'))}`).fontSize(16).fontColor('#4285F4')
+                      Text(`${record.value} 步`).fontSize(16).fontColor('#4285F4')
                         .fontWeight(FontWeight.Medium).width('40%').textAlign(TextAlign.Center)
                       Text(record.distance).fontSize(16).fontColor('#666666').width('30%').textAlign(TextAlign.End)
                     }
