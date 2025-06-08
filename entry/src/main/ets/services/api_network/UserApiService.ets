@@ -203,12 +203,12 @@ export class UserApiService {
     }
   }
 
-  private getMoodText(moodValue: number): string {
-    if (moodValue >= 8) return '很好';
-    if (moodValue >= 6) return '良好';
-    if (moodValue >= 4) return '一般';
-    if (moodValue >= 2) return '较差';
-    return '很差';
+  private getMoodText(value: number): string {
+    if (value >= 8) return '开心';
+    if (value >= 6) return '满足';
+    if (value >= 4) return '平静';
+    if (value >= 2) return '疲惫';
+    return '焦虑';
   }
 
   private getDefaultHealthData(): HealthDataSummary {
