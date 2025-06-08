@@ -535,24 +535,6 @@ export struct BloodOxygenPage {
             }
             .width('90%').justifyContent(FlexAlign.SpaceBetween)
 
-            // 时间范围选择器
-            Row() {
-              ForEach(this.getTimeRanges(), (range: string) => {
-                Text(range)
-                  .fontSize(14)
-                  .fontColor(this.selectedTimeRange === range ? '#9C27B0' : '#666666')
-                  .fontWeight(this.selectedTimeRange === range ? FontWeight.Bold : FontWeight.Normal)
-                  .padding(8)
-                  .backgroundColor(this.selectedTimeRange === range ? '#F3E5F5' : 'transparent')
-                  .borderRadius(15)
-                  .onClick(() => {
-                    console.info(`[用户操作] 用户选择血氧时间范围: ${range}, 当前用户: gadz2021, 时间: 2025-05-31 03:44:39 UTC`);
-                    this.selectedTimeRange = range;
-                  })
-              })
-            }
-            .width('90%').justifyContent(FlexAlign.SpaceAround)
-
             // 血氧历史记录
             Column() {
               Text(getContext(this).resourceManager.getStringSync($r('app.string.oxygen_records_title_758394627184759629384751952847392847392615738294751'))).fontSize(18).fontWeight(FontWeight.Medium)

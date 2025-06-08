@@ -285,29 +285,6 @@ export struct MoodPage {
             offsetY: 4
           })
 
-          // 时间范围选择器
-          Row() {
-            ForEach(this.getTimeRanges(), (range: string) => {
-              Text(range)
-                .fontSize(14)
-                .fontColor(this.selectedTimeRange === range ? '#4285F4' : '#666666')
-                .fontWeight(this.selectedTimeRange === range ? FontWeight.Bold : FontWeight.Normal)
-                .padding({ left: 16, right: 16, top: 8, bottom: 8 })
-                .backgroundColor(this.selectedTimeRange === range ? '#E8F0FE' : '#F5F5F5')
-                .borderRadius(20)
-                .border({
-                  width: this.selectedTimeRange === range ? 2 : 1,
-                  color: this.selectedTimeRange === range ? '#4285F4' : '#E0E0E0',
-                  style: BorderStyle.Solid
-                })
-                .onClick(() => {
-                  this.selectedTimeRange = range;
-                })
-            })
-          }
-          .width('90%')
-          .justifyContent(FlexAlign.SpaceAround)
-
           // 情绪分布卡片
           Column() {
             Text(getContext(this).resourceManager.getStringSync($r('app.string.mood_distribution_title_75163948')))

@@ -4,18 +4,50 @@ import { promptAction, router } from '@kit.ArkUI'
 import { BaseNavigation, JhProgressHUD, KColors } from 'JhCommon'
 import { WxHomeModel } from '../models/WxHomeModel'
 import { WxHomeCell } from '../widgets/WxHomeCell'
-//
+import { HealthDataService, HealthDataSummary } from '../../../services/HealthDataService'
 
 @Entry
 @Preview
 @Component
 export struct WxHomePage {
   @State dataArr: WxHomeModel[] = []
+  @State healthDataSummary: HealthDataSummary = new HealthDataSummary('加载中...', '加载中...', '加载中...', '加载中...', '加载中...', '加载中...')
   scroller: ListScroller = new ListScroller()
+  private healthDataService: HealthDataService = HealthDataService.getInstance()
 
   aboutToAppear() {
-    this.dataArr = this.getData()
+    this.loadHealthData()
     // console.error('data', JSON.stringify(this.dataArr))
+  }
+
+  onPageShow() {
+    // 页面显示时刷新数据
+    this.refreshHealthData()
+  }
+
+  async refreshHealthData() {
+    try {
+      console.log('[WxHomePage] 刷新健康数据...')
+      this.healthDataSummary = await this.healthDataService.getLatestHealthData()
+      this.dataArr = this.getData()
+      console.log('[WxHomePage] 健康数据刷新完成:', JSON.stringify(this.healthDataSummary))
+    } catch (error) {
+      console.error('[WxHomePage] 刷新健康数据失败:', error)
+    }
+  }
+
+  async loadHealthData() {
+    try {
+      // 加载实时健康数据
+      this.healthDataSummary = await this.healthDataService.getLatestHealthData()
+      // 生成页面数据，使用实时健康数据
+      this.dataArr = this.getData()
+    } catch (error) {
+      console.error('[WxHomePage] 加载健康数据失败:', error)
+      // 使用默认数据
+      this.healthDataSummary = new HealthDataSummary('0步', '0bpm', '0%', '0小时', '0Kcal', '正常')
+      this.dataArr = this.getData()
+    }
   }
 
   build() {
@@ -349,42 +381,42 @@ export struct WxHomePage {
       },
       {
         'title': getContext(this).resourceManager.getStringSync($r('app.string.heart_rate_title_573829461847392847392615738294751629384751')),
-        'subtitle': getContext(this).resourceManager.getStringSync($r('app.string.heart_rate_subtitle_392847516293847184759362847392615738294')),
+        'subtitle': this.healthDataSummary.heartRate, // 使用实时数据
         'img': 'images/picture/touxiang_1.png',
         'isNew': false,
         'type': '2',
       },
       {
         'title': getContext(this).resourceManager.getStringSync($r('app.string.blood_oxygen_title_758394627184759629384751952847392847392')),
-        'subtitle': getContext(this).resourceManager.getStringSync($r('app.string.blood_oxygen_subtitle_184759362847392573829461847392847392615')),
+        'subtitle': this.healthDataSummary.bloodOxygen, // 使用实时数据
         'img': 'images/picture/xueyang.png',
         'isNew': false,
         'type': '2',
       },
       {
         'title': getContext(this).resourceManager.getStringSync($r('app.string.step_analysis_title_629384751952847847392615738294751629384')),
-        'subtitle': getContext(this).resourceManager.getStringSync($r('app.string.step_analysis_subtitle_847392615738294184759362847392847392615')),
+        'subtitle': this.healthDataSummary.steps, // 使用实时数据
         'img': 'images/picture/bushu.png',
         'isNew': false,
         'type': '2',
       },
       {
         'title': getContext(this).resourceManager.getStringSync($r('app.string.sleep_title_573829461847392847392615738294751629384751952')),
-        'subtitle': getContext(this).resourceManager.getStringSync($r('app.string.sleep_subtitle_392847516293847184759362847392615738294847')),
+        'subtitle': this.healthDataSummary.sleep, // 使用实时数据
         'img': 'images/picture/sleep.png',
         'isNew': false,
         'type': '2',
       },
       {
         'title': getContext(this).resourceManager.getStringSync($r('app.string.calories_title_758394627184759629384751952847392847392615')),
-        'subtitle': getContext(this).resourceManager.getStringSync($r('app.string.calories_subtitle_184759362847392573829461847392847392615738')),
+        'subtitle': this.healthDataSummary.calories, // 使用实时数据
         'img': 'images/picture/reliang.png',
         'isNew': false,
         'type': '1',
       },
       {
         'title': getContext(this).resourceManager.getStringSync($r('app.string.mood_title_629384751952847847392615738294751629384751952')),
-        'subtitle': getContext(this).resourceManager.getStringSync($r('app.string.mood_subtitle_847392615738294184759362847392847392615738294')),
+        'subtitle': this.healthDataSummary.mood, // 使用实时数据
         'img': 'images/picture/xinqing.png',
         'isNew': false,
         'type': '1',
