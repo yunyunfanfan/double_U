@@ -1,0 +1,6 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <path d="M7 7a5 5 0 0 1 10 0v2" stroke="#4285F4" stroke-width="2" fill="none"/>
+  <polyline points="17,9 17,5 21,5" stroke="#4285F4" stroke-width="2" fill="none"/>
+  <path d="M17 17a5 5 0 0 1-10 0v-2" stroke="#4285F4" stroke-width="2" fill="none"/>
+  <polyline points="7,15 7,19 3,19" stroke="#4285F4" stroke-width="2" fill="none"/>
+</svg> 

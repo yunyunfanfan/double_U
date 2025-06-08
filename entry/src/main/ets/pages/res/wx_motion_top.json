@@ -1,0 +1,70 @@
+{
+  "code": 200,
+  "suc": true,
+  "msg": "",
+  "data": [
+    {
+      "id": 0,
+      "name": "我",
+      "color": "#4CAF50",
+      "steps": 12580,
+      "isStar": false,
+      "starNum": 15,
+      "isOwn": true
+    },
+    {
+      "id": 1,
+      "name": "爸爸",
+      "color": "#2196F3",
+      "steps": 15320,
+      "isStar": true,
+      "starNum": 23,
+      "isOwn": false
+    },
+    {
+      "id": 2,
+      "name": "妈妈",
+      "color": "#E91E63",
+      "steps": 14250,
+      "isStar": true,
+      "starNum": 31,
+      "isOwn": false
+    },
+    {
+      "id": 3,
+      "name": "爷爷",
+      "color": "#9C27B0",
+      "steps": 8760,
+      "isStar": false,
+      "starNum": 12,
+      "isOwn": false
+    },
+    {
+      "id": 4,
+      "name": "奶奶",
+      "color": "#FF9800",
+      "steps": 9430,
+      "isStar": true,
+      "starNum": 18,
+      "isOwn": false
+    },
+    {
+      "id": 5,
+      "name": "李逸飞",
+      "color": "#03A9F4",
+      "steps": 16780,
+      "isStar": true,
+      "starNum": 27,
+      "isOwn": false
+    },
+    {
+      "id": 6,
+      "name": "卢景灏",
+      "color": "#F44336",
+      "steps": 13920,
+      "isStar": false,
+      "starNum": 19,
+      "isOwn": false
+    }
+  ]
+}

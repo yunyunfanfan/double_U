@@ -1,0 +1,16 @@
+<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="80" height="80" rx="10" fill="#4A90E2"/>
+  
+  <!-- 地面平台 -->
+  <rect x="10" y="60" width="30" height="10" rx="2" fill="#8B4513"/>
+  <rect x="50" y="45" width="20" height="10" rx="2" fill="#8B4513"/>
+  
+  <!-- 玩家 -->
+  <rect x="15" y="40" width="15" height="15" rx="3" fill="#FF6B3B"/>
+  
+  <!-- 跳跃轨迹 -->
+  <path d="M30,40 Q40,20 50,40" stroke="#FFFFFF" stroke-width="3" fill="none" stroke-dasharray="4"/>
+  
+  <!-- 箭头 -->
+  <polygon points="48,35 57,40 48,45" fill="#FFFFFF"/>
+</svg> 

@@ -1,0 +1,11 @@
+{
+  "app": {
+    "bundleName": "com.du.double_u",
+    "patchVersionCode": 2000008,
+    "versionCode": 1000000
+  },
+  "module": {
+    "name": "entry",
+    "type": "hotreload"
+  }
+}

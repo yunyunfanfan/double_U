@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 游戏边框 -->
+  <rect x="8" y="4" width="24" height="32" rx="2" fill="#333333" stroke="#666666" stroke-width="1"/>
+  <rect x="10" y="6" width="20" height="28" fill="#000000"/>
+  
+  <!-- 俄罗斯方块 - T形状 -->
+  <rect x="12" y="8" width="3" height="3" fill="#9C27B0"/>
+  <rect x="15" y="8" width="3" height="3" fill="#9C27B0"/>
+  <rect x="18" y="8" width="3" height="3" fill="#9C27B0"/>
+  <rect x="15" y="11" width="3" height="3" fill="#9C27B0"/>
+  
+  <!-- 俄罗斯方块 - L形状 -->
+  <rect x="12" y="16" width="3" height="3" fill="#4285F4"/>
+  <rect x="12" y="19" width="3" height="3" fill="#4285F4"/>
+  <rect x="12" y="22" width="3" height="3" fill="#4285F4"/>
+  <rect x="15" y="22" width="3" height="3" fill="#4285F4"/>
+  
+  <!-- 俄罗斯方块 - 方形 -->
+  <rect x="21" y="16" width="3" height="3" fill="#FBBC05"/>
+  <rect x="24" y="16" width="3" height="3" fill="#FBBC05"/>
+  <rect x="21" y="19" width="3" height="3" fill="#FBBC05"/>
+  <rect x="24" y="19" width="3" height="3" fill="#FBBC05"/>
+  
+  <!-- 俄罗斯方块 - 直线 -->
+  <rect x="18" y="26" width="3" height="3" fill="#00FFFF"/>
+  <rect x="21" y="26" width="3" height="3" fill="#00FFFF"/>
+  <rect x="24" y="26" width="3" height="3" fill="#00FFFF"/>
+  <rect x="27" y="26" width="3" height="3" fill="#00FFFF"/>
+</svg> 

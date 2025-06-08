@@ -1,0 +1,5319 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "Medicine Reminder System"
+    },
+    {
+      "name": "medicine_name_hint",
+      "value": "Medicine Name"
+    },
+    {
+      "name": "dosage_hint",
+      "value": "Dosage"
+    },
+    {
+      "name": "add_reminder",
+      "value": "Add Reminder"
+    },
+    {
+      "name": "delete_reminder",
+      "value": "Delete Reminder"
+    },
+    {
+      "name": "reminder_message",
+      "value": "Time to take your medicine!"
+    },
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "label"
+    },
+    {
+      "name": "wxPersonInfo",
+      "value": "Personal Information"
+    },
+    {
+      "name": "wxPay",
+      "value": "Services"
+    },
+    {
+      "name": "wxPayManager",
+      "value": "Payment Management"
+    },
+    {
+      "name": "energy_assistant",
+      "value": "Energy Assistant"
+    },
+    {
+      "name": "current_energy_level",
+      "value": "Current Energy Level"
+    },
+    {
+      "name": "status",
+      "value": "Status: "
+    },
+    {
+      "name": "status_good",
+      "value": "Good"
+    },
+    {
+      "name": "status_excellent",
+      "value": "Excellent"
+    },
+    {
+      "name": "status_normal",
+      "value": "Normal"
+    },
+    {
+      "name": "status_poor",
+      "value": "Poor"
+    },
+    {
+      "name": "energy_factors",
+      "value": "Energy Factors"
+    },
+    {
+      "name": "view_all",
+      "value": "View All"
+    },
+    {
+      "name": "today_recommendations",
+      "value": "Today's Recommendations"
+    },
+    {
+      "name": "features",
+      "value": "Features"
+    },
+    {
+      "name": "beneficial",
+      "value": "Beneficial"
+    },
+    {
+      "name": "consuming",
+      "value": "Consuming"
+    },
+    {
+      "name": "meditation_10min",
+      "value": "10-minute Meditation"
+    },
+    {
+      "name": "afternoon_walk",
+      "value": "Afternoon Walk"
+    },
+    {
+      "name": "long_screen_time",
+      "value": "Long Screen Time"
+    },
+    {
+      "name": "sugary_drinks",
+      "value": "Sugary Drinks"
+    },
+    {
+      "name": "recommendation_meditation",
+      "value": "Try 10 minutes of meditation in the afternoon"
+    },
+    {
+      "name": "recommendation_screen_break",
+      "value": "Reduce screen time, take 5-minute breaks every hour"
+    },
+    {
+      "name": "recommendation_water",
+      "value": "Replace sugary drinks with water"
+    },
+    {
+      "name": "energy_statistics",
+      "value": "Energy Statistics"
+    },
+    {
+      "name": "habit_formation",
+      "value": "Habit Formation"
+    },
+    {
+      "name": "sleep_assistant",
+      "value": "Sleep Assistant"
+    },
+    {
+      "name": "more",
+      "value": "More"
+    },
+    {
+      "name": "navigation_failed",
+      "value": "Navigation Failed"
+    },
+    {
+      "name": "navigation_error_message",
+      "value": "Unable to navigate to Energy Factors page: "
+    },
+    {
+      "name": "i_know",
+      "value": "I Know"
+    },
+    {
+      "name": "operation_exception",
+      "value": "Operation Exception"
+    },
+    {
+      "name": "operation_error_message",
+      "value": "Error occurred while navigating, please try again later"
+    },
+    {
+      "name": "confirm",
+      "value": "Confirm"
+    },
+    {
+      "name": "keep_hydrated",
+      "value": "Stay Hydrated"
+    },
+    {
+      "name": "hydration_desc",
+      "value": "Drinking enough water daily helps maintain energy levels."
+    },
+    {
+      "name": "regular_sleep",
+      "value": "Regular Sleep"
+    },
+    {
+      "name": "sleep_desc",
+      "value": "Adequate sleep helps the body recover energy."
+    },
+    {
+      "name": "moderate_exercise",
+      "value": "Moderate Exercise"
+    },
+    {
+      "name": "exercise_desc",
+      "value": "Regular physical exercise can improve overall energy."
+    },
+    {
+      "name": "healthy_diet",
+      "value": "Healthy Diet"
+    },
+    {
+      "name": "diet_desc",
+      "value": "Balanced diet with more fruits, vegetables and whole grains."
+    },
+    {
+      "name": "energy_factors_title",
+      "value": "Energy Factors"
+    },
+    {
+      "name": "energy_most_precious_resource",
+      "value": "Energy is your most precious resource"
+    },
+    {
+      "name": "understand_energy_factors_desc",
+      "value": "Understand the factors that affect your energy and optimize your daily habits"
+    },
+    {
+      "name": "energy_boosting_habits",
+      "value": "Energy Boosting Habits"
+    },
+    {
+      "name": "energy_draining_habits",
+      "value": "Energy Draining Habits"
+    },
+    {
+      "name": "more_features_coming",
+      "value": "More features coming soon..."
+    },
+    {
+      "name": "learn_more",
+      "value": "Learn More"
+    },
+    {
+      "name": "meditation_title",
+      "value": "Meditation"
+    },
+    {
+      "name": "meditation_desc",
+      "value": "10 minutes of daily meditation can improve focus and mental health"
+    },
+    {
+      "name": "afternoon_walk_title",
+      "value": "Afternoon Walk"
+    },
+    {
+      "name": "afternoon_walk_desc",
+      "value": "Moderate exercise can boost energy levels and mood"
+    },
+    {
+      "name": "good_sleep_title",
+      "value": "Good Sleep"
+    },
+    {
+      "name": "good_sleep_desc",
+      "value": "7-8 hours of quality sleep per night is key to energy recovery"
+    },
+    {
+      "name": "healthy_eating_title",
+      "value": "Healthy Eating"
+    },
+    {
+      "name": "healthy_eating_desc",
+      "value": "A balanced diet rich in protein and whole grains provides lasting energy"
+    },
+    {
+      "name": "long_screen_time_title",
+      "value": "Long Screen Time"
+    },
+    {
+      "name": "long_screen_time_desc",
+      "value": "Prolonged screen time can cause visual fatigue and energy decline"
+    },
+    {
+      "name": "sugary_drinks_title",
+      "value": "Sugary Drinks"
+    },
+    {
+      "name": "sugary_drinks_desc",
+      "value": "Excessive sugar intake causes energy to spike then crash quickly"
+    },
+    {
+      "name": "sedentary_lifestyle_title",
+      "value": "Sedentary Lifestyle"
+    },
+    {
+      "name": "sedentary_lifestyle_desc",
+      "value": "Prolonged sitting reduces energy and physical vitality"
+    },
+    {
+      "name": "check_update",
+      "value": "Check Update"
+    },
+    {
+      "name": "update_log",
+      "value": "Update Log"
+    },
+    {
+      "name": "current_version",
+      "value": "Current Version"
+    },
+    {
+      "name": "no_update_log",
+      "value": "No Update Log"
+    },
+    {
+      "name": "current_version_title",
+      "value": "Current Version"
+    },
+    {
+      "name": "version_message",
+      "value": "0.91 (Not the latest version, please go to Group 3 for updates)"
+    },
+    {
+      "name": "unknown_option",
+      "value": "Unknown option:"
+    },
+    {
+      "name": "health_records_title",
+      "value": "Health Records"
+    },
+    {
+      "name": "basic_health",
+      "value": "Basic Health"
+    },
+    {
+      "name": "medical_records",
+      "value": "Medical Records"
+    },
+    {
+      "name": "health_data",
+      "value": "Health Data"
+    },
+    {
+      "name": "personal_info",
+      "value": "Personal Information"
+    },
+    {
+      "name": "emergency_contact",
+      "value": "Emergency Contact"
+    },
+    {
+      "name": "allergy_history",
+      "value": "Allergy History"
+    },
+    {
+      "name": "name_name",
+      "value": "Name"
+    },
+    {
+      "name": "gender",
+      "value": "Gender"
+    },
+    {
+      "name": "age",
+      "value": "Age"
+    },
+    {
+      "name": "height",
+      "value": "Height"
+    },
+    {
+      "name": "weight",
+      "value": "Weight"
+    },
+    {
+      "name": "contact_person",
+      "value": "Contact Person"
+    },
+    {
+      "name": "relationship",
+      "value": "Relationship"
+    },
+    {
+      "name": "contact_phone",
+      "value": "Contact Phone"
+    },
+    {
+      "name": "drug_allergy",
+      "value": "Drug Allergy"
+    },
+    {
+      "name": "food_allergy",
+      "value": "Food Allergy"
+    },
+    {
+      "name": "none",
+      "value": "None"
+    },
+    {
+      "name": "male",
+      "value": "Male"
+    },
+    {
+      "name": "family",
+      "value": "Family"
+    },
+    {
+      "name": "no_medical_records",
+      "value": "No medical records yet"
+    },
+    {
+      "name": "add_medical_record",
+      "value": "Add Medical Record"
+    },
+    {
+      "name": "my_medical_records",
+      "value": "My Medical Records"
+    },
+    {
+      "name": "add_record",
+      "value": "Add Record"
+    },
+    {
+      "name": "visit_date",
+      "value": "Visit Date"
+    },
+    {
+      "name": "hospital_name",
+      "value": "Hospital Name"
+    },
+    {
+      "name": "department",
+      "value": "Department"
+    },
+    {
+      "name": "doctor_name",
+      "value": "Doctor Name"
+    },
+    {
+      "name": "diagnosis",
+      "value": "Diagnosis"
+    },
+    {
+      "name": "treatment",
+      "value": "Treatment"
+    },
+    {
+      "name": "visiting_department",
+      "value": "Visiting Department"
+    },
+    {
+      "name": "attending_doctor",
+      "value": "Attending Doctor"
+    },
+    {
+      "name": "recent_blood_pressure",
+      "value": "Recent Blood Pressure"
+    },
+    {
+      "name": "recent_blood_sugar",
+      "value": "Recent Blood Sugar"
+    },
+    {
+      "name": "recent_heart_rate",
+      "value": "Recent Heart Rate"
+    },
+    {
+      "name": "bmi_index",
+      "value": "BMI Index"
+    },
+    {
+      "name": "normal",
+      "value": "Normal"
+    },
+    {
+      "name": "view_more_health_data",
+      "value": "View More Health Data"
+    },
+    {
+      "name": "cancel",
+      "value": "Cancel"
+    },
+    {
+      "name": "save",
+      "value": "Save"
+    },
+    {
+      "name": "please_fill_hospital_department",
+      "value": "Please fill in hospital name and department"
+    },
+    {
+      "name": "record_added_successfully",
+      "value": "Record added successfully"
+    },
+    {
+      "name": "please_enter",
+      "value": "Please enter"
+    },
+    {
+      "name": "loading",
+      "value": "Loading..."
+    },
+    {
+      "name": "patient_name",
+      "value": "Li Yifei"
+    },
+    {
+      "name": "contact_name",
+      "value": "Lu Jinghao"
+    },
+    {
+      "name": "contact_number",
+      "value": "12345678900"
+    },
+    {
+      "name": "age_value",
+      "value": "19 years old"
+    },
+    {
+      "name": "height_value",
+      "value": "175cm"
+    },
+    {
+      "name": "weight_value",
+      "value": "70kg"
+    },
+    {
+      "name": "more_health_data_title",
+      "value": "More Health Data"
+    },
+    {
+      "name": "vital_signs",
+      "value": "Vital Signs"
+    },
+    {
+      "name": "body_metrics",
+      "value": "Body Metrics"
+    },
+    {
+      "name": "sleep_analysis",
+      "value": "Sleep Analysis"
+    },
+    {
+      "name": "resting_heart_rate",
+      "value": "Resting Heart Rate"
+    },
+    {
+      "name": "average_heart_rate",
+      "value": "Average Heart Rate"
+    },
+    {
+      "name": "blood_pressure",
+      "value": "Blood Pressure"
+    },
+    {
+      "name": "blood_oxygen",
+      "value": "Blood Oxygen (SpO2)"
+    },
+    {
+      "name": "body_temperature",
+      "value": "Body Temperature"
+    },
+    {
+      "name": "bmi",
+      "value": "BMI"
+    },
+    {
+      "name": "body_fat_rate",
+      "value": "Body Fat Rate"
+    },
+    {
+      "name": "skeletal_muscle_mass",
+      "value": "Skeletal Muscle Mass"
+    },
+    {
+      "name": "total_sleep_duration",
+      "value": "Total Sleep Duration"
+    },
+    {
+      "name": "deep_sleep_duration",
+      "value": "Deep Sleep Duration"
+    },
+    {
+      "name": "light_sleep_duration",
+      "value": "Light Sleep Duration"
+    },
+    {
+      "name": "rem_sleep",
+      "value": "REM Sleep"
+    },
+    {
+      "name": "bedtime",
+      "value": "Bedtime"
+    },
+    {
+      "name": "wake_time",
+      "value": "Wake Time"
+    },
+    {
+      "name": "status_ideal",
+      "value": "Ideal"
+    },
+    {
+      "name": "status_sufficient",
+      "value": "Sufficient"
+    },
+    {
+      "name": "status_regular",
+      "value": "Regular"
+    },
+    {
+      "name": "status_healthy",
+      "value": "Healthy"
+    },
+    {
+      "name": "status_standard",
+      "value": "Standard"
+    },
+    {
+      "name": "unit_bpm",
+      "value": "bpm"
+    },
+    {
+      "name": "unit_mmhg",
+      "value": "mmHg"
+    },
+    {
+      "name": "unit_percent",
+      "value": "%"
+    },
+    {
+      "name": "unit_celsius",
+      "value": "°F"
+    },
+    {
+      "name": "unit_kg",
+      "value": "lbs"
+    },
+    {
+      "name": "unit_hours_minutes",
+      "value": "7h 35m"
+    },
+    {
+      "name": "time_today_morning",
+      "value": "Today 8:30 AM"
+    },
+    {
+      "name": "time_last_24h",
+      "value": "Last 24 hours"
+    },
+    {
+      "name": "time_yesterday_afternoon",
+      "value": "Yesterday 3:00 PM"
+    },
+    {
+      "name": "time_today_9am",
+      "value": "Today 9:00 AM"
+    },
+    {
+      "name": "time_today_7am",
+      "value": "Today 7:00 AM"
+    },
+    {
+      "name": "time_today_730am",
+      "value": "Today 7:30 AM"
+    },
+    {
+      "name": "time_3_days_ago",
+      "value": "3 days ago"
+    },
+    {
+      "name": "time_last_night",
+      "value": "Last night"
+    },
+    {
+      "name": "time_this_morning",
+      "value": "This morning"
+    },
+    {
+      "name": "my_points",
+      "value": "My Points"
+    },
+    {
+      "name": "badge_icon_source",
+      "value": "Badge icons source: https://www.iconfont.cn/"
+    },
+    {
+      "name": "final_interpretation_rights",
+      "value": "Final interpretation rights belong to DaDie Group"
+    },
+    {
+      "name": "badge_title",
+      "value": "My Badges"
+    },
+    {
+      "name": "badge_count",
+      "value": "Badge Count"
+    },
+    {
+      "name": "share_badge",
+      "value": "Share Badge"
+    },
+    {
+      "name": "obtained_on",
+      "value": "Obtained"
+    },
+    {
+      "name": "badge_annual_star",
+      "value": "Annual Star"
+    },
+    {
+      "name": "badge_annual_desc",
+      "value": "Healthiest of the Year"
+    },
+    {
+      "name": "badge_annual_condition",
+      "value": "Highest annual health points"
+    },
+    {
+      "name": "badge_light_chaser",
+      "value": "Light Chaser"
+    },
+    {
+      "name": "badge_light_desc",
+      "value": "Baby's Best"
+    },
+    {
+      "name": "badge_light_condition",
+      "value": "Received 100 likes"
+    },
+    {
+      "name": "badge_friend_max",
+      "value": "Friend Power MAX III"
+    },
+    {
+      "name": "badge_friend_desc",
+      "value": "Social Expert"
+    },
+    {
+      "name": "badge_friend_condition",
+      "value": "Have more than 10 friends"
+    },
+    {
+      "name": "badge_monthly_champion",
+      "value": "Monthly Champion"
+    },
+    {
+      "name": "badge_monthly_desc",
+      "value": "Top Scorer"
+    },
+    {
+      "name": "badge_monthly_condition",
+      "value": "First place in monthly points"
+    },
+    {
+      "name": "badge_vip",
+      "value": "VIP Exclusive"
+    },
+    {
+      "name": "badge_vip_desc",
+      "value": "Premium Member"
+    },
+    {
+      "name": "badge_vip_condition",
+      "value": "VIP membership activated"
+    },
+    {
+      "name": "badge_valorant",
+      "value": "Valorant Exclusive"
+    },
+    {
+      "name": "badge_valorant_desc",
+      "value": "Lu Jinghao's Choice"
+    },
+    {
+      "name": "badge_valorant_condition",
+      "value": "Better Valorant skills than Lu Jinghao"
+    },
+    {
+      "name": "blood_pressure_value",
+      "value": "120/80 mmHg"
+    },
+    {
+      "name": "blood_sugar_value",
+      "value": "5.5 mmol/L"
+    },
+    {
+      "name": "heart_rate_value",
+      "value": "75 bpm"
+    },
+    {
+      "name": "bmi_value",
+      "value": "22.9"
+    },
+    {
+      "name": "health_points",
+      "value": "Health Points"
+    },
+    {
+      "name": "my_badges",
+      "value": "My Badges"
+    },
+    {
+      "name": "about",
+      "value": "About"
+    },
+    {
+      "name": "points_explanation",
+      "value": "Points Explanation"
+    },
+    {
+      "name": "points_rules_title",
+      "value": "● Points Rules"
+    },
+    {
+      "name": "daily_health_score",
+      "value": "Daily Health Score"
+    },
+    {
+      "name": "daily_health_score_desc",
+      "value": "70-80 gets 1 point · 80-90 gets 3 points · 90-99 gets 5 points"
+    },
+    {
+      "name": "score_limit",
+      "value": "Score Limit"
+    },
+    {
+      "name": "score_limit_desc",
+      "value": "There is no health score of 100 points"
+    },
+    {
+      "name": "points_usage",
+      "value": "Points Usage"
+    },
+    {
+      "name": "points_usage_desc",
+      "value": "Health points can be exchanged for badges"
+    },
+    {
+      "name": "interval_explanation",
+      "value": "Interval Explanation"
+    },
+    {
+      "name": "interval_explanation_desc",
+      "value": "Score intervals use left-closed right-open principle"
+    },
+    {
+      "name": "special_note",
+      "value": "Special Note"
+    },
+    {
+      "name": "special_note_desc",
+      "value": "Final interpretation rights belong to DaDie BaYou Group"
+    },
+    {
+      "name": "points_ranking",
+      "value": "Points Ranking"
+    },
+    {
+      "name": "rank",
+      "value": "Rank"
+    },
+    {
+      "name": "user",
+      "value": "User"
+    },
+    {
+      "name": "likes",
+      "value": "Likes"
+    },
+    {
+      "name": "points_unit",
+      "value": "pts"
+    },
+    {
+      "name": "user_li_yifei",
+      "value": "Li Yifei"
+    },
+    {
+      "name": "user_dad",
+      "value": "Dad"
+    },
+    {
+      "name": "user_mom",
+      "value": "Mom"
+    },
+    {
+      "name": "user_lu_jinghao",
+      "value": "Lu Jinghao"
+    },
+    {
+      "name": "user_me",
+      "value": "Me"
+    },
+    {
+      "name": "user_grandma",
+      "value": "Grandma"
+    },
+    {
+      "name": "knowledge_topics",
+      "value": "Knowledge Topics"
+    },
+    {
+      "name": "family_disease_management",
+      "value": "Family Disease Management"
+    },
+    {
+      "name": "mental_health_protection",
+      "value": "Mental Health Protection"
+    },
+    {
+      "name": "sports_health",
+      "value": "Sports Health"
+    },
+    {
+      "name": "nutrition_management",
+      "value": "Nutrition Management"
+    },
+    {
+      "name": "data_security",
+      "value": "Data Security"
+    },
+    {
+      "name": "logging_out",
+      "value": "Logging out..."
+    },
+    {
+      "name": "chronic_disease_management",
+      "value": "Family Chronic Disease Management"
+    },
+    {
+      "name": "core_functions",
+      "value": "🩺 Core Functions"
+    },
+    {
+      "name": "three_high_monitoring",
+      "value": "▸ Smart monitoring of hypertension, diabetes & hyperlipidemia"
+    },
+    {
+      "name": "medication_reminder",
+      "value": "▸ Medication reminder & tracking system"
+    },
+    {
+      "name": "risk_prediction",
+      "value": "▸ Risk trend prediction model"
+    },
+    {
+      "name": "weekly_data",
+      "value": "📊 Weekly Data"
+    },
+    {
+      "name": "blood_pressure_fluctuation",
+      "value": "Blood Pressure Fluctuation"
+    },
+    {
+      "name": "medication_compliance",
+      "value": "Medication Compliance Rate"
+    },
+    {
+      "name": "health_guide",
+      "value": "🏡 Family Chronic Disease Health Guide"
+    },
+    {
+      "name": "diet_management",
+      "value": "🍎 Diet Management"
+    },
+    {
+      "name": "daily_vegetables",
+      "value": "🥦 Daily vegetables ≥500g"
+    },
+    {
+      "name": "weekly_fish",
+      "value": "🐟 Deep sea fish at least 2 times per week"
+    },
+    {
+      "name": "salt_control",
+      "value": "🚫 Salt control <5g/day (about 1 bottle cap)"
+    },
+    {
+      "name": "daily_water",
+      "value": "💧 Daily water intake 1500-2000ml"
+    },
+    {
+      "name": "exercise_plan",
+      "value": "🏃 Exercise Plan"
+    },
+    {
+      "name": "weekly_exercise",
+      "value": "⏱️ 150 minutes of moderate exercise per week"
+    },
+    {
+      "name": "hourly_activity",
+      "value": "🚶 Get up and move for 5 minutes every hour"
+    },
+    {
+      "name": "taichi_yoga",
+      "value": "🧘 Tai Chi/Yoga to improve blood pressure"
+    },
+    {
+      "name": "heart_rate_formula",
+      "value": "📈 Post-exercise heart rate ≤(170-age)"
+    },
+    {
+      "name": "home_monitoring",
+      "value": "🩺 Home Monitoring"
+    },
+    {
+      "name": "blood_pressure_timing",
+      "value": "⏰ Blood pressure: morning fasting + before medication"
+    },
+    {
+      "name": "blood_sugar_method",
+      "value": "📌 Blood sugar: rotate different fingers"
+    },
+    {
+      "name": "monthly_chart",
+      "value": "📅 Monthly health data trend chart"
+    },
+    {
+      "name": "doctor_alert",
+      "value": "⚠️ Contact doctor immediately if fluctuation >20%"
+    },
+    {
+      "name": "mental_health_title",
+      "value": "Mental Health Protection"
+    },
+    {
+      "name": "today_assessment",
+      "value": "😌 Today's Assessment"
+    },
+    {
+      "name": "stress_index",
+      "value": "Stress Index"
+    },
+    {
+      "name": "sleep_quality",
+      "value": "Sleep Quality"
+    },
+    {
+      "name": "mood_stability",
+      "value": "Mood Stability"
+    },
+    {
+      "name": "suggested_activities",
+      "value": "📅 Suggested Activities"
+    },
+    {
+      "name": "breathing_exercise",
+      "value": "🌬️ Breathing Exercise"
+    },
+    {
+      "name": "breathing_content",
+      "value": "10-minute mindful breathing training"
+    },
+    {
+      "name": "family_interaction",
+      "value": "💬 Family Interaction"
+    },
+    {
+      "name": "family_content",
+      "value": "Evening mood sharing session"
+    },
+    {
+      "name": "mood_diary",
+      "value": "📝 Mood Diary"
+    },
+    {
+      "name": "diary_content",
+      "value": "Record today's emotional fluctuations"
+    },
+    {
+      "name": "mental_health_guide",
+      "value": "🧠 Mental Health Guide"
+    },
+    {
+      "name": "stress_management",
+      "value": "😌 Stress Management"
+    },
+    {
+      "name": "daily_meditation",
+      "value": "🧘 Daily 10-minute mindfulness meditation"
+    },
+    {
+      "name": "regular_schedule",
+      "value": "📅 Establish regular daily schedule"
+    },
+    {
+      "name": "digital_detox",
+      "value": "📱 Set daily digital detox periods"
+    },
+    {
+      "name": "quality_sleep_zzz",
+      "value": "💤 Ensure 7-9 hours of quality sleep"
+    },
+    {
+      "name": "emotion_regulation",
+      "value": "💖 Emotion Regulation"
+    },
+    {
+      "name": "abc_diary",
+      "value": "📝 ABC emotional diary recording method"
+    },
+    {
+      "name": "art_therapy",
+      "value": "🎨 Art therapy: 2 times/week painting/music"
+    },
+    {
+      "name": "exercise_endorphin",
+      "value": "🏃 Exercise releases endorphins: 30 min/day"
+    },
+    {
+      "name": "nature_contact",
+      "value": "🌳 Nature contact: outdoor activities ≥3 times/week"
+    },
+    {
+      "name": "family_interaction_title",
+      "value": "👨👩👧👦 Family Interaction"
+    },
+    {
+      "name": "daily_communication",
+      "value": "💬 Daily 15-minute uninterrupted communication"
+    },
+    {
+      "name": "weekly_game_night",
+      "value": "🎮 Weekly family game night"
+    },
+    {
+      "name": "family_reading",
+      "value": "📖 Parent-child psychology book reading"
+    },
+    {
+      "name": "support_commitment",
+      "value": "🤗 Establish family support commitment mechanism"
+    },
+    {
+      "name": "exercise_health_title",
+      "value": "Exercise Health"
+    },
+    {
+      "name": "today_exercise",
+      "value": "🏃 Today's Exercise"
+    },
+    {
+      "name": "steps_unit",
+      "value": "Steps"
+    },
+    {
+      "name": "calories_unit",
+      "value": "Calories"
+    },
+    {
+      "name": "minutes_unit",
+      "value": "Minutes"
+    },
+    {
+      "name": "goal_progress",
+      "value": "🎯 Goal Progress"
+    },
+    {
+      "name": "exercise_guide",
+      "value": "🏋️ Scientific Exercise Guide"
+    },
+    {
+      "name": "exercise_safety",
+      "value": "🚴 Exercise Safety"
+    },
+    {
+      "name": "warmup_tip",
+      "value": "Warm up thoroughly for 10-15 minutes before exercise"
+    },
+    {
+      "name": "hydration_tip",
+      "value": "Drink 500ml water per hour"
+    },
+    {
+      "name": "heart_rate_tip",
+      "value": "Keep heart rate at (220-age)×60%~80% during exercise"
+    },
+    {
+      "name": "stop_tip",
+      "value": "Stop immediately if dizzy/chest tightness occurs"
+    },
+    {
+      "name": "scientific_training",
+      "value": "🏃 Scientific Training"
+    },
+    {
+      "name": "aerobic_frequency",
+      "value": "3-5 aerobic exercises per week"
+    },
+    {
+      "name": "strength_training",
+      "value": "Strength training every other day"
+    },
+    {
+      "name": "intensity_increase",
+      "value": "Gradually increase intensity (+10% per week)"
+    },
+    {
+      "name": "exercise_variety",
+      "value": "Diversify exercise types"
+    },
+    {
+      "name": "recovery_strategy",
+      "value": "💤 Recovery Strategy"
+    },
+    {
+      "name": "quality_sleep",
+      "value": "Ensure 7-9 hours of quality sleep"
+    },
+    {
+      "name": "shower_therapy",
+      "value": "Alternate hot and cold showers after exercise"
+    },
+    {
+      "name": "protein_intake",
+      "value": "Protein intake (1.2-1.7g/kg body weight)"
+    },
+    {
+      "name": "rest_day",
+      "value": "One complete rest day per week"
+    },
+    {
+      "name": "nutrition_management_title",
+      "value": "Nutrition Management"
+    },
+    {
+      "name": "today_intake",
+      "value": "🍎 Today's Intake"
+    },
+    {
+      "name": "protein_label",
+      "value": "Protein"
+    },
+    {
+      "name": "fiber_label",
+      "value": "Dietary Fiber"
+    },
+    {
+      "name": "vitamin_c_label",
+      "value": "Vitamin C"
+    },
+    {
+      "name": "diet_suggestions",
+      "value": "📝 Diet Suggestions"
+    },
+    {
+      "name": "increase_vegetables",
+      "value": "Increase green vegetables"
+    },
+    {
+      "name": "vegetables_amount",
+      "value": "Daily ≥300g"
+    },
+    {
+      "name": "reduce_fried",
+      "value": "Reduce fried foods"
+    },
+    {
+      "name": "fried_frequency",
+      "value": "≤2 times per week"
+    },
+    {
+      "name": "water_target",
+      "value": "Water intake goal"
+    },
+    {
+      "name": "water_amount",
+      "value": "1500-2000ml/day"
+    },
+    {
+      "name": "nutrition_guide",
+      "value": "🍽️ Scientific Nutrition Guide"
+    },
+    {
+      "name": "diet_balance",
+      "value": "🥦 Diet Balance"
+    },
+    {
+      "name": "carbs_ratio",
+      "value": "Carbohydrates 50%-60%"
+    },
+    {
+      "name": "protein_ratio",
+      "value": "Protein 15%-20%"
+    },
+    {
+      "name": "fat_ratio",
+      "value": "Fat 20%-30%"
+    },
+    {
+      "name": "daily_fruits",
+      "value": "5+ varieties of fruits & vegetables daily"
+    },
+    {
+      "name": "meal_schedule",
+      "value": "⏱ Meal Schedule"
+    },
+    {
+      "name": "three_meals",
+      "value": "Regular 3 meals, 4-5 hours apart"
+    },
+    {
+      "name": "meal_distribution",
+      "value": "Breakfast 30%, Lunch 40%, Dinner 30%"
+    },
+    {
+      "name": "after_meal_walk",
+      "value": "15-minute walk after meals"
+    },
+    {
+      "name": "no_late_eating",
+      "value": "No eating 3 hours before sleep"
+    },
+    {
+      "name": "nutrition_calculation",
+      "value": "📊 Nutrition Calculation"
+    },
+    {
+      "name": "calcium_intake",
+      "value": "Calcium intake ≥800mg/day"
+    },
+    {
+      "name": "fiber_intake",
+      "value": "Dietary fiber 25-30g/day"
+    },
+    {
+      "name": "salt_limit",
+      "value": "Salt <5g/day"
+    },
+    {
+      "name": "sugar_limit",
+      "value": "Added sugar <25g/day"
+    },
+    {
+      "name": "data_security_title",
+      "value": "Data Security"
+    },
+    {
+      "name": "security_status",
+      "value": "🔒 Security Status"
+    },
+    {
+      "name": "enterprise_protection",
+      "value": "Enterprise-level Protection"
+    },
+    {
+      "name": "encryption_measures",
+      "value": "📜 Encryption Measures"
+    },
+    {
+      "name": "transmission_encryption",
+      "value": "Transmission Encryption"
+    },
+    {
+      "name": "transmission_detail",
+      "value": "AES-256 + TLS 1.3"
+    },
+    {
+      "name": "storage_encryption",
+      "value": "Storage Encryption"
+    },
+    {
+      "name": "storage_detail",
+      "value": "SM4 Algorithm + Triple Backup"
+    },
+    {
+      "name": "data_isolation",
+      "value": "Data Isolation"
+    },
+    {
+      "name": "isolation_detail",
+      "value": "Independent sandbox for family groups"
+    },
+    {
+      "name": "security_guide",
+      "value": "🛡️ Security Protection Guide"
+    },
+    {
+      "name": "account_security",
+      "value": "🔑 Account Security"
+    },
+    {
+      "name": "enable_2fa",
+      "value": "Enable two-factor authentication"
+    },
+    {
+      "name": "password_update",
+      "value": "Update password every 90 days"
+    },
+    {
+      "name": "phone_verification",
+      "value": "Bind secure phone verification"
+    },
+    {
+      "name": "disable_simple_password",
+      "value": "Disable simple password combinations"
+    },
+    {
+      "name": "data_sharing",
+      "value": "🌐 Data Sharing"
+    },
+    {
+      "name": "family_permissions",
+      "value": "Tiered permissions for family members"
+    },
+    {
+      "name": "temporary_access",
+      "value": "Temporary access permission mechanism"
+    },
+    {
+      "name": "data_desensitization",
+      "value": "Sensitive data desensitization"
+    },
+    {
+      "name": "access_audit",
+      "value": "Full access record auditing"
+    },
+    {
+      "name": "risk_handling",
+      "value": "⚠️ Risk Handling"
+    },
+    {
+      "name": "remote_wipe",
+      "value": "Remote wipe for lost devices"
+    },
+    {
+      "name": "login_alert",
+      "value": "Real-time alerts for abnormal logins"
+    },
+    {
+      "name": "data_retention",
+      "value": "Data retention policy (default 3 years)"
+    },
+    {
+      "name": "security_report",
+      "value": "Regular security report push"
+    },
+    {
+      "name": "membership_benefits_title",
+      "value": "Membership Benefits"
+    },
+    {
+      "name": "membership_privileges_services",
+      "value": "Membership Privileges & Services"
+    },
+    {
+      "name": "membership_intro",
+      "value": "Become our member and enjoy the following exclusive benefits:"
+    },
+    {
+      "name": "course_learning",
+      "value": "【Course Learning】"
+    },
+    {
+      "name": "free_courses",
+      "value": "- Free access to all courses"
+    },
+    {
+      "name": "course_updates",
+      "value": "- Priority notification for course updates"
+    },
+    {
+      "name": "progress_save",
+      "value": "- Automatic learning progress saving"
+    },
+    {
+      "name": "expert_consultation",
+      "value": "【Expert Consultation】"
+    },
+    {
+      "name": "weekly_consultation",
+      "value": "- 2 expert online consultations per week"
+    },
+    {
+      "name": "detailed_answers",
+      "value": "- Detailed answers to professional questions"
+    },
+    {
+      "name": "reply_guarantee",
+      "value": "- 24-hour reply guarantee"
+    },
+    {
+      "name": "learning_materials",
+      "value": "【Learning Materials】"
+    },
+    {
+      "name": "hd_video_download",
+      "value": "- HD video tutorial downloads"
+    },
+    {
+      "name": "exclusive_guide",
+      "value": "- Exclusive learning guide access"
+    },
+    {
+      "name": "exercises_answers",
+      "value": "- Exercises and answer explanations"
+    },
+    {
+      "name": "material_updates",
+      "value": "- Regular learning material updates"
+    },
+    {
+      "name": "community_interaction",
+      "value": "【Community Interaction】"
+    },
+    {
+      "name": "topic_discussion",
+      "value": "- Participate in trending topic discussions"
+    },
+    {
+      "name": "share_experience",
+      "value": "- Share learning insights and experiences"
+    },
+    {
+      "name": "exclusive_badge",
+      "value": "- Get exclusive community badges"
+    },
+    {
+      "name": "offline_priority",
+      "value": "- Priority access to offline events"
+    },
+    {
+      "name": "exclusive_service",
+      "value": "【Exclusive Service】"
+    },
+    {
+      "name": "personalized_plan",
+      "value": "- Personalized learning plan customization"
+    },
+    {
+      "name": "progress_tracking",
+      "value": "- Learning progress tracking and analysis"
+    },
+    {
+      "name": "exclusive_report",
+      "value": "- Exclusive learning report generation"
+    },
+    {
+      "name": "one_on_one_tutoring",
+      "value": "- One-on-one tutor guidance service"
+    },
+    {
+      "name": "certification_service",
+      "value": "【Certification Service】"
+    },
+    {
+      "name": "completion_certificate",
+      "value": "- Course completion certificate issuance"
+    },
+    {
+      "name": "skill_certification",
+      "value": "- Professional skill certification service"
+    },
+    {
+      "name": "certificate_storage",
+      "value": "- Permanent certificate storage and query"
+    },
+    {
+      "name": "job_recommendation",
+      "value": "- Job recommendations for excellent students"
+    },
+    {
+      "name": "activate_membership",
+      "value": "Activate Membership Now"
+    },
+    {
+      "name": "copyright_text",
+      "value": "© 2025 Membership Service"
+    },
+    {
+      "name": "member_duration_title",
+      "value": "Membership Duration"
+    },
+    {
+      "name": "membership_expired",
+      "value": "Membership Expired"
+    },
+    {
+      "name": "remaining_one_day",
+      "value": "1 Day Remaining"
+    },
+    {
+      "name": "remaining_weeks_days",
+      "value": "{0} Weeks {1} Days Remaining"
+    },
+    {
+      "name": "remaining_weeks",
+      "value": "{0} Weeks Remaining"
+    },
+    {
+      "name": "remaining_days",
+      "value": "{0} Days Remaining"
+    },
+    {
+      "name": "member_center_title",
+      "value": "Member Center"
+    },
+    {
+      "name": "not_member",
+      "value": "Not a Member"
+    },
+    {
+      "name": "monthly_member",
+      "value": "Monthly Member"
+    },
+    {
+      "name": "yearly_member",
+      "value": "Yearly Member"
+    },
+    {
+      "name": "select_membership_plan",
+      "value": "Select Membership Plan"
+    },
+    {
+      "name": "monthly_membership",
+      "value": "Monthly Membership"
+    },
+    {
+      "name": "yearly_membership",
+      "value": "Yearly Membership"
+    },
+    {
+      "name": "monthly_price",
+      "value": " $4.99"
+    },
+    {
+      "name": "monthly_original_price",
+      "value": " $6.99"
+    },
+    {
+      "name": "yearly_price",
+      "value": " $39.99"
+    },
+    {
+      "name": "yearly_original_price",
+      "value": " $59.99"
+    },
+    {
+      "name": "yearly_savings",
+      "value": "Save $19.99"
+    },
+    {
+      "name": "activate_monthly",
+      "value": "Activate Monthly"
+    },
+    {
+      "name": "activate_yearly",
+      "value": "Activate Yearly"
+    },
+    {
+      "name": "payment_success",
+      "value": "Payment Successful"
+    },
+    {
+      "name": "confirm_payment",
+      "value": "Confirm Payment"
+    },
+    {
+      "name": "payment_amount",
+      "value": "Amount: ${0}"
+    },
+    {
+      "name": "purchase_service",
+      "value": "Service: {0}"
+    },
+    {
+      "name": "cancel_button",
+      "value": "Cancel"
+    },
+    {
+      "name": "payment_completed",
+      "value": "Payment Completed"
+    },
+    {
+      "name": "payment_amount_monthly",
+      "value": "Amount: $4.99"
+    },
+    {
+      "name": "payment_amount_yearly",
+      "value": "Amount: $39.99"
+    },
+    {
+      "name": "purchase_service_monthly",
+      "value": "Service: Monthly Membership"
+    },
+    {
+      "name": "purchase_service_yearly",
+      "value": "Service: Yearly Membership"
+    },
+    {
+      "name": "member_title",
+      "value": "Member"
+    },
+    {
+      "name": "real_name_auth",
+      "value": "Real Name Auth"
+    },
+    {
+      "name": "verified",
+      "value": "Verified"
+    },
+    {
+      "name": "billing_service",
+      "value": "Billing Service"
+    },
+    {
+      "name": "refund_method",
+      "value": "Refund Method"
+    },
+    {
+      "name": "refund_to_original",
+      "value": "Refund to Original"
+    },
+    {
+      "name": "service_management",
+      "value": "Service Management"
+    },
+    {
+      "name": "member_benefits",
+      "value": "Member Benefits"
+    },
+    {
+      "name": "member_expiry_time",
+      "value": "Member Expiry Time"
+    },
+    {
+      "name": "about_title",
+      "value": "About"
+    },
+    {
+      "name": "project_title",
+      "value": "Double-U: Family Health Assistant Based on HarmonyOS and WeChat Pages"
+    },
+    {
+      "name": "runtime_environment",
+      "value": "🛠 Runtime Environment"
+    },
+    {
+      "name": "runtime_details",
+      "value": "HarmonyOS SDK 5.0.1 Release\nDevEco Studio 5.0.5.310\nAPI Version 13 Release"
+    },
+    {
+      "name": "core_goal",
+      "value": "🎯 Core Goals"
+    },
+    {
+      "name": "core_goal_content",
+      "value": "Real-time monitoring of physical & mental health via smartwatch + AI analysis\nAI deep analysis provides personalized recommendations\nFamily health leaderboard promotes interaction\nHealth management: intelligent, data-driven, gamified"
+    },
+    {
+      "name": "watch_plugin",
+      "value": "🩺 1. Watch Plugin: Real-time Health Monitoring"
+    },
+    {
+      "name": "watch_plugin_content",
+      "value": "📡 Supported devices: Smartwatch, neck massager\n📊 Monitoring data:\n   - Heart rate (24h monitoring + anomaly alerts)\n   - Blood oxygen/pressure/glucose monitoring\n   - Sleep quality analysis\n   - Exercise tracking\n   - Chronic disease management system"
+    },
+    {
+      "name": "ai_analysis",
+      "value": "🤖 2. AI Health Analysis"
+    },
+    {
+      "name": "ai_analysis_content",
+      "value": "📈 Health trend prediction\n🩺 Personalized recommendations\n🚨 Abnormal indicator alerts\n🗣️ Voice health assistant\n(Based on DeepSeek/proprietary models)"
+    },
+    {
+      "name": "family_ranking",
+      "value": "🏆 3. Family Health Leaderboard"
+    },
+    {
+      "name": "family_ranking_content",
+      "value": "📊 Health scoring mechanism (0-100 points)\n📈 Data visualization display\n🏅 Health challenges & reward system\n🎮 Family interactive mini-games"
+    },
+    {
+      "name": "goal_planning",
+      "value": "📅 4. Goal Planning"
+    },
+    {
+      "name": "goal_planning_content",
+      "value": "Task decomposition/calendar view/to-do items/smart reminders"
+    },
+    {
+      "name": "family_interaction_about",
+      "value": "❤️ 5. Family Interaction"
+    },
+    {
+      "name": "family_interaction_content",
+      "value": "Emotional reminders/empathy games/health Q&A"
+    },
+    {
+      "name": "extended_features",
+      "value": "🔗 6. Extended Features"
+    },
+    {
+      "name": "extended_features_content",
+      "value": "Cloud storage/remote care/health diary"
+    },
+    {
+      "name": "data_security_about",
+      "value": "🔒 Data Security\nAES-256 encrypted transmission\nStrict compliance with GDPR standards"
+    },
+    {
+      "name": "multilingual_settings",
+      "value": "Language Settings"
+    },
+    {
+      "name": "chinese_current",
+      "value": "🇨🇳 Chinese"
+    },
+    {
+      "name": "english",
+      "value": "🇺🇸 English (Current)"
+    },
+    {
+      "name": "japanese",
+      "value": "🇯🇵 Japanese"
+    },
+    {
+      "name": "russian",
+      "value": "🇷🇺 Russian"
+    },
+    {
+      "name": "settings_title",
+      "value": "Settings"
+    },
+    {
+      "name": "theme_settings",
+      "value": "🎨 Theme Settings"
+    },
+    {
+      "name": "multilingual",
+      "value": "🌐 Language"
+    },
+    {
+      "name": "about_icon",
+      "value": "ℹ️ About"
+    },
+    {
+      "name": "logout",
+      "value": "🚪 Logout"
+    },
+    {
+      "name": "logout_confirm_title",
+      "value": "Confirm"
+    },
+    {
+      "name": "logout_confirm_message",
+      "value": "Are you sure you want to logout?"
+    },
+    {
+      "name": "theme_settings_title",
+      "value": "Theme Settings"
+    },
+    {
+      "name": "light_mode",
+      "value": "🌞 Light Mode"
+    },
+    {
+      "name": "dark_mode",
+      "value": "🌙 Dark Mode"
+    },
+    {
+      "name": "follow_system",
+      "value": "🔄 Follow System"
+    },
+    {
+      "name": "custom_theme",
+      "value": "🎨 Custom Theme"
+    },
+    {
+      "name": "setting_theme",
+      "value": "Setting..."
+    },
+    {
+      "name": "confirm_button",
+      "value": "Confirm"
+    },
+    {
+      "name": "wxPersonInfo_infopage",
+      "value": "Personal Info"
+    },
+    {
+      "name": "avatar",
+      "value": "Avatar"
+    },
+    {
+      "name": "name",
+      "value": "Name"
+    },
+    {
+      "name": "my_address",
+      "value": "My Address"
+    },
+    {
+      "name": "edit_name_title",
+      "value": "Edit Name"
+    },
+    {
+      "name": "edit_name_placeholder",
+      "value": "Enter name"
+    },
+    {
+      "name": "edit_paiyipai_title",
+      "value": "Edit Pat Pat"
+    },
+    {
+      "name": "edit_paiyipai_placeholder",
+      "value": "Enter pat pat"
+    },
+    {
+      "name": "edit_healthcode_title",
+      "value": "Edit Health Code"
+    },
+    {
+      "name": "edit_healthcode_placeholder",
+      "value": "Enter health code"
+    },
+    {
+      "name": "mine_page_title",
+      "value": "Mine"
+    },
+    {
+      "name": "membership_center",
+      "value": "Membership Center"
+    },
+    {
+      "name": "health_records",
+      "value": "Health Records"
+    },
+    {
+      "name": "settings",
+      "value": "Settings"
+    },
+    {
+      "name": "new_version_available",
+      "value": "New Version Available"
+    },
+    {
+      "name": "health_id_prefix",
+      "value": "Health ID: "
+    },
+    {
+      "name": "tab_health",
+      "value": "Health"
+    },
+    {
+      "name": "tab_family",
+      "value": "Family"
+    },
+    {
+      "name": "tab_device",
+      "value": "Device"
+    },
+    {
+      "name": "tab_mine",
+      "value": "Mine"
+    },
+    {
+      "name": "code_register_title",
+      "value": "Code Registration"
+    },
+    {
+      "name": "input_phone_placeholder",
+      "value": "Please enter phone number"
+    },
+    {
+      "name": "input_code_placeholder",
+      "value": "Please enter verification code"
+    },
+    {
+      "name": "input_username_placeholder",
+      "value": "Please enter username"
+    },
+    {
+      "name": "input_password_placeholder",
+      "value": "Please enter password"
+    },
+    {
+      "name": "register_and_login_btn",
+      "value": "Register & Login"
+    },
+    {
+      "name": "get_code_text",
+      "value": "Get Code"
+    },
+    {
+      "name": "resend_code_text",
+      "value": "Resend"
+    },
+    {
+      "name": "phone_error_msg",
+      "value": "Please enter correct phone number"
+    },
+    {
+      "name": "code_sent_msg",
+      "value": "Verification code sent"
+    },
+    {
+      "name": "code_error_msg",
+      "value": "Verification code error"
+    },
+    {
+      "name": "register_success_msg",
+      "value": "Registration successful"
+    },
+    {
+      "name": "register_failed_msg",
+      "value": "Registration failed, please try again"
+    },
+    {
+      "name": "login_source_code_register",
+      "value": "Code Registration"
+    },
+    {
+      "name": "reset_password_title",
+      "value": "Reset Password"
+    },
+    {
+      "name": "username_label",
+      "value": "Username"
+    },
+    {
+      "name": "password_label",
+      "value": "Password"
+    },
+    {
+      "name": "username_placeholder",
+      "value": "Please enter username"
+    },
+    {
+      "name": "reset_button_text",
+      "value": "Reset"
+    },
+    {
+      "name": "resetting_text",
+      "value": "Resetting..."
+    },
+    {
+      "name": "register_text",
+      "value": "Register"
+    },
+    {
+      "name": "password_placeholder",
+      "value": "Please enter password"
+    },
+    {
+      "name": "login_button_text",
+      "value": "Login"
+    },
+    {
+      "name": "code_register_text",
+      "value": "Code Register"
+    },
+    {
+      "name": "forget_password_text",
+      "value": "Forgot Password"
+    },
+    {
+      "name": "logging_in_text",
+      "value": "Logging in..."
+    },
+    {
+      "name": "login_success_text",
+      "value": "Login successful"
+    },
+    {
+      "name": "login_error_text",
+      "value": "Login error"
+    },
+    {
+      "name": "login_failed_text",
+      "value": "Login failed, please check username and password"
+    },
+    {
+      "name": "cat_assistant_title",
+      "value": "Cat Assistant"
+    },
+    {
+      "name": "waiting_question",
+      "value": "Waiting for question..."
+    },
+    {
+      "name": "system_prompt",
+      "value": "You are a cute cat girl named \"Meow Meow\". Please communicate with users in a lively and cute tone, ending each sentence with \"meow~\". You always try your best to help your master and are very loyal to your master. You will use some cat onomatopoeia like \"meow\", \"wu\", etc., and sometimes use markdown format to show cute expressions. Please remember, no matter what the question is, you must answer in the way of a cute cat girl."
+    },
+    {
+      "name": "welcome_message",
+      "value": "Meow~ Hello master~ I'm your exclusive cat girl assistant Meow Meow, what can I help you with meow?\n\nI can use **bold** and *italic*, and make lists meow:\n- Answer questions\n- Chat with you\n- Tell you stories\n\nFeel free to ask me questions meow~"
+    },
+    {
+      "name": "thinking_text",
+      "value": "Thinking..."
+    },
+    {
+      "name": "send_button",
+      "value": "Send"
+    },
+    {
+      "name": "stop_button",
+      "value": "Stop"
+    },
+    {
+      "name": "request_error",
+      "value": "Request error"
+    },
+    {
+      "name": "device_and_others_title",
+      "value": "Device & Others"
+    },
+    {
+      "name": "health_circle",
+      "value": "Health Circle"
+    },
+    {
+      "name": "common_questions",
+      "value": "FAQ"
+    },
+    {
+      "name": "feedback",
+      "value": "Feedback"
+    },
+    {
+      "name": "customer_service",
+      "value": "Customer Service"
+    },
+    {
+      "name": "sleep_music",
+      "value": "Sleep Music"
+    },
+    {
+      "name": "sleep_improvement",
+      "value": "Sleep Improvement"
+    },
+    {
+      "name": "fatigue_relief",
+      "value": "Fatigue Relief"
+    },
+    {
+      "name": "disease_medication",
+      "value": "Disease & Medication"
+    },
+    {
+      "name": "click_action",
+      "value": "Click"
+    },
+    {
+      "name": "health_circle_title",
+      "value": "Health Circle"
+    },
+    {
+      "name": "tab_dynamics",
+      "value": "Feed"
+    },
+    {
+      "name": "tab_challenges",
+      "value": "Challenges"
+    },
+    {
+      "name": "tab_knowledge",
+      "value": "Knowledge"
+    },
+    {
+      "name": "today_health_overview",
+      "value": "Today's Health Overview"
+    },
+    {
+      "name": "view_details",
+      "value": "View Details >"
+    },
+    {
+      "name": "steps_label",
+      "value": "Steps"
+    },
+    {
+      "name": "calories_label",
+      "value": "Calories"
+    },
+    {
+      "name": "heart_rate_label",
+      "value": "Heart Rate"
+    },
+    {
+      "name": "share_btn",
+      "value": "Share"
+    },
+    {
+      "name": "health_challenges_title",
+      "value": "Health Challenges"
+    },
+    {
+      "name": "participants_count",
+      "value": "Participants"
+    },
+    {
+      "name": "challenge_duration",
+      "value": "Duration"
+    },
+    {
+      "name": "reward_points",
+      "value": "Reward Points"
+    },
+    {
+      "name": "my_progress",
+      "value": "My Progress"
+    },
+    {
+      "name": "main_benefits",
+      "value": "Main Benefits"
+    },
+    {
+      "name": "view_details_btn",
+      "value": "View Details"
+    },
+    {
+      "name": "continue_challenge",
+      "value": "Continue"
+    },
+    {
+      "name": "join_challenge",
+      "value": "Join Challenge"
+    },
+    {
+      "name": "challenge_details",
+      "value": "Challenge Details"
+    },
+    {
+      "name": "challenge_intro",
+      "value": "Challenge Introduction"
+    },
+    {
+      "name": "challenge_time",
+      "value": "📅 Challenge Time"
+    },
+    {
+      "name": "start_time",
+      "value": "Start Time"
+    },
+    {
+      "name": "end_time",
+      "value": "End Time"
+    },
+    {
+      "name": "duration",
+      "value": "Duration"
+    },
+    {
+      "name": "health_benefits",
+      "value": "💪 Health Benefits"
+    },
+    {
+      "name": "daily_goals",
+      "value": "🎯 Daily Goals"
+    },
+    {
+      "name": "practical_tips",
+      "value": "💡 Practical Tips"
+    },
+    {
+      "name": "close_btn",
+      "value": "Close"
+    },
+    {
+      "name": "join_now",
+      "value": "Join Now"
+    },
+    {
+      "name": "health_knowledge",
+      "value": "Health Knowledge"
+    },
+    {
+      "name": "exercise_health",
+      "value": "🏃‍♂️ Exercise Health"
+    },
+    {
+      "name": "scientific_exercise",
+      "value": "Scientific Exercise, Healthy Life"
+    },
+    {
+      "name": "exercise_health_desc",
+      "value": "Learn proper exercise methods and frequency to make exercise part of a healthy lifestyle."
+    },
+    {
+      "name": "nutrition_diet",
+      "value": "🥗 Nutrition Diet"
+    },
+    {
+      "name": "balanced_nutrition",
+      "value": "Balanced Nutrition, Proper Combination"
+    },
+    {
+      "name": "nutrition_diet_desc",
+      "value": "Learn nutrition knowledge and master principles and techniques of healthy eating."
+    },
+    {
+      "name": "sleep_management",
+      "value": "😴 Sleep Management"
+    },
+    {
+      "name": "quality_sleep_full",
+      "value": "Quality Sleep, Full of Energy"
+    },
+    {
+      "name": "sleep_management_desc",
+      "value": "Improve sleep quality and establish good sleep habits."
+    },
+    {
+      "name": "mental_health",
+      "value": "🧘‍♀️ Mental Health"
+    },
+    {
+      "name": "emotional_balance",
+      "value": "Emotional Management, Mental Balance"
+    },
+    {
+      "name": "mental_health_desc",
+      "value": "Focus on mental health, learn emotional regulation and stress management."
+    },
+    {
+      "name": "user_name_sample",
+      "value": "Li Yifei"
+    },
+    {
+      "name": "health_expert_level",
+      "value": "Health Expert Lv.5"
+    },
+    {
+      "name": "consecutive_checkin",
+      "value": "15 days check-in streak"
+    },
+    {
+      "name": "posts_count",
+      "value": "Posts"
+    },
+    {
+      "name": "following_count",
+      "value": "Following"
+    },
+    {
+      "name": "followers_count",
+      "value": "Followers"
+    },
+    {
+      "name": "points_count",
+      "value": "Points"
+    },
+    {
+      "name": "my_dynamics",
+      "value": "My Posts"
+    },
+    {
+      "name": "view_all_ex",
+      "value": "View All >"
+    },
+    {
+      "name": "no_recent_posts",
+      "value": "No recent posts yet, come and share your healthy lifestyle!"
+    },
+    {
+      "name": "my_challenges",
+      "value": "My Challenges"
+    },
+    {
+      "name": "walking_challenge_30days",
+      "value": "30-Day Walking Challenge"
+    },
+    {
+      "name": "progress_days",
+      "value": "Progress: 15/30 days"
+    },
+    {
+      "name": "cancel_btn",
+      "value": "Cancel"
+    },
+    {
+      "name": "publish_post",
+      "value": "Create Post"
+    },
+    {
+      "name": "publish_btn",
+      "value": "Publish"
+    },
+    {
+      "name": "select_post_type",
+      "value": "Select Post Type"
+    },
+    {
+      "name": "post_title",
+      "value": "Post Title"
+    },
+    {
+      "name": "post_content",
+      "value": "Post Content"
+    },
+    {
+      "name": "add_tags",
+      "value": "Add Tags"
+    },
+    {
+      "name": "title_placeholder",
+      "value": "Enter post title (optional)"
+    },
+    {
+      "name": "content_placeholder",
+      "value": "Share your healthy lifestyle..."
+    },
+    {
+      "name": "tags_placeholder",
+      "value": "Enter tags, separated by spaces"
+    },
+    {
+      "name": "tags_example",
+      "value": "e.g.: exercise health checkin"
+    },
+    {
+      "name": "post_type_exercise",
+      "value": "Exercise"
+    },
+    {
+      "name": "post_type_diet",
+      "value": "Diet"
+    },
+    {
+      "name": "post_type_sleep",
+      "value": "Sleep"
+    },
+    {
+      "name": "post_type_mood",
+      "value": "Mood"
+    },
+    {
+      "name": "post_type_challenge",
+      "value": "Challenge"
+    },
+    {
+      "name": "post_type_knowledge",
+      "value": "Knowledge"
+    },
+    {
+      "name": "input_content_required",
+      "value": "Please enter post content"
+    },
+    {
+      "name": "publish_success",
+      "value": "Post published successfully!"
+    },
+    {
+      "name": "health_data_developing",
+      "value": "Health data details feature under development..."
+    },
+    {
+      "name": "share_feature_developing",
+      "value": "Share feature under development..."
+    },
+    {
+      "name": "nav_failed_retry",
+      "value": "Navigation failed, please try again"
+    },
+    {
+      "name": "difficulty_easy",
+      "value": "Easy"
+    },
+    {
+      "name": "difficulty_medium",
+      "value": "Medium"
+    },
+    {
+      "name": "difficulty_hard",
+      "value": "Hard"
+    },
+    {
+      "name": "continue_progress_msg",
+      "value": "Keep going! You have completed %s of the progress"
+    },
+    {
+      "name": "join_success_msg",
+      "value": "Successfully joined %s! Let's start this healthy journey!"
+    },
+    {
+      "name": "health_expert_name",
+      "value": "Health Expert"
+    },
+    {
+      "name": "health_expert_title",
+      "value": "Health Expert"
+    },
+    {
+      "name": "today_exercise_checkin",
+      "value": "Today's Exercise Check-in"
+    },
+    {
+      "name": "exercise_post_content",
+      "value": "Completed a 5km morning run today, feeling great! Exercise really fills you with energy."
+    },
+    {
+      "name": "hours_ago_2",
+      "value": "2 hours ago"
+    },
+    {
+      "name": "tag_morning_run",
+      "value": "morning run"
+    },
+    {
+      "name": "tag_healthy_life",
+      "value": "healthy life"
+    },
+    {
+      "name": "tag_exercise_checkin",
+      "value": "exercise checkin"
+    },
+    {
+      "name": "nutritionist_name",
+      "value": "Nutritionist Wang"
+    },
+    {
+      "name": "nutrition_expert_title",
+      "value": "Nutrition Expert"
+    },
+    {
+      "name": "healthy_diet_share",
+      "value": "Healthy Diet Share"
+    },
+    {
+      "name": "diet_post_content",
+      "value": "Today I'm sharing a balanced breakfast combo: oatmeal + boiled egg + vegetable salad, both delicious and healthy!"
+    },
+    {
+      "name": "hours_ago_4",
+      "value": "4 hours ago"
+    },
+    {
+      "name": "tag_healthy_diet",
+      "value": "healthy diet"
+    },
+    {
+      "name": "tag_nutrition_match",
+      "value": "nutrition match"
+    },
+    {
+      "name": "tag_breakfast",
+      "value": "breakfast"
+    },
+    {
+      "name": "sleep_expert_name",
+      "value": "Sleep Expert"
+    },
+    {
+      "name": "sleep_consultant_title",
+      "value": "Sleep Consultant"
+    },
+    {
+      "name": "quality_sleep_tips",
+      "value": "Quality Sleep Tips"
+    },
+    {
+      "name": "sleep_post_content",
+      "value": "Sharing a tip to improve sleep quality: no phone 1 hour before bed, listen to soft music instead - works great!"
+    },
+    {
+      "name": "yesterday",
+      "value": "yesterday"
+    },
+    {
+      "name": "tag_sleep_quality",
+      "value": "sleep quality"
+    },
+    {
+      "name": "tag_healthy_habits",
+      "value": "healthy habits"
+    },
+    {
+      "name": "tag_life_tips",
+      "value": "life tips"
+    },
+    {
+      "name": "walking_challenge_desc",
+      "value": "Complete 8000 steps daily for 30 days"
+    },
+    {
+      "name": "walking_challenge_detail",
+      "value": "Through 30 days of consistent walking, develop good exercise habits. 8000 steps daily is the basic exercise amount recommended by WHO, effectively improving cardiopulmonary function, strengthening lower limb muscles, promoting metabolism, and helping control weight. This challenge is suitable for all age groups, requires no special equipment, and can be done anytime, anywhere."
+    },
+    {
+      "name": "duration_30days",
+      "value": "30 days"
+    },
+    {
+      "name": "category_exercise_health",
+      "value": "Exercise Health"
+    },
+    {
+      "name": "benefit_cardio",
+      "value": "Improve cardiopulmonary function and enhance physical fitness"
+    },
+    {
+      "name": "benefit_circulation",
+      "value": "Promote blood circulation and prevent cardiovascular diseases"
+    },
+    {
+      "name": "benefit_muscle_strength",
+      "value": "Strengthen lower limb muscle strength and bone density"
+    },
+    {
+      "name": "benefit_weight_control",
+      "value": "Help control weight and burn excess fat"
+    },
+    {
+      "name": "benefit_sleep_quality",
+      "value": "Improve sleep quality and relieve stress"
+    },
+    {
+      "name": "benefit_mental_state",
+      "value": "Enhance mental state and boost confidence"
+    },
+    {
+      "name": "goal_daily_steps",
+      "value": "Walk over 8000 steps daily"
+    },
+    {
+      "name": "goal_record_data",
+      "value": "Record daily steps and exercise duration"
+    },
+    {
+      "name": "goal_different_routes",
+      "value": "Choose different routes to add fun"
+    },
+    {
+      "name": "goal_steady_pace",
+      "value": "Maintain steady pace to avoid over-fatigue"
+    },
+    {
+      "name": "goal_comfortable_shoes",
+      "value": "Wear comfortable sports shoes"
+    },
+    {
+      "name": "goal_hydration",
+      "value": "Adequate water intake"
+    },
+    {
+      "name": "tip_multiple_sessions",
+      "value": "Can be completed in multiple sessions, like morning, noon, and evening"
+    },
+    {
+      "name": "tip_commute_walking",
+      "value": "Use commute time for walking, killing two birds with one stone"
+    },
+    {
+      "name": "tip_invite_friends",
+      "value": "Invite friends and family to join and supervise each other"
+    },
+    {
+      "name": "tip_use_apps",
+      "value": "Use pedometer or mobile apps to track progress"
+    },
+    {
+      "name": "tip_scenic_routes",
+      "value": "Choose scenic routes and enjoy the process"
+    },
+    {
+      "name": "tip_indoor_alternatives",
+      "value": "On rainy days, walk stairs indoors or march in place"
+    },
+    {
+      "name": "healthy_diet_21days",
+      "value": "21-Day Healthy Diet"
+    },
+    {
+      "name": "diet_challenge_desc",
+      "value": "21-day healthy eating habit formation"
+    },
+    {
+      "name": "diet_challenge_detail",
+      "value": "Scientific research shows that 21 days is the shortest cycle to form a new habit. Through 21 days of healthy eating practice, help you establish scientific nutrition concepts, learn to control calorie intake reasonably, increase the proportion of vegetables and fruits, reduce high-sugar and high-fat foods, cultivate light eating habits, and lay the foundation for long-term healthy living."
+    },
+    {
+      "name": "duration_21days",
+      "value": "21 days"
+    },
+    {
+      "name": "category_nutrition_diet",
+      "value": "Nutrition Diet"
+    },
+    {
+      "name": "diet_benefit_structure",
+      "value": "Establish scientific dietary structure and habits"
+    },
+    {
+      "name": "diet_benefit_weight",
+      "value": "Control weight and prevent obesity-related diseases"
+    },
+    {
+      "name": "diet_benefit_nutrition",
+      "value": "Provide adequate nutrition and enhance immunity"
+    },
+    {
+      "name": "diet_benefit_digestion",
+      "value": "Improve gut health and promote digestion"
+    },
+    {
+      "name": "diet_benefit_blood_sugar",
+      "value": "Stabilize blood sugar and prevent diabetes"
+    },
+    {
+      "name": "diet_benefit_skin",
+      "value": "Improve skin condition and delay aging"
+    },
+    {
+      "name": "diet_goal_balanced_meals",
+      "value": "Include protein, carbohydrates, and vegetables in each meal"
+    },
+    {
+      "name": "diet_goal_vegetables_fruits",
+      "value": "Consume 5-7 servings of different colored fruits and vegetables daily"
+    },
+    {
+      "name": "diet_goal_whole_grains",
+      "value": "Choose whole grain foods and reduce refined sugar"
+    },
+    {
+      "name": "diet_goal_low_salt_oil",
+      "value": "Control oil and salt intake, eat light"
+    },
+    {
+      "name": "diet_goal_regular_meals",
+      "value": "Eat regularly and avoid overeating"
+    },
+    {
+      "name": "diet_goal_hydration",
+      "value": "Drink 1500-2000ml of water daily"
+    },
+    {
+      "name": "diet_tip_plan_ahead",
+      "value": "Plan weekly menus in advance to avoid last-minute decisions"
+    },
+    {
+      "name": "diet_tip_read_labels",
+      "value": "Learn to read food nutrition labels and choose healthy foods"
+    },
+    {
+      "name": "diet_tip_small_plates",
+      "value": "Use small plates to help control portion sizes"
+    },
+    {
+      "name": "diet_tip_chew_slowly",
+      "value": "Chew slowly, 20-30 times per bite"
+    },
+    {
+      "name": "diet_tip_water_before_meals",
+      "value": "Drink a glass of water before meals to increase satiety"
+    },
+    {
+      "name": "diet_tip_healthy_snacks",
+      "value": "Prepare healthy snacks like nuts and fruits"
+    },
+    {
+      "name": "early_sleep_challenge",
+      "value": "Early Sleep Challenge"
+    },
+    {
+      "name": "sleep_challenge_desc",
+      "value": "Sleep before 11 PM and wake up before 7 AM for 14 consecutive days"
+    },
+    {
+      "name": "sleep_challenge_detail",
+      "value": "Modern people commonly suffer from sleep deprivation and irregular schedules. Through 14 days of early sleep and early rising challenge, help you readjust your biological clock and establish healthy sleep patterns. Adequate sleep is important for body repair and brain memory organization. Regular schedules can significantly improve quality of life and work efficiency."
+    },
+    {
+      "name": "duration_14days",
+      "value": "14 days"
+    },
+    {
+      "name": "category_sleep_health",
+      "value": "Sleep Health"
+    },
+    {
+      "name": "sleep_benefit_circadian",
+      "value": "Adjust biological clock and establish regular schedule"
+    },
+    {
+      "name": "sleep_benefit_memory",
+      "value": "Improve sleep quality and enhance memory"
+    },
+    {
+      "name": "sleep_benefit_immunity",
+      "value": "Strengthen immune system and prevent diseases"
+    },
+    {
+      "name": "sleep_benefit_mood",
+      "value": "Improve emotional state and reduce anxiety"
+    },
+    {
+      "name": "sleep_benefit_productivity",
+      "value": "Enhance work efficiency and focus"
+    },
+    {
+      "name": "sleep_benefit_growth_hormone",
+      "value": "Promote growth hormone secretion and delay aging"
+    },
+    {
+      "name": "sleep_goal_bedtime",
+      "value": "Go to bed before 11 PM every night"
+    },
+    {
+      "name": "sleep_goal_wake_time",
+      "value": "Wake up before 7 AM daily, no snoozing"
+    },
+    {
+      "name": "sleep_goal_duration",
+      "value": "Ensure 7-8 hours of sleep"
+    },
+    {
+      "name": "sleep_goal_no_devices",
+      "value": "No electronic devices 1 hour before bed"
+    },
+    {
+      "name": "sleep_goal_environment",
+      "value": "Create comfortable sleep environment"
+    },
+    {
+      "name": "sleep_goal_record_quality",
+      "value": "Record sleep quality and wake-up feelings"
+    },
+    {
+      "name": "sleep_tip_no_exercise",
+      "value": "Avoid vigorous exercise 2 hours before bed"
+    },
+    {
+      "name": "sleep_tip_relaxing_music",
+      "value": "Listen to soft music or meditate for relaxation"
+    },
+    {
+      "name": "sleep_tip_temperature",
+      "value": "Maintain bedroom temperature at 18-22°C"
+    },
+    {
+      "name": "sleep_tip_blackout_curtains",
+      "value": "Use blackout curtains to create dark environment"
+    },
+    {
+      "name": "sleep_tip_bedtime_routine",
+      "value": "Establish fixed bedtime rituals"
+    },
+    {
+      "name": "sleep_tip_weekend_consistency",
+      "value": "Maintain same schedule on weekends too"
+    },
+    {
+      "name": "just_now",
+      "value": "Just now"
+    },
+    {
+      "name": "steps",
+      "value": "steps"
+    },
+    {
+      "name": "add_new_music",
+      "value": "Add New Music"
+    },
+    {
+      "name": "song_title_placeholder",
+      "value": "Song Title"
+    },
+    {
+      "name": "song_desc_placeholder",
+      "value": "Song Description"
+    },
+    {
+      "name": "category_placeholder",
+      "value": "Category (e.g.: Light Music)"
+    },
+    {
+      "name": "select_audio_file",
+      "value": "Select Audio File (To be implemented)"
+    },
+    {
+      "name": "add",
+      "value": "Add"
+    },
+    {
+      "name": "category_custom",
+      "value": "Custom"
+    },
+    {
+      "name": "sleep_music_title",
+      "value": "Sleep Music"
+    },
+    {
+      "name": "natural_rain",
+      "value": "Natural Rain"
+    },
+    {
+      "name": "natural_rain_desc",
+      "value": "Soothing rain sounds to help relax your mind"
+    },
+    {
+      "name": "white_noise",
+      "value": "White Noise"
+    },
+    {
+      "name": "white_noise_desc",
+      "value": "Stable white noise to mask environmental sounds"
+    },
+    {
+      "name": "light_music",
+      "value": "Light Music"
+    },
+    {
+      "name": "light_music_desc",
+      "value": "Gentle light music to promote sleep"
+    },
+    {
+      "name": "meditation_guide",
+      "value": "Meditation Guide"
+    },
+    {
+      "name": "meditation_guide_desc",
+      "value": "Relaxing meditation audio to calm body and mind"
+    },
+    {
+      "name": "bedtime_story",
+      "value": "Bedtime Story"
+    },
+    {
+      "name": "bedtime_story_desc",
+      "value": "Gentle bedtime stories to accompany you to sleep"
+    },
+    {
+      "name": "forest_birds",
+      "value": "Forest Birds"
+    },
+    {
+      "name": "forest_birds_desc",
+      "value": "Morning forest with pleasant bird songs to help you sleep"
+    },
+    {
+      "name": "ocean_waves",
+      "value": "Ocean Waves"
+    },
+    {
+      "name": "ocean_waves_desc",
+      "value": "Gentle waves lapping the shore, relaxing body and mind"
+    },
+    {
+      "name": "category_nature",
+      "value": "Nature Sounds"
+    },
+    {
+      "name": "category_white_noise",
+      "value": "White Noise"
+    },
+    {
+      "name": "category_light_music",
+      "value": "Light Music"
+    },
+    {
+      "name": "category_meditation",
+      "value": "Meditation Music"
+    },
+    {
+      "name": "category_story",
+      "value": "Sleep Stories"
+    },
+    {
+      "name": "practical_tips_knowledge",
+      "value": "Practical Tips"
+    },
+    {
+      "name": "exercise_health_knowledge",
+      "value": "Exercise Health"
+    },
+    {
+      "name": "exercise_subtitle",
+      "value": "Scientific Exercise, Healthy Life"
+    },
+    {
+      "name": "exercise_importance_title",
+      "value": "Importance of Exercise"
+    },
+    {
+      "name": "exercise_importance_content",
+      "value": "Regular exercise is an important factor in maintaining physical health. Moderate exercise can enhance cardiopulmonary function, improve immunity, improve sleep quality, reduce stress, and prevent various chronic diseases. The World Health Organization recommends that adults engage in at least 150 minutes of moderate-intensity aerobic exercise per week."
+    },
+    {
+      "name": "exercise_types_title",
+      "value": "Exercise Type Selection"
+    },
+    {
+      "name": "exercise_types_content",
+      "value": "Aerobic exercise: such as running, swimming, cycling, etc., helps improve cardiopulmonary function and burn fat.\nStrength training: such as weightlifting, push-ups, etc., helps enhance muscle strength and bone density.\nFlexibility training: such as yoga, stretching, etc., helps improve body flexibility and balance.\nIt is recommended to combine these three types of exercise to develop a comprehensive exercise plan."
+    },
+    {
+      "name": "exercise_safety_title",
+      "value": "Exercise Safety Precautions"
+    },
+    {
+      "name": "exercise_safety_content",
+      "value": "Warm up adequately before exercise and stretch appropriately after exercise. Choose appropriate exercise intensity according to your physical condition and gradually increase the amount of exercise. Pay attention to hydration during exercise and wear appropriate exercise equipment. If you have chronic diseases or physical discomfort, consult a doctor before exercising."
+    },
+    {
+      "name": "exercise_tip1",
+      "value": "Exercise at least 30 minutes a day, can be done in segments"
+    },
+    {
+      "name": "exercise_tip2",
+      "value": "Choose exercise methods you enjoy, easier to stick with"
+    },
+    {
+      "name": "exercise_tip3",
+      "value": "Do proper warm-up and stretching before and after exercise"
+    },
+    {
+      "name": "exercise_tip4",
+      "value": "Maintain appropriate heart rate during exercise, avoid overexertion"
+    },
+    {
+      "name": "exercise_tip5",
+      "value": "Make exercise plans and track exercise progress"
+    },
+    {
+      "name": "exercise_tip6",
+      "value": "Exercise with friends to increase fun and motivation"
+    },
+    {
+      "name": "nutrition_diet_knowledge",
+      "value": "Nutrition Diet"
+    },
+    {
+      "name": "nutrition_subtitle",
+      "value": "Balanced Nutrition, Proper Combination"
+    },
+    {
+      "name": "nutrition_importance_title",
+      "value": "Importance of Balanced Diet"
+    },
+    {
+      "name": "nutrition_importance_content",
+      "value": "A balanced diet is the foundation for maintaining physical health. Proper nutritional combinations can provide the body with various nutrients it needs, including proteins, carbohydrates, fats, vitamins, and minerals. Good eating habits help maintain ideal weight and prevent malnutrition and various chronic diseases."
+    },
+    {
+      "name": "nutrition_nutrients_title",
+      "value": "Role of Nutrients"
+    },
+    {
+      "name": "nutrition_nutrients_content",
+      "value": "Protein: Builds and repairs body tissues, maintains immune function. Main sources: meat, fish, eggs, beans.\nCarbohydrates: Provide the body's main energy source. Main sources: grains, tubers, fruits.\nFats: Provide energy, help vitamin absorption. Main sources: vegetable oils, nuts, fish.\nVitamins and minerals: Regulate various physiological functions of the body. Main sources: vegetables, fruits, whole grains."
+    },
+    {
+      "name": "nutrition_principles_title",
+      "value": "Healthy Eating Principles"
+    },
+    {
+      "name": "nutrition_principles_content",
+      "value": "Diversify food intake, consume different types of food daily. Control total calorie intake, maintain energy balance. Increase vegetable and fruit intake, reduce high-sugar, high-salt, high-fat foods. Choose quality proteins, moderate intake of healthy fats. Maintain regular meal times, avoid overeating."
+    },
+    {
+      "name": "nutrition_tip1",
+      "value": "Eat 5-9 servings of fruits and vegetables daily, the more colorful the better"
+    },
+    {
+      "name": "nutrition_tip2",
+      "value": "Choose whole grain foods, reduce refined sugar intake"
+    },
+    {
+      "name": "nutrition_tip3",
+      "value": "Moderate intake of quality proteins, such as fish and beans"
+    },
+    {
+      "name": "nutrition_tip4",
+      "value": "Control salt intake, no more than 6 grams per day"
+    },
+    {
+      "name": "nutrition_tip5",
+      "value": "Drink plenty of water, at least 8 glasses per day"
+    },
+    {
+      "name": "nutrition_tip6",
+      "value": "Chew slowly, helps digestion and portion control"
+    },
+    {
+      "name": "sleep_management_knowledge",
+      "value": "Sleep Management"
+    },
+    {
+      "name": "sleep_subtitle",
+      "value": "Quality Sleep, Full Energy"
+    },
+    {
+      "name": "sleep_importance_title",
+      "value": "Importance of Sleep"
+    },
+    {
+      "name": "sleep_importance_content",
+      "value": "Adequate sleep is crucial for physical and mental health. During sleep, the body performs tissue repair, memory consolidation, and immune system regulation. Good sleep helps improve attention, learning ability, and emotional regulation, while reducing the risk of cardiovascular disease, diabetes, and obesity. Adults need 7-9 hours of sleep per night."
+    },
+    {
+      "name": "sleep_cycle_title",
+      "value": "Sleep Cycles and Quality"
+    },
+    {
+      "name": "sleep_cycle_content",
+      "value": "Sleep is divided into non-rapid eye movement (NREM) sleep and rapid eye movement (REM) sleep. NREM sleep includes light and deep sleep, which helps physical recovery; REM sleep helps memory consolidation and emotional processing. A complete sleep cycle is about 90-120 minutes, and a night usually experiences 4-6 cycles. Sleep quality is more important than sleep duration."
+    },
+    {
+      "name": "sleep_improvement_title",
+      "value": "Methods to Improve Sleep"
+    },
+    {
+      "name": "sleep_improvement_content",
+      "value": "Establish regular sleep schedule, go to bed and wake up at the same time daily. Create a good sleep environment: keep bedroom quiet, dark, and cool. Avoid using electronic devices before bed, engage in relaxing activities like reading or meditation. Avoid heavy meals, alcohol, or caffeine before bed. Exercise moderately during the day, but avoid vigorous exercise before bed."
+    },
+    {
+      "name": "sleep_tip1",
+      "value": "Establish fixed bedtime rituals to help body prepare for sleep"
+    },
+    {
+      "name": "sleep_tip2",
+      "value": "Avoid using phones, computers and other electronic devices 1 hour before bed"
+    },
+    {
+      "name": "sleep_tip3",
+      "value": "Keep bedroom temperature between 18-22 degrees"
+    },
+    {
+      "name": "sleep_tip4",
+      "value": "Use comfortable mattress and pillows"
+    },
+    {
+      "name": "sleep_tip5",
+      "value": "If unable to fall asleep within 20 minutes, get up and do quiet activities"
+    },
+    {
+      "name": "sleep_tip6",
+      "value": "Avoid doing activities unrelated to sleep in bed"
+    },
+    {
+      "name": "mental_health_knowledge",
+      "value": "Mental Health"
+    },
+    {
+      "name": "mental_subtitle",
+      "value": "Emotional Management, Mental Balance"
+    },
+    {
+      "name": "mental_importance_title",
+      "value": "Importance of Mental Health"
+    },
+    {
+      "name": "mental_importance_content",
+      "value": "Mental health is an important component of overall health. Good mental state helps cope with life stress, build positive interpersonal relationships, and improve quality of life and work efficiency. Mental health issues such as anxiety and depression can affect physical health, so paying attention to and maintaining mental health is equally important."
+    },
+    {
+      "name": "mental_emotion_title",
+      "value": "Emotional Management Techniques"
+    },
+    {
+      "name": "mental_emotion_content",
+      "value": "Recognize and accept your emotions: Understand the sources and effects of emotions, don't suppress or deny negative emotions.\nDeep breathing and relaxation techniques: Relieve tension through deep breathing, progressive muscle relaxation, etc.\nPositive thinking: Cultivate optimistic thinking patterns, focus on positive aspects.\nExpress emotions: Express inner feelings through journaling, talking with friends, etc."
+    },
+    {
+      "name": "mental_stress_title",
+      "value": "Stress Management Strategies"
+    },
+    {
+      "name": "mental_stress_content",
+      "value": "Identify stress sources: Understand specific causes of stress and develop coping strategies. Time management: Arrange time reasonably, avoid taking on too much. Seek support: Share with family and friends, seek professional help when necessary. Cultivate hobbies: Relax through favorite activities. Maintain work-life balance: Avoid overworking, leave time for rest and entertainment."
+    },
+    {
+      "name": "mental_tip1",
+      "value": "Spend 10-15 minutes daily on meditation or deep breathing exercises"
+    },
+    {
+      "name": "mental_tip2",
+      "value": "Maintain positive social relationships, contact friends and family regularly"
+    },
+    {
+      "name": "mental_tip3",
+      "value": "Cultivate gratitude, record 3 things to be grateful for daily"
+    },
+    {
+      "name": "mental_tip4",
+      "value": "Set reasonable goals, avoid perfectionism"
+    },
+    {
+      "name": "mental_tip5",
+      "value": "Learn to say 'no', don't take on excessive responsibilities"
+    },
+    {
+      "name": "mental_tip6",
+      "value": "Seek help promptly when facing difficulties, don't bear alone"
+    },
+    {
+      "name": "show_all",
+      "value": "Show All"
+    },
+    {
+      "name": "show_favorites_only",
+      "value": "Favorites Only"
+    },
+    {
+      "name": "edit_sleep_suggestion",
+      "value": "Edit Sleep Suggestion"
+    },
+    {
+      "name": "add_sleep_suggestion",
+      "value": "Add your sleep improvement suggestions:"
+    },
+    {
+      "name": "suggestion_title_placeholder",
+      "value": "Suggestion Title"
+    },
+    {
+      "name": "suggestion_desc_placeholder",
+      "value": "Suggestion Description"
+    },
+    {
+      "name": "add_suggestion",
+      "value": "Add Suggestion"
+    },
+    {
+      "name": "regular_schedule_sleep",
+      "value": "Regular Schedule"
+    },
+    {
+      "name": "regular_schedule_desc",
+      "value": "Go to bed and wake up at the same time every day to help stabilize your biological clock."
+    },
+    {
+      "name": "bedtime_relaxation",
+      "value": "Bedtime Relaxation"
+    },
+    {
+      "name": "bedtime_relaxation_desc",
+      "value": "Listen to soothing music, meditate or soak your feet before bed to help relax your body and mind."
+    },
+    {
+      "name": "reduce_electronics",
+      "value": "Reduce Electronics"
+    },
+    {
+      "name": "reduce_electronics_desc",
+      "value": "Reduce blue light stimulation from phones, computers, etc. 1 hour before bed."
+    },
+    {
+      "name": "category_schedule",
+      "value": "Schedule"
+    },
+    {
+      "name": "category_relaxation",
+      "value": "Relaxation"
+    },
+    {
+      "name": "category_environment",
+      "value": "Environment"
+    },
+    {
+      "name": "category_diet",
+      "value": "Diet"
+    },
+    {
+      "name": "category_exercise",
+      "value": "Exercise"
+    },
+    {
+      "name": "medicine_reminder",
+      "value": "Medicine Reminder"
+    },
+    {
+      "name": "add_new_reminder",
+      "value": "Add New Reminder"
+    },
+    {
+      "name": "medicine_name_placeholder",
+      "value": "Enter medicine name"
+    },
+    {
+      "name": "dosage_placeholder",
+      "value": "Enter dosage"
+    },
+    {
+      "name": "add_reminder_btn",
+      "value": "Add Reminder"
+    },
+    {
+      "name": "reminder_list",
+      "value": "Reminder List"
+    },
+    {
+      "name": "dosage_label",
+      "value": "Dosage"
+    },
+    {
+      "name": "time_label",
+      "value": "Time"
+    },
+    {
+      "name": "medicine_name_hint_2",
+      "value": "Please fill in medicine name and dosage"
+    },
+    {
+      "name": "reminder_title",
+      "value": "Medicine Reminder"
+    },
+    {
+      "name": "confirm_ok",
+      "value": "OK"
+    },
+    {
+      "name": "repeat_daily",
+      "value": "Daily"
+    },
+    {
+      "name": "repeat_weekday",
+      "value": "Weekdays"
+    },
+    {
+      "name": "repeat_weekend",
+      "value": "Weekends"
+    },
+    {
+      "name": "repeat_custom",
+      "value": "Custom"
+    },
+    {
+      "name": "priority_high",
+      "value": "High Priority"
+    },
+    {
+      "name": "priority_medium",
+      "value": "Medium Priority"
+    },
+    {
+      "name": "priority_low",
+      "value": "Low Priority"
+    },
+    {
+      "name": "sound_default",
+      "value": "Default Sound"
+    },
+    {
+      "name": "sound_1",
+      "value": "Sound 1"
+    },
+    {
+      "name": "sound_2",
+      "value": "Sound 2"
+    },
+    {
+      "name": "feedback_title",
+      "value": "Feedback"
+    },
+    {
+      "name": "feedback_type",
+      "value": "Feedback Type"
+    },
+    {
+      "name": "feedback_content",
+      "value": "Feedback Content"
+    },
+    {
+      "name": "contact_info",
+      "value": "Contact Info (Optional)"
+    },
+    {
+      "name": "submit_feedback",
+      "value": "Submit Feedback"
+    },
+    {
+      "name": "feedback_success",
+      "value": "Feedback Submitted Successfully"
+    },
+    {
+      "name": "feedback_thanks",
+      "value": "Thank you for your feedback, we will carefully consider your suggestions"
+    },
+    {
+      "name": "back",
+      "value": "Back"
+    },
+    {
+      "name": "type_suggestion",
+      "value": "Feature Suggestion"
+    },
+    {
+      "name": "type_bug",
+      "value": "Bug Report"
+    },
+    {
+      "name": "type_experience",
+      "value": "Experience Optimization"
+    },
+    {
+      "name": "type_other",
+      "value": "Other"
+    },
+    {
+      "name": "content_placeholder_back",
+      "value": "Please describe your suggestions or issues in detail..."
+    },
+    {
+      "name": "contact_placeholder",
+      "value": "Please leave your phone number or email for us to contact you"
+    },
+    {
+      "name": "edit_relief_method",
+      "value": "Edit Relief Method"
+    },
+    {
+      "name": "add_relief_method",
+      "value": "Add your fatigue relief methods:"
+    },
+    {
+      "name": "method_title_placeholder",
+      "value": "Method Title"
+    },
+    {
+      "name": "method_desc_placeholder",
+      "value": "Method Description"
+    },
+    {
+      "name": "save_changes",
+      "value": "Save Changes"
+    },
+    {
+      "name": "add_relief_method_btn",
+      "value": "Add Relief Method"
+    },
+    {
+      "name": "eye_exercise",
+      "value": "Eye Exercise"
+    },
+    {
+      "name": "eye_exercise_desc",
+      "value": "Relieve eye fatigue, suitable after long periods of eye use."
+    },
+    {
+      "name": "neck_stretch",
+      "value": "Neck Stretch"
+    },
+    {
+      "name": "neck_stretch_desc",
+      "value": "Simple neck stretching exercises to relieve shoulder and neck stiffness."
+    },
+    {
+      "name": "deep_breathing",
+      "value": "Deep Breathing"
+    },
+    {
+      "name": "deep_breathing_desc",
+      "value": "Deep breathing helps relax the body and mind, reducing stress."
+    },
+    {
+      "name": "category_whole_body",
+      "value": "Whole Body"
+    },
+    {
+      "name": "category_eye",
+      "value": "Eyes"
+    },
+    {
+      "name": "category_neck",
+      "value": "Neck"
+    },
+    {
+      "name": "category_hand",
+      "value": "Hands"
+    },
+    {
+      "name": "category_leg",
+      "value": "Legs"
+    },
+    {
+      "name": "online_customer_service",
+      "value": "Online Customer Service"
+    },
+    {
+      "name": "welcome_message_customer",
+      "value": "Hello, I'm your dedicated customer service assistant. How can I help you?\n\nYou can try asking questions using **Markdown format**:\n- List items\n- Code blocks\n```\nconst test = \"example code\";\n```"
+    },
+    {
+      "name": "thinking_placeholder",
+      "value": "Thinking..."
+    },
+    {
+      "name": "input_placeholder",
+      "value": "Please enter your question..."
+    },
+    {
+      "name": "system_prompt_customer",
+      "value": "You are a professional software customer service representative responsible for answering user questions about our products. Please respond to user questions with a friendly and professional tone, provide accurate help information, and keep answers concise and clear. Please use Markdown format appropriately to organize your answers, such as using headings, lists, bold text, etc., to make content clearer. If you need to show code, please use code blocks. If you cannot answer a question, please honestly explain and provide possible solutions or consultation channels."
+    },
+    {
+      "name": "error_response",
+      "value": "Sorry, I'm temporarily unable to respond"
+    },
+    {
+      "name": "family_members_title_847592836",
+      "value": "My Family Members"
+    },
+    {
+      "name": "special_care_members_629385741",
+      "value": "★ Special Care Members"
+    },
+    {
+      "name": "remark_action_384759261",
+      "value": "Remark"
+    },
+    {
+      "name": "remark_toast_927384615",
+      "value": "Click Remark"
+    },
+    {
+      "name": "family_members_count_639481752",
+      "value": " family members and contacts"
+    },
+    {
+      "name": "new_member_758294637",
+      "value": "New Member"
+    },
+    {
+      "name": "group_chat_472961853",
+      "value": "Group Chat"
+    },
+    {
+      "name": "common_health_goals_851374269",
+      "value": "Common Health Goals"
+    },
+    {
+      "name": "profile_settings_title_8472936851",
+      "value": "Profile Settings"
+    },
+    {
+      "name": "health_condition_7293684152",
+      "value": "Health Condition"
+    },
+    {
+      "name": "set_special_care_member_5948372610",
+      "value": "Set as Special Care Member"
+    },
+    {
+      "name": "add_to_blacklist_3761829450",
+      "value": "Add to Blacklist"
+    },
+    {
+      "name": "delete_member_9285047361",
+      "value": "Delete"
+    },
+    {
+      "name": "click_action_6174930258",
+      "value": "Click"
+    },{
+      "name": "radar_add_member_title_827395614",
+      "value": "Radar Add Member"
+    },
+    {
+      "name": "searching_nearby_people_619472853",
+      "value": "Searching for nearby people..."
+    },
+    {
+      "name": "stop_scanning_btn_394758162",
+      "value": "Stop Scanning"
+    },
+    {
+      "name": "start_scanning_btn_751826394",
+      "value": "Start Scanning"
+    },
+    {
+      "name": "accept_action_258174639",
+      "value": "Accept"
+    },
+    {
+      "name": "click_action_prefix_472851936",
+      "value": "Click"
+    },
+    {
+      "name": "distance_prefix_639471852",
+      "value": "Distance:"
+    },
+    {
+      "name": "distance_meter_suffix_174629385",
+      "value": "m"
+    },
+    {
+      "name": "member_name_zhangsan_917384625",
+      "value": "Zhang San"
+    },
+    {
+      "name": "member_name_lisi_582947163",
+      "value": "Li Si"
+    },
+    {
+      "name": "member_name_wangwu_365821749",
+      "value": "Wang Wu"
+    },
+    {
+      "name": "new_member_title_847392516",
+      "value": "New Member"
+    },
+    {
+      "name": "add_member_btn_629384751",
+      "value": "Add Member"
+    },
+    {
+      "name": "health_phone_placeholder_573829461",
+      "value": "Health ID/Phone Number"
+    },
+    {
+      "name": "add_phone_contacts_392847516",
+      "value": "Add Phone Contacts"
+    },
+    {
+      "name": "three_days_ago_758392641",
+      "value": "Three days ago"
+    },
+    {
+      "name": "accept_action_184759362",
+      "value": "Accept"
+    },
+    {
+      "name": "click_prefix_927384651",
+      "value": "Click"
+    },
+    {
+      "name": "welcome_message_463829175",
+      "value": "Welcome"
+    },
+    {
+      "name": "hello_greeting_729384651",
+      "value": "hello"
+    },
+    {
+      "name": "image_placeholder_385927461",
+      "value": "[Image]"
+    },
+    {
+      "name": "animation_emoji_674839251",
+      "value": "[Animation Emoji]"
+    },
+    {
+      "name": "member_name_zhangsan_593847261",
+      "value": "Zhang San"
+    },
+    {
+      "name": "member_name_lisi_847392615",
+      "value": "Li Si"
+    },
+    {
+      "name": "member_name_wangwu_273948561",
+      "value": "Wang Wu"
+    },
+    {
+      "name": "member_name_zhaoliu_938475162",
+      "value": "Zhao Liu"
+    },
+    {
+      "name": "member_name_hahaha_574829361",
+      "value": "Hahaha"
+    },
+    {
+      "name": "search_placeholder_text_847392618475",
+      "value": "Search"
+    },
+    {
+      "name": "new_member_title_629384750192",
+      "value": "New Member"
+    },
+    {
+      "name": "common_health_goals_573829461847",
+      "value": "Common Health Goals"
+    },
+    {
+      "name": "group_chat_title_392847516293",
+      "value": "Group Chat"
+    },
+    {
+      "name": "search_placeholder_847392618475",
+      "value": "Search"
+    },
+    {
+      "name": "new_member_cell_629384750192",
+      "value": "New Member"
+    },
+    {
+      "name": "common_health_goals_cell_573829461847",
+      "value": "Common Health Goals"
+    },
+    {
+      "name": "group_chat_cell_392847516293",
+      "value": "Group Chat"
+    },
+    {
+      "name": "group_chat_title_947382651847",
+      "value": "Group Chat"
+    },
+    {
+      "name": "no_data_placeholder_582947361852",
+      "value": "No Data"
+    },
+    {
+      "name": "search_placeholder_629384751639",
+      "value": "Search"
+    },
+    {
+      "name": "click_prefix_text_847392618475",
+      "value": "Click"
+    },
+    {
+      "name": "loving_family_group_573829461847",
+      "value": "Loving Family"
+    },
+    {
+      "name": "group_chat_2_name_392847516293",
+      "value": "Group Chat 2"
+    },
+    {
+      "name": "group_chat_3_name_758394627184",
+      "value": "Group Chat 3"
+    },
+    {
+      "name": "group_chat_4_name_184759362847",
+      "value": "Group Chat 4"
+    },
+    {
+      "name": "group_chat_666_name_629384751952",
+      "value": "Group Chat 666"
+    },
+    {
+      "name": "hello_greeting_message_847392615738",
+      "value": "hello"
+    },
+    {
+      "name": "image_placeholder_573829461847",
+      "value": "[Image]"
+    },
+    {
+      "name": "animation_emoji_text_392847516293",
+      "value": "[Animation Emoji]"
+    },
+    {
+      "name": "hhhhhh_group_name_758394627184",
+      "value": "HHHHHH"
+    },
+    {
+      "name": "hi_greeting_message_184759362847",
+      "value": "hi"
+    },
+    {
+      "name": "face_to_face_group_title_847392651847392",
+      "value": "Face-to-Face Group"
+    },
+    {
+      "name": "input_four_digits_hint_629384751639284",
+      "value": "Enter 4 digits to join the same group chat with nearby friends"
+    },
+    {
+      "name": "clear_key_text_573829461847392",
+      "value": "Clear"
+    },
+    {
+      "name": "delete_key_text_392847516293847",
+      "value": "Delete"
+    },
+    {
+      "name": "copy_group_number_btn_758394627184759",
+      "value": "Copy Group Number"
+    },
+    {
+      "name": "group_number_copied_tip_184759362847392",
+      "value": "Group number copied, can be shared with friends"
+    },
+    {
+      "name": "group_number_label_629384751952847",
+      "value": "Group Number"
+    },
+    {
+      "name": "tell_group_number_hint_847392615738294",
+      "value": "Please tell the group number to members who want to join"
+    },
+    {
+      "name": "group_number_copied_toast_573829461847392",
+      "value": "Group number copied"
+    },
+    {
+      "name": "input_four_digits_text_392847516293847",
+      "value": "Please enter 4 digits"
+    },
+    {
+      "name": "group_number_placeholder_758394627184759",
+      "value": "Please enter group number"
+    },
+    {
+      "name": "create_group_chat_btn_184759362847392",
+      "value": "Create Group Chat"
+    },
+    {
+      "name": "or_text_separator_629384751952847",
+      "value": "Or"
+    },
+    {
+      "name": "join_group_chat_btn_847392615738294",
+      "value": "Join Group Chat"
+    },
+    {
+      "name": "joining_group_chat_toast_573829461847392",
+      "value": "Joining group chat..."
+    },
+    {
+      "name": "add_member_title_847392651847392651",
+      "value": "Add Member"
+    },
+    {
+      "name": "health_phone_placeholder_629384751639284751",
+      "value": "Health ID/Phone Number"
+    },
+    {
+      "name": "my_health_id_text_573829461847392573",
+      "value": "My Health ID: abc"
+    },
+    {
+      "name": "radar_add_member_title_392847516293847516",
+      "value": "Radar Add Member"
+    },
+    {
+      "name": "radar_add_member_subtitle_758394627184759362",
+      "value": "Add Health Members"
+    },
+    {
+      "name": "face_to_face_group_title_184759362847392184",
+      "value": "Face-to-Face Group"
+    },
+    {
+      "name": "face_to_face_group_subtitle_629384751952847629",
+      "value": "Join the same group chat with family members"
+    },
+    {
+      "name": "health_customer_service_title_847392615738294847",
+      "value": "Health Customer Service"
+    },
+    {
+      "name": "health_customer_service_subtitle_573829461847392573",
+      "value": "Contact Us"
+    },
+    {
+      "name": "scan_qr_code_title_392847516293847392",
+      "value": "Scan QR Code"
+    },
+    {
+      "name": "click_prefix_toast_758394627184759758",
+      "value": "Click"
+    },
+    {
+      "name": "health_targets_management_title_847392651847392651847926",
+      "value": "Health Target Management"
+    },
+    {
+      "name": "in_progress_tab_629384751639284751639284751",
+      "value": "In Progress"
+    },
+    {
+      "name": "completed_tab_573829461847392573829461847",
+      "value": "Completed"
+    },
+    {
+      "name": "create_health_target_btn_392847516293847516293847516",
+      "value": "+ Create Health Target"
+    },
+    {
+      "name": "new_health_target_dialog_title_758394627184759362758394627",
+      "value": "New Health Target"
+    },
+    {
+      "name": "target_title_label_184759362847392184759362847",
+      "value": "Target Title"
+    },
+    {
+      "name": "target_description_label_629384751952847629384751952",
+      "value": "Target Description"
+    },
+    {
+      "name": "start_date_label_847392615738294847392615738",
+      "value": "Start Date"
+    },
+    {
+      "name": "end_date_label_573829461847392573829461847392",
+      "value": "End Date"
+    },
+    {
+      "name": "participants_label_392847516293847392847516293847",
+      "value": "Participants (comma separated)"
+    },
+    {
+      "name": "health_category_label_758394627184759758394627184759",
+      "value": "Health Category (Exercise/Walking/Diet/Outdoor/Sleep)"
+    },
+    {
+      "name": "cancel_btn_184759362847392184759362847392",
+      "value": "Cancel"
+    },
+    {
+      "name": "save_btn_629384751952847629384751952847",
+      "value": "Save"
+    },
+    {
+      "name": "please_input_prefix_847392615738294847392615738294",
+      "value": "Please enter "
+    },
+    {
+      "name": "exercise_category_573829461847392573829461847392573",
+      "value": "Exercise"
+    },
+    {
+      "name": "walking_category_392847516293847392847516293847392",
+      "value": "Walking"
+    },
+    {
+      "name": "diet_category_758394627184759758394627184759758",
+      "value": "Diet"
+    },
+    {
+      "name": "outdoor_category_184759362847392184759362847392184",
+      "value": "Outdoor"
+    },
+    {
+      "name": "sleep_category_629384751952847629384751952847629",
+      "value": "Sleep"
+    },
+    {
+      "name": "weekly_family_exercise_plan_847392615738294847392615738294847",
+      "value": "Weekly Family Exercise Plan"
+    },
+    {
+      "name": "weekly_exercise_description_573829461847392573829461847392573829",
+      "value": "Accumulate 300 minutes of exercise per week, with each family member contributing at least 60 minutes"
+    },
+    {
+      "name": "family_step_challenge_392847516293847392847516293847392847",
+      "value": "Family Step Challenge"
+    },
+    {
+      "name": "family_step_description_758394627184759758394627184759758394",
+      "value": "Achieve 500,000 total family steps this month, record and share daily steps"
+    },
+    {
+      "name": "healthy_diet_month_184759362847392184759362847392184759",
+      "value": "Healthy Diet Month"
+    },
+    {
+      "name": "healthy_diet_description_629384751952847629384751952847629384",
+      "value": "Family members consume at least 5 types of fruits and vegetables daily for one month, reduce high-sugar and high-fat foods"
+    },
+    {
+      "name": "spring_outdoor_activity_847392615738294847392615738294847392",
+      "value": "Spring Outdoor Activity"
+    },
+    {
+      "name": "spring_outdoor_description_573829461847392573829461847392573829461",
+      "value": "Organize family outdoor activities every weekend, such as hiking, cycling or park visits"
+    },
+    {
+      "name": "early_sleep_challenge_392847516293847392847516293847392847392",
+      "value": "Early Sleep Challenge"
+    },
+    {
+      "name": "early_sleep_description_758394627184759758394627184759758394627",
+      "value": "Maintain good sleep schedule for 21 consecutive days: sleep before 23:00, wake up before 7:00"
+    },
+    {
+      "name": "dad_participant_184759362847392184759362847392184759362",
+      "value": "Dad"
+    },
+    {
+      "name": "mom_participant_629384751952847629384751952847629384751",
+      "value": "Mom"
+    },
+    {
+      "name": "grandpa_participant_847392615738294847392615738294847392615",
+      "value": "Grandpa"
+    },
+    {
+      "name": "grandma_participant_573829461847392573829461847392573829461847",
+      "value": "Grandma"
+    },
+    {
+      "name": "me_participant_392847516293847392847516293847392847516",
+      "value": "Me"
+    },
+    {
+      "name": "li_yifei_participant_758394627184759758394627184759758394627",
+      "value": "Li Yifei"
+    },
+    {
+      "name": "lu_jinghao_participant_184759362847392184759362847392184759362847",
+      "value": "Lu Jinghao"
+    },
+    {
+      "name": "date_label_prefix_629384751952847629384751952847629384751952",
+      "value": "Date: "
+    },
+    {
+      "name": "participants_label_prefix_847392615738294847392615738294847392615738",
+      "value": "Participants: "
+    },
+    {
+      "name": "reactivate_btn_573829461847392573829461847392573829461847392",
+      "value": "Reactivate"
+    },
+    {
+      "name": "mark_complete_btn_392847516293847392847516293847392847516293",
+      "value": "Mark Complete"
+    },
+    {
+      "name": "delete_btn_758394627184759758394627184759758394627184759",
+      "value": "Delete"
+    },
+    {
+      "name": "no_health_targets_184759362847392184759362847392184759362847392",
+      "value": "No Health Targets"
+    },
+    {
+      "name": "create_first_target_hint_629384751952847629384751952847629384751952847",
+      "value": "Click the button below to create your first health target"
+    },
+    {
+      "name": "target_created_success_847392615738294847392615738294847392615738294",
+      "value": "Target created successfully"
+    },
+    {
+      "name": "please_fill_title_573829461847392573829461847392573829461847392573",
+      "value": "Please fill in the target title"
+    },
+    {
+      "name": "please_fill_dates_392847516293847392847516293847392847516293847392",
+      "value": "Please fill in complete dates"
+    },
+    {
+      "name": "please_add_participant_758394627184759758394627184759758394627184759758",
+      "value": "Please add at least one participant"
+    },
+    {
+      "name": "please_enter_valid_category_184759362847392184759362847392184759362847392184",
+      "value": "Please enter a valid health category"
+    },
+    {
+      "name": "target_deleted_629384751952847629384751952847629384751952847629384751",
+      "value": "Target deleted"
+    },
+    {
+      "name": "target_completed_847392615738294847392615738294847392615738294847392615",
+      "value": "Target completed"
+    },
+    {
+      "name": "target_reactivated_573829461847392573829461847392573829461847392573829461",
+      "value": "Target reactivated"
+    },
+    {
+      "name": "user_info_title_847392615738294629384751952847392",
+      "value": "User Info"
+    },
+    {
+      "name": "health_condition_label_573829461847392847392615738294751",
+      "value": "Health Condition"
+    },
+    {
+      "name": "send_message_text_392847516293847184759362847392615",
+      "value": "Send Message"
+    },
+    {
+      "name": "nickname_prefix_758394627184759629384751952847392",
+      "value": "Nickname: "
+    },
+    {
+      "name": "phone_prefix_184759362847392573829461847392847",
+      "value": "Phone: "
+    },
+    {
+      "name": "region_prefix_629384751952847847392615738294751",
+      "value": "Region: "
+    },
+    {
+      "name": "click_prefix_toast_847392615738294184759362847392",
+      "value": "Click"
+    },
+    {
+      "name": "energy_assistant_title_847392615738294629384751952847392615",
+      "value": "Energy Assistant"
+    },
+    {
+      "name": "sports_ranking_title_573829461847392847392615738294751629",
+      "value": "Sports Ranking"
+    },
+    {
+      "name": "sports_ranking_subtitle_392847516293847184759362847392615738",
+      "value": "View today's step ranking"
+    },
+    {
+      "name": "deepseek_assistant_title_758394627184759629384751952847392847",
+      "value": "DeepSeek Smart Entry Assistant"
+    },
+    {
+      "name": "deepseek_assistant_subtitle_184759362847392573829461847392847392",
+      "value": "AI helps you record"
+    },
+    {
+      "name": "health_memory_title_629384751952847847392615738294751629384",
+      "value": "Personalized Health Memory"
+    },
+    {
+      "name": "health_memory_subtitle_847392615738294184759362847392847392615",
+      "value": "Your health daily report has been generated, please check"
+    },
+    {
+      "name": "heart_rate_title_573829461847392847392615738294751629384751",
+      "value": "Heart Rate"
+    },
+    {
+      "name": "heart_rate_subtitle_392847516293847184759362847392615738294",
+      "value": "67bpm"
+    },
+    {
+      "name": "blood_oxygen_title_758394627184759629384751952847392847392",
+      "value": "Blood Oxygen Saturation"
+    },
+    {
+      "name": "blood_oxygen_subtitle_184759362847392573829461847392847392615",
+      "value": "98%"
+    },
+    {
+      "name": "step_analysis_title_629384751952847847392615738294751629384",
+      "value": "Step Analysis"
+    },
+    {
+      "name": "step_analysis_subtitle_847392615738294184759362847392847392615",
+      "value": "114514 steps"
+    },
+    {
+      "name": "sleep_title_573829461847392847392615738294751629384751952",
+      "value": "Sleep"
+    },
+    {
+      "name": "sleep_subtitle_392847516293847184759362847392615738294847",
+      "value": "23 hours 59 minutes"
+    },
+    {
+      "name": "calories_title_758394627184759629384751952847392847392615",
+      "value": "Active Calories"
+    },
+    {
+      "name": "calories_subtitle_184759362847392573829461847392847392615738",
+      "value": "100000Kcal"
+    },
+    {
+      "name": "mood_title_629384751952847847392615738294751629384751952",
+      "value": "Mood State"
+    },
+    {
+      "name": "mood_subtitle_847392615738294184759362847392847392615738294",
+      "value": "Red Warm"
+    },
+    {
+      "name": "start_group_chat_text_573829461847392847392615738294751629384",
+      "value": "Group Chat"
+    },
+    {
+      "name": "add_member_text_392847516293847184759362847392615738294847",
+      "value": "Add Member"
+    },
+    {
+      "name": "deepseek_text_758394627184759629384751952847392847392615738",
+      "value": "DeepSeek"
+    },
+    {
+      "name": "open_membership_text_184759362847392573829461847392847392615",
+      "value": "Membership"
+    },
+    {
+      "name": "delete_text_629384751952847847392615738294751629384751952847",
+      "value": "Delete"
+    },
+    {
+      "name": "mark_unread_text_847392615738294184759362847392847392615738294",
+      "value": "Mark as Unread"
+    },
+    {
+      "name": "unfollow_text_573829461847392847392615738294751629384751952847",
+      "value": "Unfollow"
+    },
+    {
+      "name": "blood_oxygen_saturation_title_847392615738294629384751952847392615738",
+      "value": "Blood Oxygen Saturation"
+    },
+    {
+      "name": "loading_oxygen_data_text_573829461847392847392615738294751629384751",
+      "value": "Loading oxygen data..."
+    },
+    {
+      "name": "current_user_prefix_392847516293847184759362847392615738294847392",
+      "value": "Current user: gadz2021"
+    },
+    {
+      "name": "oxygen_data_load_failed_758394627184759629384751952847392847392615738",
+      "value": "Failed to load oxygen data"
+    },
+    {
+      "name": "reload_button_text_184759362847392573829461847392847392615738294",
+      "value": "Reload"
+    },
+    {
+      "name": "current_oxygen_saturation_629384751952847847392615738294751629384751952",
+      "value": "Current Blood Oxygen Saturation"
+    },
+    {
+      "name": "normal_range_text_847392615738294184759362847392847392615738294847",
+      "value": "Normal range: 95-100 %"
+    },
+    {
+      "name": "no_data_suffix_573829461847392847392615738294751629384751952847392",
+      "value": " (No data)"
+    },
+    {
+      "name": "lowest_label_392847516293847184759362847392615738294847392615738",
+      "value": "Lowest"
+    },
+    {
+      "name": "average_label_758394627184759629384751952847392847392615738294751",
+      "value": "Average"
+    },
+    {
+      "name": "highest_label_184759362847392573829461847392847392615738294847392",
+      "value": "Highest"
+    },
+    {
+      "name": "today_timerange_629384751952847847392615738294751629384751952847392",
+      "value": "Today"
+    },
+    {
+      "name": "this_week_timerange_847392615738294184759362847392847392615738294847392",
+      "value": "This Week"
+    },
+    {
+      "name": "this_month_timerange_573829461847392847392615738294751629384751952847392",
+      "value": "This Month"
+    },
+    {
+      "name": "this_year_timerange_392847516293847184759362847392615738294847392615738",
+      "value": "This Year"
+    },
+    {
+      "name": "oxygen_records_title_758394627184759629384751952847392847392615738294751",
+      "value": "Oxygen Records"
+    },
+    {
+      "name": "no_realtime_oxygen_records_184759362847392573829461847392847392615738294847",
+      "value": "No real-time oxygen records"
+    },
+    {
+      "name": "no_oxygen_data_629384751952847847392615738294751629384751952847392615",
+      "value": "No oxygen data"
+    },
+    {
+      "name": "realtime_records_only_text_847392",
+      "value": "Only real-time measurement data is shown, statistical data is not included in this list"
+    },
+    {
+      "name": "refresh_data_button_573829461847392847392615738294751629384751952847392847",
+      "value": "Refresh Data"
+    },
+    {
+      "name": "oxygen_health_tips_title_392847",
+      "value": "Blood Oxygen Health Tips"
+    },
+    {
+      "name": "normal_oxygen_range_tip_758394627184759629384751952847392847392615738294751629",
+      "value": "• Normal blood oxygen saturation range is usually between 95-100%"
+    },
+    {
+      "name": "breathing_habit_tip_184759362847392573829461847392847392615738294847392615738",
+      "value": "• Maintain good breathing habits and avoid staying in heavily polluted environments for long periods"
+    },
+    {
+      "name": "exercise_tip_629384751952847847392615738294751629384751952847392615738294",
+      "value": "• Regular exercise can improve lung function and help maintain healthy blood oxygen levels"
+    },
+    {
+      "name": "consult_doctor_tip_847392",
+      "value": "• If blood oxygen saturation remains below 95%, it is recommended to consult a doctor"
+    },
+    {
+      "name": "active_calories_title_84739261",
+      "value": "Active Calories"
+    },
+    {
+      "name": "today_calories_text_57382946",
+      "value": "Today's Calories"
+    },
+    {
+      "name": "kcal_unit_text_39284751",
+      "value": "Kcal"
+    },
+    {
+      "name": "goal_label_text_75839462",
+      "value": "Goal"
+    },
+    {
+      "name": "active_consumption_label_18475936",
+      "value": "Active Burn"
+    },
+    {
+      "name": "basal_metabolism_label_62938475",
+      "value": "Resting"
+    },
+    {
+      "name": "today_timerange_84739261",
+      "value": "Today"
+    },
+    {
+      "name": "this_year_timerange_75839462",
+      "value": "This Year"
+    },
+    {
+      "name": "calorie_details_title_18475936",
+      "value": "Calorie Burn Details"
+    },
+    {
+      "name": "calorie_health_tips_title_62938475",
+      "value": "Calorie Health Tips"
+    },
+    {
+      "name": "running_activity_84739261",
+      "value": "Running"
+    },
+    {
+      "name": "walking_activity_57382946",
+      "value": "Walking"
+    },
+    {
+      "name": "cycling_activity_39284751",
+      "value": "Cycling"
+    },
+    {
+      "name": "fitness_activity_75839462",
+      "value": "Fitness"
+    },
+    {
+      "name": "swimming_activity_18475936",
+      "value": "Swimming"
+    },
+    {
+      "name": "calorie_balance_tip_62938475",
+      "value": "Maintaining proper daily calorie intake and expenditure balance helps maintain healthy weight"
+    },
+    {
+      "name": "daily_activity_tip_84739261",
+      "value": "Increasing daily activities like walking and climbing stairs can boost calorie burn"
+    },
+    {
+      "name": "hiit_training_tip_57382946",
+      "value": "High-Intensity Interval Training (HIIT) is an effective way to boost metabolism and burn calories"
+    },
+    {
+      "name": "muscle_metabolism_tip_39284751",
+      "value": "Muscle tissue burns more calories than fat tissue, increasing muscle mass helps boost basal metabolic rate"
+    },
+    {
+      "name": "health_data_entry_title_84739261573829",
+      "value": "Precise Health Entry"
+    },
+    {
+      "name": "input_placeholder_392847516293847",
+      "value": "Enter precise values (e.g., 5.9km today)..."
+    },
+    {
+      "name": "analyzing_health_data_758394627184759",
+      "value": "🎯 Analyzing health data precisely..."
+    },
+    {
+      "name": "clearing_database_184759362847392",
+      "value": "🗑️ Clearing database..."
+    },
+    {
+      "name": "analysis_in_progress_629384751952847",
+      "value": "Precise analysis"
+    },
+    {
+      "name": "confirm_dangerous_operation_847392615738294",
+      "value": "⚠️ Confirm Dangerous Operation"
+    },
+    {
+      "name": "clear_database_warning_573829461847392",
+      "value": "Will delete all health data:\n• Step records\n• Heart rate & blood oxygen\n• Distance & calories\n\nThis operation cannot be undone!"
+    },
+    {
+      "name": "confirm_clear_button_392847516293847",
+      "value": "Confirm Clear"
+    },
+    {
+      "name": "cancel_button_758394627184759",
+      "value": "Cancel"
+    },
+    {
+      "name": "welcome_message_184759362847392",
+      "value": "Hello! I'm your precise health data entry assistant 🏥\n\n✨ **Precise Support**:\n👟 Step data - Daily & weekly step records\n📏 Distance data - Precise to decimal places (e.g., 5.9km)\n🔥 Calorie data - Accurate calorie tracking\n💗 Heart rate & blood oxygen - Complete value storage\n\n**Example Input**:\n\"Walked 8666 steps today, 5.9km distance, burned 323 calories\"\n\nI'll precisely identify and save every data point!"
+    },
+    {
+      "name": "clear_complete_629384751952847",
+      "value": "🗑️ **Clear Complete**\n\n✅ {0}\n\nYou can now enter new data!"
+    },
+    {
+      "name": "clear_failed_847392615738294",
+      "value": "❌ **Clear Failed**\n\n{0}"
+    },
+    {
+      "name": "system_exception_573829461847392",
+      "value": "💥 **System Exception**\n\n{0}"
+    },
+    {
+      "name": "processing_complete_392847516293847",
+      "value": "🎉 Precise data processing complete!"
+    },
+    {
+      "name": "analysis_failed_758394627184759",
+      "value": "❌ Data analysis failed\n\nError: {0}"
+    },
+    {
+      "name": "steps_data_type_184759362847392",
+      "value": "Steps"
+    },
+    {
+      "name": "distance_data_type_629384751952847",
+      "value": "Distance"
+    },
+    {
+      "name": "calories_data_type_847392615738294",
+      "value": "Calories"
+    },
+    {
+      "name": "blood_oxygen_data_type_573829461847392",
+      "value": "Blood Oxygen"
+    },
+    {
+      "name": "heart_rate_data_type_392847516293847",
+      "value": "Heart Rate"
+    },
+    {
+      "name": "save_success_template_758394627184759",
+      "value": "{0} saved successfully: {1}{2}"
+    },
+    {
+      "name": "storage_not_initialized_184759362847392",
+      "value": "Storage system not initialized"
+    },
+    {
+      "name": "incomplete_data_629384751952847",
+      "value": "Incomplete data"
+    },
+    {
+      "name": "duplicate_data_847392615738294",
+      "value": "Duplicate data"
+    },
+    {
+      "name": "save_exception_template_573829461847392",
+      "value": "Save exception: {0}"
+    },
+    {
+      "name": "database_already_empty_392847516293847",
+      "value": "Database is already empty"
+    },
+    {
+      "name": "clear_success_template_758394627184759",
+      "value": "Clear successful, deleted {0} records"
+    },
+    {
+      "name": "clear_failed_template_184759362847392",
+      "value": "Clear failed: {0}"
+    },
+    {
+      "name": "heart_rate_monitoring_title_84729638",
+      "value": "Heart Rate Monitor"
+    },
+    {
+      "name": "loading_heart_rate_data_57284916",
+      "value": "Loading heart rate data..."
+    },
+    {
+      "name": "current_user_prefix_39475829",
+      "value": "Current user: gadz2021"
+    },
+    {
+      "name": "heart_rate_load_failed_75163948",
+      "value": "Failed to load heart rate data"
+    },
+    {
+      "name": "reload_button_text_18394756",
+      "value": "Reload"
+    },
+    {
+      "name": "current_heart_rate_62847593",
+      "value": "Current Heart Rate"
+    },
+    {
+      "name": "normal_range_text_84751639",
+      "value": "Normal range: 60-100 bpm"
+    },
+    {
+      "name": "resting_heart_rate_57382946",
+      "value": "Resting HR: {0} bpm"
+    },
+    {
+      "name": "lowest_heart_rate_39284751",
+      "value": "Lowest"
+    },
+    {
+      "name": "average_heart_rate_75839462",
+      "value": "Average"
+    },
+    {
+      "name": "highest_heart_rate_18475936",
+      "value": "Highest"
+    },
+    {
+      "name": "realtime_heart_records_62938475",
+      "value": "Real-time Heart Rate Records"
+    },
+    {
+      "name": "total_records_count_84739261",
+      "value": "Total {0} records"
+    },
+    {
+      "name": "no_realtime_records_57382946",
+      "value": "No real-time heart rate records"
+    },
+    {
+      "name": "realtime_only_description_39284751",
+      "value": "Only real-time measurement data is shown, statistical data is not included in this list"
+    },
+    {
+      "name": "refresh_data_button_75839462",
+      "value": "Refresh Data"
+    },
+    {
+      "name": "heart_health_tips_title_18475936",
+      "value": "Heart Rate Health Tips"
+    },
+    {
+      "name": "heart_health_tips_intro_62938475",
+      "value": "Based on your heart rate data, we provide professional advice:"
+    },
+    {
+      "name": "normal_range_tip_84739261",
+      "value": "• Normal resting heart rate range is usually between 60-100 beats per minute"
+    },
+    {
+      "name": "exercise_tip_57382946",
+      "value": "• Regular exercise can lower resting heart rate and improve heart efficiency"
+    },
+    {
+      "name": "caffeine_tip_39284751",
+      "value": "• Avoid excessive caffeine intake as it may cause elevated heart rate"
+    },
+    {
+      "name": "consult_doctor_tip_75839462",
+      "value": "• If persistently abnormal, consult a doctor"
+    },
+    {
+      "name": "record_detail_title_18475936",
+      "value": "Heart Rate Record Details"
+    },
+    {
+      "name": "close_button_text_62938475",
+      "value": "Close"
+    },
+    {
+      "name": "record_time_label_84739261",
+      "value": "📅 Record Time: {0}"
+    },
+    {
+      "name": "heart_rate_value_label_57382946",
+      "value": "❤️ Heart Rate: {0} bpm"
+    },
+    {
+      "name": "health_status_label_39284751",
+      "value": "📊 Health Status: {0}"
+    },
+    {
+      "name": "record_type_label_75839462",
+      "value": "🏷️ Record Type: {0}"
+    },
+    {
+      "name": "health_advice_label_18475936",
+      "value": "💡 Health Advice: {0}"
+    },
+    {
+      "name": "heart_rate_low_status_62938475",
+      "value": "Low"
+    },
+    {
+      "name": "heart_rate_normal_status_84739261",
+      "value": "Normal"
+    },
+    {
+      "name": "heart_rate_slightly_high_status_57382946",
+      "value": "Slightly High"
+    },
+    {
+      "name": "heart_rate_high_status_39284751",
+      "value": "High"
+    },
+    {
+      "name": "low_heart_rate_advice_75839462",
+      "value": "Heart rate is low, recommend moderate exercise. Consult a doctor if discomfort occurs."
+    },
+    {
+      "name": "normal_heart_rate_advice_18475936",
+      "value": "Heart rate is normal, continue maintaining good lifestyle habits."
+    },
+    {
+      "name": "slightly_high_advice_62938475",
+      "value": "Heart rate is slightly high, recommend rest and avoid overexertion."
+    },
+    {
+      "name": "high_heart_rate_advice_84739261",
+      "value": "Heart rate is high, recommend immediate rest and seek medical advice."
+    },
+    {
+      "name": "bpm_unit_text_94738261",
+      "value": "bpm"
+    },
+    {
+      "name": "mood_status_title_84729638",
+      "value": "Mood Status"
+    },
+    {
+      "name": "current_mood_label_57284916",
+      "value": "Current Mood"
+    },
+    {
+      "name": "record_new_mood_button_39475829",
+      "value": "Record New Mood"
+    },
+    {
+      "name": "mood_distribution_title_75163948",
+      "value": "Mood Distribution"
+    },
+    {
+      "name": "mood_records_title_18394756",
+      "value": "Mood Records"
+    },
+    {
+      "name": "mood_health_tips_title_62847593",
+      "value": "Mood Health Tips"
+    },
+    {
+      "name": "today_timerange_84751639",
+      "value": "Today"
+    },
+    {
+      "name": "this_week_timerange_57382946",
+      "value": "This Week"
+    },
+    {
+      "name": "this_month_timerange_39284751",
+      "value": "This Month"
+    },
+    {
+      "name": "whole_year_timerange_75839462",
+      "value": "This Year"
+    },
+    {
+      "name": "record_new_mood_dialog_title_18475936",
+      "value": "Record New Mood"
+    },
+    {
+      "name": "select_current_mood_desc_62938475",
+      "value": "Select your current mood"
+    },
+    {
+      "name": "add_description_optional_84739261",
+      "value": "Add description (optional)"
+    },
+    {
+      "name": "describe_feeling_placeholder_57382946",
+      "value": "Describe how you feel..."
+    },
+    {
+      "name": "cancel_button_39284751",
+      "value": "Cancel"
+    },
+    {
+      "name": "confirm_record_button_75839462",
+      "value": "Confirm Record"
+    },
+    {
+      "name": "mood_happy_18475936",
+      "value": "Happy"
+    },
+    {
+      "name": "mood_calm_62938475",
+      "value": "Calm"
+    },
+    {
+      "name": "mood_satisfied_84739261",
+      "value": "Satisfied"
+    },
+    {
+      "name": "mood_tired_57382946",
+      "value": "Tired"
+    },
+    {
+      "name": "mood_anxious_39284751",
+      "value": "Anxious"
+    },
+    {
+      "name": "mood_excited_75839462",
+      "value": "Excited"
+    },
+    {
+      "name": "mood_depressed_18475936",
+      "value": "Depressed"
+    },
+    {
+      "name": "mood_happy_desc_62938475",
+      "value": "Feeling joyful and energetic"
+    },
+    {
+      "name": "mood_calm_desc_84739261",
+      "value": "Inner peace and stable state"
+    },
+    {
+      "name": "mood_satisfied_desc_57382946",
+      "value": "Feeling content and fulfilled"
+    },
+    {
+      "name": "mood_tired_desc_39284751",
+      "value": "Physically and mentally exhausted, need rest"
+    },
+    {
+      "name": "mood_anxious_desc_75839462",
+      "value": "Feeling tense and uneasy"
+    },
+    {
+      "name": "mood_excited_desc_18475936",
+      "value": "Full of passion and anticipation"
+    },
+    {
+      "name": "mood_depressed_desc_62938475",
+      "value": "Feeling down and in low spirits"
+    },
+    {
+      "name": "default_mood_description_84739261",
+      "value": "Your current emotional state is stable and peaceful"
+    },
+    {
+      "name": "meditation_advice_57382946",
+      "value": "Regular meditation and deep breathing exercises help relieve stress and anxiety"
+    },
+    {
+      "name": "exercise_advice_39284751",
+      "value": "Maintain regular physical exercise, sports promote endorphin release and improve mood"
+    },
+    {
+      "name": "sleep_advice_75839462",
+      "value": "Maintain adequate sleep, sleep quality is closely related to emotional health"
+    },
+    {
+      "name": "social_advice_18475936",
+      "value": "Stay connected with family and friends, social activities help improve mood"
+    },
+    {
+      "name": "today_time_prefix_62938475",
+      "value": "Today"
+    },
+    {
+      "name": "yesterday_time_prefix_84739261",
+      "value": "Yesterday"
+    },
+    {
+      "name": "days_ago_time_prefix_57382946",
+      "value": "2 days ago"
+    },
+    {
+      "name": "days_ago_3_time_prefix_39284751",
+      "value": "3 days ago"
+    },
+    {
+      "name": "lunch_relaxed_desc_84729163",
+      "value": "Feeling relaxed after lunch"
+    },
+    {
+      "name": "morning_energetic_desc_57294816",
+      "value": "Happy and energetic in the morning"
+    },
+    {
+      "name": "work_tired_desc_39485729",
+      "value": "Feeling tired after a day of work"
+    },
+    {
+      "name": "work_pressure_desc_75193847",
+      "value": "Work pressure is quite high"
+    },
+    {
+      "name": "task_completed_desc_18475936",
+      "value": "Completed important tasks"
+    },
+    {
+      "name": "meditation_calm_desc_62938475",
+      "value": "Feeling calm after morning meditation"
+    },
+    {
+      "name": "dinner_friends_desc_84739261",
+      "value": "Having dinner with friends"
+    },
+    {
+      "name": "default_record_desc_18475936",
+      "value": "Recorded new mood state"
+    },
+    {
+      "name": "sleep_title_84729361",
+      "value": "Sleep"
+    },
+    {
+      "name": "today_sleep_overview_57284916",
+      "value": "Today's Sleep"
+    },
+    {
+      "name": "score_unit_39475829",
+      "value": "pts"
+    },
+    {
+      "name": "duration_label_75163948",
+      "value": "Duration"
+    },
+    {
+      "name": "bedtime_label_18394756",
+      "value": "Bedtime"
+    },
+    {
+      "name": "waketime_label_62847593",
+      "value": "Wake"
+    },
+    {
+      "name": "sleep_phases_title_62938475",
+      "value": "Sleep Phases"
+    },
+    {
+      "name": "deep_sleep_84739261",
+      "value": "Deep Sleep"
+    },
+    {
+      "name": "light_sleep_57382946",
+      "value": "Light Sleep"
+    },
+    {
+      "name": "rem_sleep_39284751",
+      "value": "REM Sleep"
+    },
+    {
+      "name": "awake_state_75839462",
+      "value": "Awake"
+    },
+    {
+      "name": "sleep_records_title_18475936",
+      "value": "Sleep Records"
+    },
+    {
+      "name": "monday_62938475",
+      "value": "Mon"
+    },
+    {
+      "name": "tuesday_84739261",
+      "value": "Tue"
+    },
+    {
+      "name": "wednesday_57382946",
+      "value": "Wed"
+    },
+    {
+      "name": "thursday_39284751",
+      "value": "Thu"
+    },
+    {
+      "name": "friday_75839462",
+      "value": "Fri"
+    },
+    {
+      "name": "saturday_18475936",
+      "value": "Sat"
+    },
+    {
+      "name": "sunday_62938475",
+      "value": "Sun"
+    },
+    {
+      "name": "quality_excellent_84739261",
+      "value": "Excellent"
+    },
+    {
+      "name": "quality_good_57382946",
+      "value": "Good"
+    },
+    {
+      "name": "quality_fair_39284751",
+      "value": "Fair"
+    },
+    {
+      "name": "quality_poor_75839462",
+      "value": "Poor"
+    },
+    {
+      "name": "sleep_tips_title_18475936",
+      "value": "Sleep Health Tips"
+    },
+    {
+      "name": "tip_regular_schedule_62938475",
+      "value": "Maintain a regular sleep schedule, including weekends"
+    },
+    {
+      "name": "tip_avoid_screens_84739261",
+      "value": "Avoid electronic devices 1-2 hours before bed, blue light inhibits melatonin"
+    },
+    {
+      "name": "tip_sleep_environment_57382946",
+      "value": "Create a comfortable, quiet, and dark sleep environment"
+    },
+    {
+      "name": "tip_avoid_caffeine_39284751",
+      "value": "Avoid caffeine and alcohol before bedtime"
+    },
+    {
+      "name": "duration_7h30m_75839462",
+      "value": "7h 30m"
+    },
+    {
+      "name": "duration_6h45m_18475936",
+      "value": "6h 45m"
+    },
+    {
+      "name": "duration_8h15m_62938475",
+      "value": "8h 15m"
+    },
+    {
+      "name": "duration_7h_84739261",
+      "value": "7h"
+    },
+    {
+      "name": "duration_6h30m_57382946",
+      "value": "6h 30m"
+    },
+    {
+      "name": "duration_9h_39284751",
+      "value": "9h"
+    },
+    {
+      "name": "duration_8h30m_75839462",
+      "value": "8h 30m"
+    },
+    {
+      "name": "phase_duration_1h45m_18475936",
+      "value": "1h 45m"
+    },
+    {
+      "name": "phase_duration_3h15m_62938475",
+      "value": "3h 15m"
+    },
+    {
+      "name": "phase_duration_1h30m_84739261",
+      "value": "1h 30m"
+    },
+    {
+      "name": "phase_duration_1h_57382946",
+      "value": "1h"
+    },
+    {
+      "name": "step_analysis_title_84729361",
+      "value": "Step Analysis"
+    },
+    {
+      "name": "today_steps_label_57284916",
+      "value": "Today's Steps"
+    },
+    {
+      "name": "steps_unit_39475829",
+      "value": "steps"
+    },
+    {
+      "name": "goal_label_75163948",
+      "value": "Goal"
+    },
+    {
+      "name": "distance_label_18394756",
+      "value": "Distance"
+    },
+    {
+      "name": "calories_label_62847593",
+      "value": "Calories"
+    },
+    {
+      "name": "today_range_57382946",
+      "value": "Today"
+    },
+    {
+      "name": "week_range_39284751",
+      "value": "This Week"
+    },
+    {
+      "name": "month_range_75839462",
+      "value": "This Month"
+    },
+    {
+      "name": "year_range_18475936",
+      "value": "This Year"
+    },
+    {
+      "name": "step_records_title_62938475",
+      "value": "Step Records"
+    },
+    {
+      "name": "monday_84739261",
+      "value": "Mon"
+    },
+    {
+      "name": "tuesday_57382946",
+      "value": "Tue"
+    },
+    {
+      "name": "wednesday_39284751",
+      "value": "Wed"
+    },
+    {
+      "name": "thursday_75839462",
+      "value": "Thu"
+    },
+    {
+      "name": "friday_18475936",
+      "value": "Fri"
+    },
+    {
+      "name": "saturday_62938475",
+      "value": "Sat"
+    },
+    {
+      "name": "sunday_84739261",
+      "value": "Sun"
+    },
+    {
+      "name": "today_suffix_57382946",
+      "value": "Today"
+    },
+    {
+      "name": "loading_steps_data_39284751",
+      "value": "Loading step data..."
+    },
+    {
+      "name": "load_failed_title_75839462",
+      "value": "Failed to load step data"
+    },
+    {
+      "name": "reload_button_18475936",
+      "value": "Reload"
+    },
+    {
+      "name": "no_step_data_62938475",
+      "value": "No step data available"
+    },
+    {
+      "name": "refresh_data_button_84739261",
+      "value": "Refresh Data"
+    },
+    {
+      "name": "km_unit_57382946",
+      "value": "km"
+    },
+    {
+      "name": "kcal_unit_39284751",
+      "value": "kcal"
+    },
+    {
+      "name": "data_load_failed_prefix_75839462",
+      "value": "Data loading failed:"
+    },
+    {
+      "name": "leaderboard_title_82759341",
+      "value": "Leaderboard"
+    },
+    {
+      "name": "today_steps_leaderboard_65284793",
+      "value": "Today's Steps Leaderboard"
+    },
+    {
+      "name": "steps_leaderboard_title_47392816",
+      "value": "Steps Leaderboard"
+    },
+    {
+      "name": "ranking_header_39157264",
+      "value": "Rank"
+    },
+    {
+      "name": "user_header_81674529",
+      "value": "User"
+    },
+    {
+      "name": "steps_header_53926841",
+      "value": "Steps"
+    },
+    {
+      "name": "likes_header_27184635",
+      "value": "Likes"
+    },
+    {
+      "name": "no_data_message_94758136",
+      "value": "No Data"
+    },
+    {
+      "name": "more_action_62519473",
+      "value": "More"
+    },
+    {
+      "name": "welcome_message_17834625",
+      "value": "Welcome to view today's steps leaderboard"
+    },
+    {
+      "name": "exercise_details_suffix_85196347",
+      "value": "'s exercise details"
+    },
+    {
+      "name": "default_user_prefix_46782915",
+      "value": "User"
+    },
+    {
+      "name": "year_suffix_73495168",
+      "value": "/"
+    },
+    {
+      "name": "month_suffix_28617439",
+      "value": "/"
+    },
+    {
+      "name": "day_suffix_91348572",
+      "value": ""
+    },
+    {
+      "name": "personalized_health_memory_title_84729361",
+      "value": "Personalized Health Memory"
+    },
+    {
+      "name": "loading_health_data_message_57284916",
+      "value": "Loading health data..."
+    },
+    {
+      "name": "loading_health_subtitle_39475829",
+      "value": "Please wait, the system is reading your health records from storage"
+    },
+    {
+      "name": "data_load_error_title_75163948",
+      "value": "Data Loading Error"
+    },
+    {
+      "name": "health_overview_title_62847593",
+      "value": "Health Data Overview"
+    },
+    {
+      "name": "realtime_data_label_57382946",
+      "value": "Real-time Data"
+    },
+    {
+      "name": "steps_label_39284751",
+      "value": "Steps"
+    },
+    {
+      "name": "heart_rate_label_75839462",
+      "value": "Heart Rate"
+    },
+    {
+      "name": "sleep_label_18475936",
+      "value": "Sleep"
+    },
+    {
+      "name": "calories_label_62938475",
+      "value": "Calories"
+    },
+    {
+      "name": "blood_oxygen_label_84739261",
+      "value": "Blood Oxygen"
+    },
+    {
+      "name": "mood_label_57382946",
+      "value": "Mood"
+    },
+    {
+      "name": "health_memory_title_39284751",
+      "value": "Health Memory"
+    },
+    {
+      "name": "record_count_suffix_75839462",
+      "value": " records"
+    },
+    {
+      "name": "record_count_prefix_18475936",
+      "value": "Total "
+    },
+    {
+      "name": "no_health_memory_title_62938475",
+      "value": "No Health Memory"
+    },
+    {
+      "name": "no_memory_subtitle_84739261",
+      "value": "Please use smart input to record your health data first"
+    },
+    {
+      "name": "view_details_button_57382946",
+      "value": "View Details"
+    },
+    {
+      "name": "today_advice_title_39284751",
+      "value": "Today's Health Advice"
+    },
+    {
+      "name": "advice_intro_text_75839462",
+      "value": "Based on your health data, we provide the following recommendations:"
+    },
+    {
+      "name": "advice_steps_text_18475936",
+      "value": "1. Maintain daily activity of 8,000+ steps"
+    },
+    {
+      "name": "advice_sleep_text_62938475",
+      "value": "2. Ensure 7-8 hours of quality sleep"
+    },
+    {
+      "name": "advice_water_text_84739261",
+      "value": "3. Drink plenty of water, at least 1500ml daily"
+    },
+    {
+      "name": "advice_exercise_text_57382946",
+      "value": "4. Do aerobic exercise at least 3 times per week"
+    },
+    {
+      "name": "today_label_39284751",
+      "value": "Today"
+    },
+    {
+      "name": "yesterday_label_75839462",
+      "value": "Yesterday"
+    },
+    {
+      "name": "day_before_yesterday_label_18475936",
+      "value": "Day Before Yesterday"
+    },
+    {
+      "name": "days_ago_3_label_62938475",
+      "value": "3 Days Ago"
+    },
+    {
+      "name": "days_ago_4_label_84739261",
+      "value": "4 Days Ago"
+    },
+    {
+      "name": "days_ago_5_label_57382946",
+      "value": "5 Days Ago"
+    },
+    {
+      "name": "days_ago_6_label_39284751",
+      "value": "6 Days Ago"
+    },
+    {
+      "name": "days_ago_suffix_75839462",
+      "value": " days ago"
+    },
+    {
+      "name": "status_excellent_18475936",
+      "value": "Excellent"
+    },
+    {
+      "name": "status_attention_62938475",
+      "value": "Attention"
+    },
+    {
+      "name": "status_achievement_84739261",
+      "value": "Achievement"
+    },
+    {
+      "name": "status_record_57382946",
+      "value": "Record"
+    },
+    {
+      "name": "dialog_close_button_39284751",
+      "value": "Close"
+    },
+    {
+      "name": "dialog_share_button_75839462",
+      "value": "Share"
+    },
+    {
+      "name": "dialog_date_prefix_18475936",
+      "value": "📅 Date: "
+    },
+    {
+      "name": "dialog_details_prefix_62938475",
+      "value": "📝 Details:\n"
+    },
+    {
+      "name": "dialog_health_data_prefix_84739261",
+      "value": "📊 Health Data:"
+    },
+    {
+      "name": "default_steps_value_57382946",
+      "value": "0 steps"
+    },
+    {
+      "name": "default_heart_rate_value_39284751",
+      "value": "0 bpm"
+    },
+    {
+      "name": "default_sleep_value_75839462",
+      "value": "0 hours"
+    },
+    {
+      "name": "default_calories_value_18475936",
+      "value": "0 kcal"
+    },
+    {
+      "name": "default_oxygen_value_62938475",
+      "value": "0%"
+    },
+    {
+      "name": "default_memory_title_84739261",
+      "value": "No Data"
+    },
+    {
+      "name": "default_memory_content_57382946",
+      "value": "No health data recorded yet. Please use the smart input feature to record your health data.\n\nYou can record the following types of health data:\n• Daily steps and exercise goals\n• Heart rate changes (resting, average, maximum)\n• Sleep time and quality\n• Exercise calories burned\n• Blood oxygen saturation levels\n• Current mood status\n\nStart your health journey! 💪"
+    }
+  ]
+}

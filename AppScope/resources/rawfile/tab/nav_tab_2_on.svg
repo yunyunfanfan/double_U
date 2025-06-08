@@ -1,0 +1,17 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <!-- 屋顶 -->
+    <path d="M50 5L5 40H15V90H85V40H95L50 5Z" fill="#191919"/>
+
+    <!-- 门 -->
+    <path d="M40 90V60H60V90H40Z" fill="#2a2a2a"/>
+
+    <!-- 家庭成员（稍微灰色） -->
+    <circle cx="30" cy="45" r="8" fill="#767676"/>
+    <path d="M30 53V67M23 58H37M21 73H39" stroke="#767676" stroke-width="3.5" fill="none"/>
+
+    <circle cx="50" cy="38" r="9" fill="#767676"/>
+    <path d="M50 47V64M42 54H58M40 70H60" stroke="#767676" stroke-width="3.5" fill="none"/>
+
+    <circle cx="70" cy="45" r="8" fill="#767676"/>
+    <path d="M70 53V67M63 58H77M61 73H79" stroke="#767676" stroke-width="3.5" fill="none"/>
+</svg>

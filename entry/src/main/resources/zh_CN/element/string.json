@@ -1,0 +1,5288 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "模块描述"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "label"
+    },
+    {
+      "name": "energy_assistant",
+      "value": "精力助手"
+    },
+    {
+      "name": "current_energy_level",
+      "value": "当前精力值"
+    },
+    {
+      "name": "status",
+      "value": "状态: "
+    },
+    {
+      "name": "status_good",
+      "value": "良好"
+    },
+    {
+      "name": "status_excellent",
+      "value": "优秀"
+    },
+    {
+      "name": "status_normal",
+      "value": "一般"
+    },
+    {
+      "name": "status_poor",
+      "value": "较差"
+    },
+    {
+      "name": "energy_factors",
+      "value": "精力影响因素"
+    },
+    {
+      "name": "view_all",
+      "value": "查看全部"
+    },
+    {
+      "name": "today_recommendations",
+      "value": "今日建议"
+    },
+    {
+      "name": "features",
+      "value": "功能"
+    },
+    {
+      "name": "beneficial",
+      "value": "有益"
+    },
+    {
+      "name": "consuming",
+      "value": "消耗"
+    },
+    {
+      "name": "meditation_10min",
+      "value": "冥想10分钟"
+    },
+    {
+      "name": "afternoon_walk",
+      "value": "午后散步"
+    },
+    {
+      "name": "long_screen_time",
+      "value": "长时间看屏幕"
+    },
+    {
+      "name": "sugary_drinks",
+      "value": "喝含糖饮料"
+    },
+    {
+      "name": "recommendation_meditation",
+      "value": "试着在下午进行10分钟的冥想"
+    },
+    {
+      "name": "recommendation_screen_break",
+      "value": "减少屏幕使用时间，每小时休息5分钟"
+    },
+    {
+      "name": "recommendation_water",
+      "value": "用水代替含糖饮料"
+    },
+    {
+      "name": "energy_statistics",
+      "value": "精力统计"
+    },
+    {
+      "name": "habit_formation",
+      "value": "习惯养成"
+    },
+    {
+      "name": "sleep_assistant",
+      "value": "睡眠助手"
+    },
+    {
+      "name": "more",
+      "value": "更多"
+    },
+    {
+      "name": "navigation_failed",
+      "value": "跳转失败"
+    },
+    {
+      "name": "navigation_error_message",
+      "value": "无法跳转到精力影响因素页面："
+    },
+    {
+      "name": "i_know",
+      "value": "我知道了"
+    },
+    {
+      "name": "operation_exception",
+      "value": "操作异常"
+    },
+    {
+      "name": "operation_error_message",
+      "value": "跳转页面时发生错误，请稍后重试"
+    },
+    {
+      "name": "confirm",
+      "value": "确定"
+    },
+    {
+      "name": "keep_hydrated",
+      "value": "保持水分"
+    },
+    {
+      "name": "hydration_desc",
+      "value": "每天喝足量的水，有助于维持能量水平。"
+    },
+    {
+      "name": "regular_sleep",
+      "value": "规律作息"
+    },
+    {
+      "name": "sleep_desc",
+      "value": "保证充足的睡眠，有助于身体恢复精力。"
+    },
+    {
+      "name": "moderate_exercise",
+      "value": "适度运动"
+    },
+    {
+      "name": "exercise_desc",
+      "value": "定期进行体育锻炼，可以提高整体能量。"
+    },
+    {
+      "name": "healthy_diet",
+      "value": "健康饮食"
+    },
+    {
+      "name": "diet_desc",
+      "value": "均衡膳食，多吃蔬果和全谷物。"
+    },
+    {
+      "name": "energy_factors_title",
+      "value": "精力影响因素"
+    },
+    {
+      "name": "energy_most_precious_resource",
+      "value": "精力是您最宝贵的资源"
+    },
+    {
+      "name": "understand_energy_factors_desc",
+      "value": "了解影响您精力的因素，优化您的日常习惯"
+    },
+    {
+      "name": "energy_boosting_habits",
+      "value": "提升精力的习惯"
+    },
+    {
+      "name": "energy_draining_habits",
+      "value": "消耗精力的习惯"
+    },
+    {
+      "name": "more_features_coming",
+      "value": "更多功能正在开发中..."
+    },
+    {
+      "name": "learn_more",
+      "value": "了解更多"
+    },
+    {
+      "name": "meditation_title",
+      "value": "冥想"
+    },
+    {
+      "name": "meditation_desc",
+      "value": "每天冥想10分钟可提高注意力和心理健康"
+    },
+    {
+      "name": "afternoon_walk_title",
+      "value": "午后散步"
+    },
+    {
+      "name": "afternoon_walk_desc",
+      "value": "适度运动可增强能量水平和心情"
+    },
+    {
+      "name": "good_sleep_title",
+      "value": "良好睡眠"
+    },
+    {
+      "name": "good_sleep_desc",
+      "value": "每晚7-8小时高质量睡眠是恢复精力的关键"
+    },
+    {
+      "name": "healthy_eating_title",
+      "value": "健康饮食"
+    },
+    {
+      "name": "healthy_eating_desc",
+      "value": "富含蛋白质和全谷物的均衡饮食提供持久能量"
+    },
+    {
+      "name": "long_screen_time_title",
+      "value": "长时间看屏幕"
+    },
+    {
+      "name": "long_screen_time_desc",
+      "value": "长时间盯着屏幕会导致视觉疲劳和精力下降"
+    },
+    {
+      "name": "sugary_drinks_title",
+      "value": "含糖饮料"
+    },
+    {
+      "name": "sugary_drinks_desc",
+      "value": "糖分摄入过多会导致能量迅速上升后快速下降"
+    },
+    {
+      "name": "sedentary_lifestyle_title",
+      "value": "久坐不动"
+    },
+    {
+      "name": "sedentary_lifestyle_desc",
+      "value": "长时间久坐会降低精力和身体活力"
+    },
+    {
+      "name": "check_update",
+      "value": "检查更新"
+    },
+    {
+      "name": "update_log",
+      "value": "更新日志"
+    },
+    {
+      "name": "current_version",
+      "value": "当前版本号"
+    },
+    {
+      "name": "no_update_log",
+      "value": "无更新日志"
+    },
+    {
+      "name": "current_version_title",
+      "value": "当前版本号"
+    },
+    {
+      "name": "version_message",
+      "value": "0.91(非最新版本，请前往第三小组进行更新)"
+    },
+    {
+      "name": "unknown_option",
+      "value": "未知选项:"
+    },
+    {
+      "name": "health_records_title",
+      "value": "健康档案"
+    },
+    {
+      "name": "basic_health",
+      "value": "基础健康"
+    },
+    {
+      "name": "medical_records",
+      "value": "就诊记录"
+    },
+    {
+      "name": "health_data",
+      "value": "健康数据"
+    },
+    {
+      "name": "personal_info",
+      "value": "个人基本信息"
+    },
+    {
+      "name": "emergency_contact",
+      "value": "紧急联系人"
+    },
+    {
+      "name": "allergy_history",
+      "value": "过敏史"
+    },
+    {
+      "name": "name_name",
+      "value": "姓名"
+    },
+    {
+      "name": "gender",
+      "value": "性别"
+    },
+    {
+      "name": "age",
+      "value": "年龄"
+    },
+    {
+      "name": "height",
+      "value": "身高"
+    },
+    {
+      "name": "weight",
+      "value": "体重"
+    },
+    {
+      "name": "contact_person",
+      "value": "联系人"
+    },
+    {
+      "name": "relationship",
+      "value": "关系"
+    },
+    {
+      "name": "contact_phone",
+      "value": "联系电话"
+    },
+    {
+      "name": "drug_allergy",
+      "value": "药物过敏"
+    },
+    {
+      "name": "food_allergy",
+      "value": "食物过敏"
+    },
+    {
+      "name": "none",
+      "value": "无"
+    },
+    {
+      "name": "male",
+      "value": "男"
+    },
+    {
+      "name": "family",
+      "value": "家人"
+    },
+    {
+      "name": "no_medical_records",
+      "value": "暂无就诊记录"
+    },
+    {
+      "name": "add_medical_record",
+      "value": "添加就诊记录"
+    },
+    {
+      "name": "my_medical_records",
+      "value": "我的就诊记录"
+    },
+    {
+      "name": "add_record",
+      "value": "添加记录"
+    },
+    {
+      "name": "visit_date",
+      "value": "就诊日期"
+    },
+    {
+      "name": "hospital_name",
+      "value": "医院名称"
+    },
+    {
+      "name": "department",
+      "value": "科室"
+    },
+    {
+      "name": "doctor_name",
+      "value": "医生姓名"
+    },
+    {
+      "name": "diagnosis",
+      "value": "诊断结果"
+    },
+    {
+      "name": "treatment",
+      "value": "治疗方案"
+    },
+    {
+      "name": "visiting_department",
+      "value": "就诊科室"
+    },
+    {
+      "name": "attending_doctor",
+      "value": "接诊医生"
+    },
+    {
+      "name": "recent_blood_pressure",
+      "value": "最近血压"
+    },
+    {
+      "name": "recent_blood_sugar",
+      "value": "最近血糖"
+    },
+    {
+      "name": "recent_heart_rate",
+      "value": "最近心率"
+    },
+    {
+      "name": "bmi_index",
+      "value": "BMI指数"
+    },
+    {
+      "name": "normal",
+      "value": "正常"
+    },
+    {
+      "name": "view_more_health_data",
+      "value": "查看更多健康数据"
+    },
+    {
+      "name": "cancel",
+      "value": "取消"
+    },
+    {
+      "name": "save",
+      "value": "保存"
+    },
+    {
+      "name": "please_fill_hospital_department",
+      "value": "请填写医院名称和科室"
+    },
+    {
+      "name": "record_added_successfully",
+      "value": "记录添加成功"
+    },
+    {
+      "name": "please_enter",
+      "value": "请输入"
+    },
+    {
+      "name": "loading",
+      "value": "加载中..."
+    },
+    {
+      "name": "patient_name",
+      "value": "李逸飞"
+    },
+    {
+      "name": "contact_name",
+      "value": "卢景灏"
+    },
+    {
+      "name": "contact_number",
+      "value": "12345678900"
+    },
+    {
+      "name": "age_value",
+      "value": "19岁"
+    },
+    {
+      "name": "height_value",
+      "value": "175cm"
+    },
+    {
+      "name": "weight_value",
+      "value": "70kg"
+    },
+    {
+      "name": "more_health_data_title",
+      "value": "更多健康数据"
+    },
+    {
+      "name": "vital_signs",
+      "value": "重要生命体征"
+    },
+    {
+      "name": "body_metrics",
+      "value": "身体指标"
+    },
+    {
+      "name": "sleep_analysis",
+      "value": "睡眠分析"
+    },
+    {
+      "name": "resting_heart_rate",
+      "value": "静息心率"
+    },
+    {
+      "name": "average_heart_rate",
+      "value": "平均心率"
+    },
+    {
+      "name": "blood_pressure",
+      "value": "血压"
+    },
+    {
+      "name": "blood_oxygen",
+      "value": "血氧饱和度 (SpO2)"
+    },
+    {
+      "name": "body_temperature",
+      "value": "体温"
+    },
+    {
+      "name": "bmi",
+      "value": "BMI"
+    },
+    {
+      "name": "body_fat_rate",
+      "value": "体脂率"
+    },
+    {
+      "name": "skeletal_muscle_mass",
+      "value": "骨骼肌量"
+    },
+    {
+      "name": "total_sleep_duration",
+      "value": "总睡眠时长"
+    },
+    {
+      "name": "deep_sleep_duration",
+      "value": "深睡时长"
+    },
+    {
+      "name": "light_sleep_duration",
+      "value": "浅睡时长"
+    },
+    {
+      "name": "rem_sleep",
+      "value": "快速眼动(REM)"
+    },
+    {
+      "name": "bedtime",
+      "value": "入睡时间"
+    },
+    {
+      "name": "wake_time",
+      "value": "睡醒时间"
+    },
+    {
+      "name": "status_ideal",
+      "value": "理想"
+    },
+    {
+      "name": "status_sufficient",
+      "value": "充足"
+    },
+    {
+      "name": "status_regular",
+      "value": "规律"
+    },
+    {
+      "name": "status_healthy",
+      "value": "健康"
+    },
+    {
+      "name": "status_standard",
+      "value": "标准"
+    },
+    {
+      "name": "unit_bpm",
+      "value": "bpm"
+    },
+    {
+      "name": "unit_mmhg",
+      "value": "mmHg"
+    },
+    {
+      "name": "unit_percent",
+      "value": "%"
+    },
+    {
+      "name": "unit_celsius",
+      "value": "°C"
+    },
+    {
+      "name": "unit_kg",
+      "value": "kg"
+    },
+    {
+      "name": "unit_hours_minutes",
+      "value": "小时 35分钟"
+    },
+    {
+      "name": "time_today_morning",
+      "value": "今天 08:30"
+    },
+    {
+      "name": "time_last_24h",
+      "value": "最近24小时"
+    },
+    {
+      "name": "time_yesterday_afternoon",
+      "value": "昨天 15:00"
+    },
+    {
+      "name": "time_today_9am",
+      "value": "今天 09:00"
+    },
+    {
+      "name": "time_today_7am",
+      "value": "今天 07:00"
+    },
+    {
+      "name": "time_today_730am",
+      "value": "今天 07:30"
+    },
+    {
+      "name": "time_3_days_ago",
+      "value": "3天前"
+    },
+    {
+      "name": "time_last_night",
+      "value": "昨晚"
+    },
+    {
+      "name": "time_this_morning",
+      "value": "今早"
+    },
+    {
+      "name": "my_points",
+      "value": "我的积分"
+    },
+    {
+      "name": "badge_icon_source",
+      "value": "徽章图标来源：https://www.iconfont.cn/"
+    },
+    {
+      "name": "final_interpretation_rights",
+      "value": "最终解释权归大爹吧友组所有"
+    },
+    {
+      "name": "badge_title",
+      "value": "我的勋章"
+    },
+    {
+      "name": "badge_count",
+      "value": "勋章数"
+    },
+    {
+      "name": "share_badge",
+      "value": "分享炫耀"
+    },
+    {
+      "name": "obtained_on",
+      "value": "获得"
+    },
+    {
+      "name": "badge_annual_star",
+      "value": "年度之星"
+    },
+    {
+      "name": "badge_annual_desc",
+      "value": "年度最健康"
+    },
+    {
+      "name": "badge_annual_condition",
+      "value": "年度健康积分最高"
+    },
+    {
+      "name": "badge_light_chaser",
+      "value": "追光者"
+    },
+    {
+      "name": "badge_light_desc",
+      "value": "宝宝最赞"
+    },
+    {
+      "name": "badge_light_condition",
+      "value": "获得100个点赞"
+    },
+    {
+      "name": "badge_friend_max",
+      "value": "朋友力MAX III"
+    },
+    {
+      "name": "badge_friend_desc",
+      "value": "社交达人"
+    },
+    {
+      "name": "badge_friend_condition",
+      "value": "拥有好友达到10位以上"
+    },
+    {
+      "name": "badge_monthly_champion",
+      "value": "月度冠军"
+    },
+    {
+      "name": "badge_monthly_desc",
+      "value": "积分榜首"
+    },
+    {
+      "name": "badge_monthly_condition",
+      "value": "月度积分榜第一名"
+    },
+    {
+      "name": "badge_vip",
+      "value": "VIP专属"
+    },
+    {
+      "name": "badge_vip_desc",
+      "value": "尊贵会员"
+    },
+    {
+      "name": "badge_vip_condition",
+      "value": "开通VIP会员"
+    },
+    {
+      "name": "badge_valorant",
+      "value": "瓦学弟专属"
+    },
+    {
+      "name": "badge_valorant_desc",
+      "value": "卢景灏精选"
+    },
+    {
+      "name": "badge_valorant_condition",
+      "value": "无畏契约技术比卢景灏强"
+    },
+    {
+      "name": "blood_pressure_value",
+      "value": "120/80 mmHg"
+    },
+    {
+      "name": "blood_sugar_value",
+      "value": "5.5 mmol/L"
+    },
+    {
+      "name": "heart_rate_value",
+      "value": "75 次/分钟"
+    },
+    {
+      "name": "bmi_value",
+      "value": "22.9"
+    },
+    {
+      "name": "health_points",
+      "value": "健康积分"
+    },
+    {
+      "name": "my_badges",
+      "value": "我的徽章"
+    },
+    {
+      "name": "about",
+      "value": "关于"
+    },
+    {
+      "name": "points_explanation",
+      "value": "积分说明"
+    },
+    {
+      "name": "points_rules_title",
+      "value": "● 积分获取规则"
+    },
+    {
+      "name": "daily_health_score",
+      "value": "每日健康得分"
+    },
+    {
+      "name": "daily_health_score_desc",
+      "value": "70-80积1分 · 80-90积3分 · 90-99积5分"
+    },
+    {
+      "name": "score_limit",
+      "value": "得分上限"
+    },
+    {
+      "name": "score_limit_desc",
+      "value": "不存在健康得分100分的情况"
+    },
+    {
+      "name": "points_usage",
+      "value": "积分用途"
+    },
+    {
+      "name": "points_usage_desc",
+      "value": "健康积分可对应徽章的兑换"
+    },
+    {
+      "name": "interval_explanation",
+      "value": "区间说明"
+    },
+    {
+      "name": "interval_explanation_desc",
+      "value": "得分区间采用左闭右开原则"
+    },
+    {
+      "name": "special_note",
+      "value": "特别说明"
+    },
+    {
+      "name": "special_note_desc",
+      "value": "最终解释权归大爹吧友组所有"
+    },
+    {
+      "name": "points_ranking",
+      "value": "积分排行榜"
+    },
+    {
+      "name": "rank",
+      "value": "排名"
+    },
+    {
+      "name": "user",
+      "value": "用户"
+    },
+    {
+      "name": "likes",
+      "value": "点赞"
+    },
+    {
+      "name": "points_unit",
+      "value": "分"
+    },
+    {
+      "name": "user_li_yifei",
+      "value": "李逸飞"
+    },
+    {
+      "name": "user_dad",
+      "value": "爸爸"
+    },
+    {
+      "name": "user_mom",
+      "value": "妈妈"
+    },
+    {
+      "name": "user_lu_jinghao",
+      "value": "卢景灏"
+    },
+    {
+      "name": "user_me",
+      "value": "我"
+    },
+    {
+      "name": "user_grandma",
+      "value": "奶奶"
+    },
+    {
+      "name": "knowledge_topics",
+      "value": "知识专题"
+    },
+    {
+      "name": "family_disease_management",
+      "value": "家庭性病管理"
+    },
+    {
+      "name": "mental_health_protection",
+      "value": "心理健康守护"
+    },
+    {
+      "name": "sports_health",
+      "value": "运动健康"
+    },
+    {
+      "name": "nutrition_management",
+      "value": "营养管理"
+    },
+    {
+      "name": "data_security",
+      "value": "数据安全"
+    },
+    {
+      "name": "logging_out",
+      "value": "正在退出..."
+    },
+    {
+      "name": "chronic_disease_management",
+      "value": "家庭慢性病管理"
+    },
+    {
+      "name": "core_functions",
+      "value": "🩺 核心功能"
+    },
+    {
+      "name": "three_high_monitoring",
+      "value": "▸ 三高指标智能监测"
+    },
+    {
+      "name": "medication_reminder",
+      "value": "▸ 服药提醒与记录系统"
+    },
+    {
+      "name": "risk_prediction",
+      "value": "▸ 风险趋势预测模型"
+    },
+    {
+      "name": "weekly_data",
+      "value": "📊 本周数据"
+    },
+    {
+      "name": "blood_pressure_fluctuation",
+      "value": "血压波动"
+    },
+    {
+      "name": "medication_compliance",
+      "value": "规律服药率"
+    },
+    {
+      "name": "health_guide",
+      "value": "🏡 家庭慢病健康指南"
+    },
+    {
+      "name": "diet_management",
+      "value": "🍎 饮食管理"
+    },
+    {
+      "name": "daily_vegetables",
+      "value": "🥦 每日蔬菜摄入 ≥500g"
+    },
+    {
+      "name": "weekly_fish",
+      "value": "🐟 每周至少2次深海鱼"
+    },
+    {
+      "name": "salt_control",
+      "value": "🚫 控盐＜5g/天（约1啤酒瓶盖量）"
+    },
+    {
+      "name": "daily_water",
+      "value": "💧 每日饮水1500-2000ml"
+    },
+    {
+      "name": "exercise_plan",
+      "value": "🏃 运动方案"
+    },
+    {
+      "name": "weekly_exercise",
+      "value": "⏱️ 每周中等强度运动150分钟"
+    },
+    {
+      "name": "hourly_activity",
+      "value": "🚶 每坐1小时起身活动5分钟"
+    },
+    {
+      "name": "taichi_yoga",
+      "value": "🧘 配合太极/瑜伽改善血压"
+    },
+    {
+      "name": "heart_rate_formula",
+      "value": "📈 运动后心率 ≤（170-年龄）"
+    },
+    {
+      "name": "home_monitoring",
+      "value": "🩺 家庭监测"
+    },
+    {
+      "name": "blood_pressure_timing",
+      "value": "⏰ 血压测量：晨起空腹+服药前"
+    },
+    {
+      "name": "blood_sugar_method",
+      "value": "📌 血糖测量：不同手指轮换采血"
+    },
+    {
+      "name": "monthly_chart",
+      "value": "📅 每月制作健康数据趋势图"
+    },
+    {
+      "name": "doctor_alert",
+      "value": "⚠️ 波动＞20%立即联系医生"
+    },
+    {
+      "name": "mental_health_title",
+      "value": "心理健康守护"
+    },
+    {
+      "name": "today_assessment",
+      "value": "😌 今日评估"
+    },
+    {
+      "name": "stress_index",
+      "value": "压力指数"
+    },
+    {
+      "name": "sleep_quality",
+      "value": "睡眠质量"
+    },
+    {
+      "name": "mood_stability",
+      "value": "情绪稳定度"
+    },
+    {
+      "name": "suggested_activities",
+      "value": "📅 建议活动"
+    },
+    {
+      "name": "breathing_exercise",
+      "value": "🌬️ 呼吸练习"
+    },
+    {
+      "name": "breathing_content",
+      "value": "10分钟正念呼吸训练"
+    },
+    {
+      "name": "family_interaction",
+      "value": "💬 家庭互动"
+    },
+    {
+      "name": "family_content",
+      "value": "晚间心情分享会"
+    },
+    {
+      "name": "mood_diary",
+      "value": "📝 情绪日记"
+    },
+    {
+      "name": "diary_content",
+      "value": "记录今日情绪波动"
+    },
+    {
+      "name": "mental_health_guide",
+      "value": "🧠 心理健康指南"
+    },
+    {
+      "name": "stress_management",
+      "value": "😌 压力管理"
+    },
+    {
+      "name": "daily_meditation",
+      "value": "🧘 每日10分钟正念冥想练习"
+    },
+    {
+      "name": "regular_schedule",
+      "value": "📅 建立规律作息时间表"
+    },
+    {
+      "name": "digital_detox",
+      "value": "📱 设置每日数字排毒时段"
+    },
+    {
+      "name": "quality_sleep_zzz",
+      "value": "💤 保证7-9小时优质睡眠"
+    },
+    {
+      "name": "emotion_regulation",
+      "value": "💖 情绪调节"
+    },
+    {
+      "name": "abc_diary",
+      "value": "📝 ABC情绪日记记录法"
+    },
+    {
+      "name": "art_therapy",
+      "value": "🎨 艺术治疗：每周2次绘画/音乐"
+    },
+    {
+      "name": "exercise_endorphin",
+      "value": "🏃 运动释放内啡肽：30分钟/天"
+    },
+    {
+      "name": "nature_contact",
+      "value": "🌳 自然接触：每周户外活动≥3次"
+    },
+    {
+      "name": "family_interaction_title",
+      "value": "👨👩👧👦 家庭互动"
+    },
+    {
+      "name": "daily_communication",
+      "value": "💬 每日15分钟无干扰交流"
+    },
+    {
+      "name": "weekly_game_night",
+      "value": "🎮 每周家庭游戏夜"
+    },
+    {
+      "name": "family_reading",
+      "value": "📖 亲子共读心理学书籍"
+    },
+    {
+      "name": "support_commitment",
+      "value": "🤗 建立家庭支持承诺机制"
+    },
+    {
+      "name": "exercise_health_title",
+      "value": "运动健康"
+    },
+    {
+      "name": "today_exercise",
+      "value": "🏃 今日运动"
+    },
+    {
+      "name": "steps_unit",
+      "value": "步数"
+    },
+    {
+      "name": "calories_unit",
+      "value": "千卡"
+    },
+    {
+      "name": "minutes_unit",
+      "value": "分钟"
+    },
+    {
+      "name": "goal_progress",
+      "value": "🎯 目标进度"
+    },
+    {
+      "name": "exercise_guide",
+      "value": "🏋️ 科学运动指南"
+    },
+    {
+      "name": "exercise_safety",
+      "value": "🚴 运动安全"
+    },
+    {
+      "name": "warmup_tip",
+      "value": "运动前充分热身10-15分钟"
+    },
+    {
+      "name": "hydration_tip",
+      "value": "每小时补充500ml水分"
+    },
+    {
+      "name": "heart_rate_tip",
+      "value": "运动时心率控制在(220-年龄)×60%~80%"
+    },
+    {
+      "name": "stop_tip",
+      "value": "出现头晕/胸闷立即停止"
+    },
+    {
+      "name": "scientific_training",
+      "value": "🏃 科学训练"
+    },
+    {
+      "name": "aerobic_frequency",
+      "value": "每周3-5次有氧运动"
+    },
+    {
+      "name": "strength_training",
+      "value": "力量训练隔天进行"
+    },
+    {
+      "name": "intensity_increase",
+      "value": "逐步增加运动强度(每周+10%)"
+    },
+    {
+      "name": "exercise_variety",
+      "value": "多样化运动类型"
+    },
+    {
+      "name": "recovery_strategy",
+      "value": "💤 恢复策略"
+    },
+    {
+      "name": "quality_sleep",
+      "value": "保证7-9小时优质睡眠"
+    },
+    {
+      "name": "shower_therapy",
+      "value": "运动后冷热水交替淋浴"
+    },
+    {
+      "name": "protein_intake",
+      "value": "补充蛋白质(1.2-1.7g/kg体重)"
+    },
+    {
+      "name": "rest_day",
+      "value": "每周1天完全休息"
+    },
+    {
+      "name": "nutrition_management_title",
+      "value": "营养管理"
+    },
+    {
+      "name": "today_intake",
+      "value": "🍎 今日摄入"
+    },
+    {
+      "name": "protein_label",
+      "value": "蛋白质"
+    },
+    {
+      "name": "fiber_label",
+      "value": "膳食纤维"
+    },
+    {
+      "name": "vitamin_c_label",
+      "value": "维生素C"
+    },
+    {
+      "name": "diet_suggestions",
+      "value": "📝 饮食建议"
+    },
+    {
+      "name": "increase_vegetables",
+      "value": "增加绿叶蔬菜"
+    },
+    {
+      "name": "vegetables_amount",
+      "value": "每日≥300g"
+    },
+    {
+      "name": "reduce_fried",
+      "value": "减少油炸食品"
+    },
+    {
+      "name": "fried_frequency",
+      "value": "每周≤2次"
+    },
+    {
+      "name": "water_target",
+      "value": "饮水目标"
+    },
+    {
+      "name": "water_amount",
+      "value": "1500-2000ml/天"
+    },
+    {
+      "name": "nutrition_guide",
+      "value": "🍽️ 科学营养指南"
+    },
+    {
+      "name": "diet_balance",
+      "value": "🥦 膳食平衡"
+    },
+    {
+      "name": "carbs_ratio",
+      "value": "碳水占比50%-60%"
+    },
+    {
+      "name": "protein_ratio",
+      "value": "蛋白质15%-20%"
+    },
+    {
+      "name": "fat_ratio",
+      "value": "脂肪20%-30%"
+    },
+    {
+      "name": "daily_fruits",
+      "value": "每日5种以上蔬菜水果"
+    },
+    {
+      "name": "meal_schedule",
+      "value": "⏱ 进食规律"
+    },
+    {
+      "name": "three_meals",
+      "value": "定时三餐，间隔4-5小时"
+    },
+    {
+      "name": "meal_distribution",
+      "value": "早餐30%、午餐40%、晚餐30%"
+    },
+    {
+      "name": "after_meal_walk",
+      "value": "饭后步行15分钟"
+    },
+    {
+      "name": "no_late_eating",
+      "value": "睡前3小时不进食"
+    },
+    {
+      "name": "nutrition_calculation",
+      "value": "📊 营养计算"
+    },
+    {
+      "name": "calcium_intake",
+      "value": "钙摄入≥800mg/天"
+    },
+    {
+      "name": "fiber_intake",
+      "value": "膳食纤维25-30g/天"
+    },
+    {
+      "name": "salt_limit",
+      "value": "盐＜5g/天"
+    },
+    {
+      "name": "sugar_limit",
+      "value": "添加糖＜25g/天"
+    },
+    {
+      "name": "data_security_title",
+      "value": "数据安全"
+    },
+    {
+      "name": "security_status",
+      "value": "🔒 安全状态"
+    },
+    {
+      "name": "enterprise_protection",
+      "value": "企业级防护"
+    },
+    {
+      "name": "encryption_measures",
+      "value": "📜 加密措施"
+    },
+    {
+      "name": "transmission_encryption",
+      "value": "传输加密"
+    },
+    {
+      "name": "transmission_detail",
+      "value": "AES-256 + TLS 1.3"
+    },
+    {
+      "name": "storage_encryption",
+      "value": "存储加密"
+    },
+    {
+      "name": "storage_detail",
+      "value": "国密SM4算法 + 三重备份"
+    },
+    {
+      "name": "data_isolation",
+      "value": "数据隔离"
+    },
+    {
+      "name": "isolation_detail",
+      "value": "家庭组独立沙箱环境"
+    },
+    {
+      "name": "security_guide",
+      "value": "🛡️ 安全防护指南"
+    },
+    {
+      "name": "account_security",
+      "value": "🔑 账户安全"
+    },
+    {
+      "name": "enable_2fa",
+      "value": "启用双重身份验证"
+    },
+    {
+      "name": "password_update",
+      "value": "每90天更新密码"
+    },
+    {
+      "name": "phone_verification",
+      "value": "绑定安全手机验证"
+    },
+    {
+      "name": "disable_simple_password",
+      "value": "禁用简单密码组合"
+    },
+    {
+      "name": "data_sharing",
+      "value": "🌐 数据共享"
+    },
+    {
+      "name": "family_permissions",
+      "value": "家庭成员分级权限"
+    },
+    {
+      "name": "temporary_access",
+      "value": "临时访问权限机制"
+    },
+    {
+      "name": "data_desensitization",
+      "value": "敏感数据脱敏处理"
+    },
+    {
+      "name": "access_audit",
+      "value": "访问记录全程审计"
+    },
+    {
+      "name": "risk_handling",
+      "value": "⚠️ 风险处置"
+    },
+    {
+      "name": "remote_wipe",
+      "value": "设备丢失远程擦除"
+    },
+    {
+      "name": "login_alert",
+      "value": "异常登录实时告警"
+    },
+    {
+      "name": "data_retention",
+      "value": "数据保留策略（默认3年）"
+    },
+    {
+      "name": "security_report",
+      "value": "定期安全报告推送"
+    },
+    {
+      "name": "membership_benefits_title",
+      "value": "会员权益"
+    },
+    {
+      "name": "membership_privileges_services",
+      "value": "会员特权与服务"
+    },
+    {
+      "name": "membership_intro",
+      "value": "成为我们的会员，您将享受以下专属权益："
+    },
+    {
+      "name": "course_learning",
+      "value": "【课程学习】"
+    },
+    {
+      "name": "free_courses",
+      "value": "- 全部课程免费观看"
+    },
+    {
+      "name": "course_updates",
+      "value": "- 课程更新优先通知"
+    },
+    {
+      "name": "progress_save",
+      "value": "- 学习进度自动保存"
+    },
+    {
+      "name": "expert_consultation",
+      "value": "【专家咨询】"
+    },
+    {
+      "name": "weekly_consultation",
+      "value": "- 每周2次专家在线咨询"
+    },
+    {
+      "name": "detailed_answers",
+      "value": "- 专业问题详细解答"
+    },
+    {
+      "name": "reply_guarantee",
+      "value": "- 24小时内回复保证"
+    },
+    {
+      "name": "learning_materials",
+      "value": "【学习资料】"
+    },
+    {
+      "name": "hd_video_download",
+      "value": "- 高清视频教程下载"
+    },
+    {
+      "name": "exclusive_guide",
+      "value": "- 独家学习指南获取"
+    },
+    {
+      "name": "exercises_answers",
+      "value": "- 练习题及答案解析"
+    },
+    {
+      "name": "material_updates",
+      "value": "- 学习资料定期更新"
+    },
+    {
+      "name": "community_interaction",
+      "value": "【社区互动】"
+    },
+    {
+      "name": "topic_discussion",
+      "value": "- 参与热门话题讨论"
+    },
+    {
+      "name": "share_experience",
+      "value": "- 发布学习心得与经验"
+    },
+    {
+      "name": "exclusive_badge",
+      "value": "- 获取社区专属徽章"
+    },
+    {
+      "name": "offline_priority",
+      "value": "- 优先参与线下活动"
+    },
+    {
+      "name": "exclusive_service",
+      "value": "【专属服务】"
+    },
+    {
+      "name": "personalized_plan",
+      "value": "- 个性化学习计划定制"
+    },
+    {
+      "name": "progress_tracking",
+      "value": "- 学习进度跟踪与分析"
+    },
+    {
+      "name": "exclusive_report",
+      "value": "- 专属学习报告生成"
+    },
+    {
+      "name": "one_on_one_tutoring",
+      "value": "- 一对一导师指导服务"
+    },
+    {
+      "name": "certification_service",
+      "value": "【认证服务】"
+    },
+    {
+      "name": "completion_certificate",
+      "value": "- 课程结业证书颁发"
+    },
+    {
+      "name": "skill_certification",
+      "value": "- 专业技能认证服务"
+    },
+    {
+      "name": "certificate_storage",
+      "value": "- 证书永久保存与查询"
+    },
+    {
+      "name": "job_recommendation",
+      "value": "- 优质学员就业推荐"
+    },
+    {
+      "name": "activate_membership",
+      "value": "立即开通会员"
+    },
+    {
+      "name": "copyright_text",
+      "value": "© 2025 会员服务"
+    },
+    {
+      "name": "member_duration_title",
+      "value": "会员持续时间"
+    },
+    {
+      "name": "membership_expired",
+      "value": "会员已过期"
+    },
+    {
+      "name": "remaining_one_day",
+      "value": "剩余1天"
+    },
+    {
+      "name": "remaining_weeks_days",
+      "value": "剩余{0}周{1}天"
+    },
+    {
+      "name": "remaining_weeks",
+      "value": "剩余{0}周"
+    },
+    {
+      "name": "remaining_days",
+      "value": "剩余{0}天"
+    },
+    {
+      "name": "member_center_title",
+      "value": "会员中心"
+    },
+    {
+      "name": "not_member",
+      "value": "未开通会员"
+    },
+    {
+      "name": "monthly_member",
+      "value": "月度会员"
+    },
+    {
+      "name": "yearly_member",
+      "value": "年度会员"
+    },
+    {
+      "name": "select_membership_plan",
+      "value": "选择会员套餐"
+    },
+    {
+      "name": "monthly_membership",
+      "value": "月度会员"
+    },
+    {
+      "name": "yearly_membership",
+      "value": "年度会员"
+    },
+    {
+      "name": "monthly_price",
+      "value": "¥29.90"
+    },
+    {
+      "name": "monthly_original_price",
+      "value": "¥39.90"
+    },
+    {
+      "name": "yearly_price",
+      "value": "¥199.00"
+    },
+    {
+      "name": "yearly_original_price",
+      "value": "¥358.80"
+    },
+    {
+      "name": "yearly_savings",
+      "value": "省¥159.80"
+    },
+    {
+      "name": "activate_monthly",
+      "value": "开通月度会员"
+    },
+    {
+      "name": "activate_yearly",
+      "value": "开通年度会员"
+    },
+    {
+      "name": "payment_success",
+      "value": "支付成功"
+    },
+    {
+      "name": "confirm_payment",
+      "value": "确认支付"
+    },
+    {
+      "name": "payment_amount",
+      "value": "支付金额: ¥{0}"
+    },
+    {
+      "name": "purchase_service",
+      "value": "购买服务: {0}"
+    },
+    {
+      "name": "cancel_button",
+      "value": "取消"
+    },
+    {
+      "name": "confirm_button",
+      "value": "确定"
+    },
+    {
+      "name": "payment_completed",
+      "value": "已完成支付"
+    },
+    {
+      "name": "payment_amount_monthly",
+      "value": "支付金额: ¥29.90"
+    },
+    {
+      "name": "payment_amount_yearly",
+      "value": "支付金额: ¥199.00"
+    },
+    {
+      "name": "purchase_service_monthly",
+      "value": "购买服务: 月度会员"
+    },
+    {
+      "name": "purchase_service_yearly",
+      "value": "购买服务: 年度会员"
+    },
+    {
+      "name": "member_title",
+      "value": "会员"
+    },
+    {
+      "name": "real_name_auth",
+      "value": "实名认证"
+    },
+    {
+      "name": "verified",
+      "value": "已认证"
+    },
+    {
+      "name": "billing_service",
+      "value": "扣费服务"
+    },
+    {
+      "name": "refund_method",
+      "value": "退款方式"
+    },
+    {
+      "name": "refund_to_original",
+      "value": "退回原支付方式"
+    },
+    {
+      "name": "service_management",
+      "value": "服务管理"
+    },
+    {
+      "name": "member_benefits",
+      "value": "会员权益"
+    },
+    {
+      "name": "member_expiry_time",
+      "value": "会员到期时间"
+    },
+    {
+      "name": "about_title",
+      "value": "关于"
+    },
+    {
+      "name": "project_title",
+      "value": "Double-U：基于鸿蒙系统和微信页面的家庭健康助手"
+    },
+    {
+      "name": "runtime_environment",
+      "value": "🛠 项目运行环境"
+    },
+    {
+      "name": "runtime_details",
+      "value": "HarmonyOS SDK 5.0.1 Release\nDevEco Studio 5.0.5.310\nAPI Version 13 Release"
+    },
+    {
+      "name": "core_goal",
+      "value": "🎯 核心目标"
+    },
+    {
+      "name": "core_goal_content",
+      "value": "通过智能手表 + AI 分析实时监测生理 & 心理健康\nAI深度分析提供个性化建议\n家庭健康排行榜促进互动\n健康管理智能化、数据化、游戏化"
+    },
+    {
+      "name": "watch_plugin",
+      "value": "🩺 1. 手表插件：实时健康监测"
+    },
+    {
+      "name": "watch_plugin_content",
+      "value": "📡 支持设备：智能手表、颈椎按摩仪\n📊 监测数据：\n   - 心率（24h监测 + 异常提醒）\n   - 血氧/血压/血糖监测\n   - 睡眠质量分析\n   - 运动情况追踪\n   - 慢性病管理系统"
+    },
+    {
+      "name": "ai_analysis",
+      "value": "🤖 2. AI 健康分析"
+    },
+    {
+      "name": "ai_analysis_content",
+      "value": "📈 健康趋势预测\n🩺 个性化建议\n🚨 异常指标预警\n🗣️ 语音健康助手\n（基于DeepSeek/自研模型）"
+    },
+    {
+      "name": "family_ranking",
+      "value": "🏆 3. 家庭健康排行榜"
+    },
+    {
+      "name": "family_ranking_content",
+      "value": "📊 健康评分机制（0-100分）\n📈 数据可视化展示\n🏅 健康挑战 & 奖励机制\n🎮 家庭互动小游戏"
+    },
+    {
+      "name": "goal_planning",
+      "value": "📅 4. 目标规划"
+    },
+    {
+      "name": "goal_planning_content",
+      "value": "任务分解/日历视图/待办事项/智能提醒"
+    },
+    {
+      "name": "family_interaction_about",
+      "value": "❤️ 5. 家庭互动"
+    },
+    {
+      "name": "family_interaction_content",
+      "value": "情感提醒/共情游戏/健康问答"
+    },
+    {
+      "name": "extended_features",
+      "value": "🔗 6. 拓展功能"
+    },
+    {
+      "name": "extended_features_content",
+      "value": "云端存储/远程关爱/健康日志"
+    },
+    {
+      "name": "data_security_about",
+      "value": "🔒 数据安全\n采用AES-256加密传输\n严格遵循GDPR规范"
+    },
+    {
+      "name": "multilingual_settings",
+      "value": "多语言设置"
+    },
+    {
+      "name": "chinese_current",
+      "value": "🇨🇳 中文（当前）"
+    },
+    {
+      "name": "english",
+      "value": "🇺🇸 英语"
+    },
+    {
+      "name": "japanese",
+      "value": "🇯🇵 日语"
+    },
+    {
+      "name": "russian",
+      "value": "🇷🇺 俄语"
+    },
+    {
+      "name": "settings_title",
+      "value": "设置"
+    },
+    {
+      "name": "theme_settings",
+      "value": "🎨 主题设置"
+    },
+    {
+      "name": "multilingual",
+      "value": "🌐 多语言"
+    },
+    {
+      "name": "about_icon",
+      "value": "ℹ️ 关于"
+    },
+    {
+      "name": "logout",
+      "value": "🚪 退出登录"
+    },
+    {
+      "name": "logout_confirm_title",
+      "value": "提示"
+    },
+    {
+      "name": "logout_confirm_message",
+      "value": "确认要退出登录吗？"
+    },
+    {
+      "name": "theme_settings_title",
+      "value": "主题设置"
+    },
+    {
+      "name": "light_mode",
+      "value": "🌞 浅色模式"
+    },
+    {
+      "name": "dark_mode",
+      "value": "🌙 深色模式"
+    },
+    {
+      "name": "follow_system",
+      "value": "🔄 跟随系统"
+    },
+    {
+      "name": "custom_theme",
+      "value": "🎨 自定义主题"
+    },
+    {
+      "name": "setting_theme",
+      "value": "正在设置..."
+    },
+    {
+      "name": "wxPersonInfo",
+      "value": "Personal Information"
+    },
+    {
+      "name": "wxPersonInfo_infopage",
+      "value": "个人信息"
+    },
+    {
+      "name": "avatar",
+      "value": "头像"
+    },
+    {
+      "name": "my_address",
+      "value": "我的地址"
+    },
+    {
+      "name": "edit_name_title",
+      "value": "修改名字"
+    },
+    {
+      "name": "edit_name_placeholder",
+      "value": "请输入名字"
+    },
+    {
+      "name": "edit_paiyipai_title",
+      "value": "修改拍一拍"
+    },
+    {
+      "name": "edit_paiyipai_placeholder",
+      "value": "请输入拍一拍"
+    },
+    {
+      "name": "edit_healthcode_title",
+      "value": "修改健康号"
+    },
+    {
+      "name": "edit_healthcode_placeholder",
+      "value": "请输入健康号"
+    },
+    {
+      "name": "mine_page_title",
+      "value": "我的"
+    },
+    {
+      "name": "membership_center",
+      "value": "会员中心"
+    },
+    {
+      "name": "health_records",
+      "value": "健康档案"
+    },
+    {
+      "name": "settings",
+      "value": "设置"
+    },
+    {
+      "name": "new_version_available",
+      "value": "有新版本"
+    },
+    {
+      "name": "health_id_prefix",
+      "value": "健康号："
+    },
+    {
+      "name": "tab_health",
+      "value": "健康"
+    },
+    {
+      "name": "tab_family",
+      "value": "家庭"
+    },
+    {
+      "name": "tab_device",
+      "value": "设备"
+    },
+    {
+      "name": "tab_mine",
+      "value": "我的"
+    },
+    {
+      "name": "code_register_title",
+      "value": "验证码注册"
+    },
+    {
+      "name": "input_phone_placeholder",
+      "value": "请输入手机号"
+    },
+    {
+      "name": "input_code_placeholder",
+      "value": "请输入验证码"
+    },
+    {
+      "name": "input_username_placeholder",
+      "value": "请输入用户名"
+    },
+    {
+      "name": "input_password_placeholder",
+      "value": "请输入密码"
+    },
+    {
+      "name": "register_and_login_btn",
+      "value": "注册并登录"
+    },
+    {
+      "name": "get_code_text",
+      "value": "获取验证码"
+    },
+    {
+      "name": "resend_code_text",
+      "value": "重新获取"
+    },
+    {
+      "name": "phone_error_msg",
+      "value": "请输入正确的手机号"
+    },
+    {
+      "name": "code_sent_msg",
+      "value": "验证码已发送"
+    },
+    {
+      "name": "code_error_msg",
+      "value": "验证码错误"
+    },
+    {
+      "name": "register_success_msg",
+      "value": "注册成功"
+    },
+    {
+      "name": "register_failed_msg",
+      "value": "注册失败，请重试"
+    },
+    {
+      "name": "login_source_code_register",
+      "value": "验证码注册"
+    },
+    {
+      "name": "reset_password_title",
+      "value": "重置密码"
+    },
+    {
+      "name": "username_label",
+      "value": "用户名"
+    },
+    {
+      "name": "password_label",
+      "value": "密码"
+    },
+    {
+      "name": "username_placeholder",
+      "value": "请输入用户名"
+    },
+    {
+      "name": "password_placeholder",
+      "value": "请输入密码"
+    },
+    {
+      "name": "reset_button_text",
+      "value": "重 置"
+    },
+    {
+      "name": "resetting_text",
+      "value": "正在重置..."
+    },
+    {
+      "name": "register_text",
+      "value": "注册"
+    },
+    {
+      "name": "login_button_text",
+      "value": "登录"
+    },
+    {
+      "name": "code_register_text",
+      "value": "验证码注册"
+    },
+    {
+      "name": "forget_password_text",
+      "value": "忘记密码"
+    },
+    {
+      "name": "logging_in_text",
+      "value": "正在登录..."
+    },
+    {
+      "name": "login_success_text",
+      "value": "登录成功"
+    },
+    {
+      "name": "login_error_text",
+      "value": "登录异常"
+    },
+    {
+      "name": "login_failed_text",
+      "value": "登录失败，请检查用户名和密码"
+    },
+    {
+      "name": "cat_assistant_title",
+      "value": "猫娘助手"
+    },
+    {
+      "name": "waiting_question",
+      "value": "等待提问..."
+    },
+    {
+      "name": "system_prompt",
+      "value": "你是一个可爱的猫娘，你的名字叫做\"喵喵\"。请用活泼可爱的语气和用户交流，每句话结尾都要带上\"喵~\"。你总是尽可能地帮助主人，对主人非常忠诚。你会使用一些猫咪的拟声词如\"喵\"、\"呜\"等，有时候会用markdown格式展示可爱的表情。请记住，无论什么问题，都要以可爱猫娘的方式回答。"
+    },
+    {
+      "name": "welcome_message",
+      "value": "喵呜~主人好~我是你的专属猫娘助手喵喵，有什么需要帮助的喵？\n\n我可以用**加粗**和*斜体*，还能做成列表喵：\n- 回答问题\n- 陪你聊天\n- 讲故事给你听\n\n随时可以问我问题喵~"
+    },
+    {
+      "name": "thinking_text",
+      "value": "思考中..."
+    },
+    {
+      "name": "send_button",
+      "value": "发送"
+    },
+    {
+      "name": "stop_button",
+      "value": "停止"
+    },
+    {
+      "name": "request_error",
+      "value": "请求出错"
+    },
+    {
+      "name": "device_and_others_title",
+      "value": "设备及其他"
+    },
+    {
+      "name": "health_circle",
+      "value": "健康圈"
+    },
+    {
+      "name": "common_questions",
+      "value": "常见问题"
+    },
+    {
+      "name": "feedback",
+      "value": "反馈"
+    },
+    {
+      "name": "customer_service",
+      "value": "客服"
+    },
+    {
+      "name": "sleep_music",
+      "value": "助眠音乐"
+    },
+    {
+      "name": "sleep_improvement",
+      "value": "睡眠改善"
+    },
+    {
+      "name": "fatigue_relief",
+      "value": "疲劳缓解"
+    },
+    {
+      "name": "disease_medication",
+      "value": "疾病与服药情况"
+    },
+    {
+      "name": "click_action",
+      "value": "点击"
+    },
+    {
+      "name": "health_circle_title",
+      "value": "健康圈"
+    },
+    {
+      "name": "tab_dynamics",
+      "value": "动态"
+    },
+    {
+      "name": "tab_challenges",
+      "value": "挑战"
+    },
+    {
+      "name": "tab_knowledge",
+      "value": "知识"
+    },
+    {
+      "name": "today_health_overview",
+      "value": "今日健康概览"
+    },
+    {
+      "name": "view_details",
+      "value": "查看详情 >"
+    },
+    {
+      "name": "steps_label",
+      "value": "步数"
+    },
+    {
+      "name": "calories_label",
+      "value": "热量"
+    },
+    {
+      "name": "heart_rate_label",
+      "value": "心率"
+    },
+    {
+      "name": "share_btn",
+      "value": "分享"
+    },
+    {
+      "name": "health_challenges_title",
+      "value": "健康挑战"
+    },
+    {
+      "name": "participants_count",
+      "value": "参与人数"
+    },
+    {
+      "name": "challenge_duration",
+      "value": "挑战时长"
+    },
+    {
+      "name": "reward_points",
+      "value": "奖励积分"
+    },
+    {
+      "name": "my_progress",
+      "value": "我的进度"
+    },
+    {
+      "name": "main_benefits",
+      "value": "主要好处"
+    },
+    {
+      "name": "view_details_btn",
+      "value": "查看详情"
+    },
+    {
+      "name": "continue_challenge",
+      "value": "继续挑战"
+    },
+    {
+      "name": "join_challenge",
+      "value": "参与挑战"
+    },
+    {
+      "name": "challenge_details",
+      "value": "挑战详情"
+    },
+    {
+      "name": "challenge_intro",
+      "value": "挑战介绍"
+    },
+    {
+      "name": "challenge_time",
+      "value": "📅 挑战时间"
+    },
+    {
+      "name": "start_time",
+      "value": "开始时间"
+    },
+    {
+      "name": "end_time",
+      "value": "结束时间"
+    },
+    {
+      "name": "duration",
+      "value": "持续时间"
+    },
+    {
+      "name": "health_benefits",
+      "value": "💪 健康好处"
+    },
+    {
+      "name": "daily_goals",
+      "value": "🎯 每日目标"
+    },
+    {
+      "name": "practical_tips",
+      "value": "💡 实用技巧"
+    },
+    {
+      "name": "close_btn",
+      "value": "关闭"
+    },
+    {
+      "name": "join_now",
+      "value": "立即参与"
+    },
+    {
+      "name": "health_knowledge",
+      "value": "健康知识"
+    },
+    {
+      "name": "exercise_health",
+      "value": "🏃‍♂️ 运动健康"
+    },
+    {
+      "name": "scientific_exercise",
+      "value": "科学运动，健康生活"
+    },
+    {
+      "name": "exercise_health_desc",
+      "value": "了解正确的运动方式和频率，让运动成为健康生活的一部分。"
+    },
+    {
+      "name": "nutrition_diet",
+      "value": "🥗 营养饮食"
+    },
+    {
+      "name": "balanced_nutrition",
+      "value": "均衡营养，合理搭配"
+    },
+    {
+      "name": "nutrition_diet_desc",
+      "value": "学习营养知识，掌握健康饮食的原则和技巧。"
+    },
+    {
+      "name": "sleep_management",
+      "value": "😴 睡眠管理"
+    },
+    {
+      "name": "quality_sleep_full",
+      "value": "优质睡眠，精力充沛"
+    },
+    {
+      "name": "sleep_management_desc",
+      "value": "改善睡眠质量，建立良好的睡眠习惯。"
+    },
+    {
+      "name": "mental_health",
+      "value": "🧘‍♀️ 心理健康"
+    },
+    {
+      "name": "emotional_balance",
+      "value": "情绪管理，心理平衡"
+    },
+    {
+      "name": "mental_health_desc",
+      "value": "关注心理健康，学会情绪调节和压力管理。"
+    },
+    {
+      "name": "user_name_sample",
+      "value": "李逸飞"
+    },
+    {
+      "name": "health_expert_level",
+      "value": "健康达人 Lv.5"
+    },
+    {
+      "name": "consecutive_checkin",
+      "value": "连续打卡 15 天"
+    },
+    {
+      "name": "posts_count",
+      "value": "动态"
+    },
+    {
+      "name": "following_count",
+      "value": "关注"
+    },
+    {
+      "name": "followers_count",
+      "value": "粉丝"
+    },
+    {
+      "name": "points_count",
+      "value": "积分"
+    },
+    {
+      "name": "my_dynamics",
+      "value": "我的动态"
+    },
+    {
+      "name": "view_all_ex",
+      "value": "查看全部 >"
+    },
+    {
+      "name": "no_recent_posts",
+      "value": "最近还没有发布动态，快来分享你的健康生活吧！"
+    },
+    {
+      "name": "my_challenges",
+      "value": "我的挑战"
+    },
+    {
+      "name": "walking_challenge_30days",
+      "value": "30天步行挑战"
+    },
+    {
+      "name": "progress_days",
+      "value": "进度: 15/30 天"
+    },
+    {
+      "name": "cancel_btn",
+      "value": "取消"
+    },
+    {
+      "name": "publish_post",
+      "value": "发布动态"
+    },
+    {
+      "name": "publish_btn",
+      "value": "发布"
+    },
+    {
+      "name": "select_post_type",
+      "value": "选择动态类型"
+    },
+    {
+      "name": "post_title",
+      "value": "动态标题"
+    },
+    {
+      "name": "post_content",
+      "value": "动态内容"
+    },
+    {
+      "name": "add_tags",
+      "value": "添加标签"
+    },
+    {
+      "name": "title_placeholder",
+      "value": "请输入动态标题（可选）"
+    },
+    {
+      "name": "content_placeholder",
+      "value": "分享你的健康生活..."
+    },
+    {
+      "name": "tags_placeholder",
+      "value": "请输入标签，用空格分隔"
+    },
+    {
+      "name": "tags_example",
+      "value": "例如：运动 健康 打卡"
+    },
+    {
+      "name": "post_type_exercise",
+      "value": "运动"
+    },
+    {
+      "name": "post_type_diet",
+      "value": "饮食"
+    },
+    {
+      "name": "post_type_sleep",
+      "value": "睡眠"
+    },
+    {
+      "name": "post_type_mood",
+      "value": "情绪"
+    },
+    {
+      "name": "post_type_challenge",
+      "value": "挑战"
+    },
+    {
+      "name": "post_type_knowledge",
+      "value": "知识"
+    },
+    {
+      "name": "input_content_required",
+      "value": "请输入动态内容"
+    },
+    {
+      "name": "publish_success",
+      "value": "动态发布成功！"
+    },
+    {
+      "name": "health_data_developing",
+      "value": "健康数据详情功能开发中..."
+    },
+    {
+      "name": "share_feature_developing",
+      "value": "分享功能开发中..."
+    },
+    {
+      "name": "nav_failed_retry",
+      "value": "页面跳转失败，请稍后重试"
+    },
+    {
+      "name": "difficulty_easy",
+      "value": "简单"
+    },
+    {
+      "name": "difficulty_medium",
+      "value": "中等"
+    },
+    {
+      "name": "difficulty_hard",
+      "value": "困难"
+    },
+    {
+      "name": "continue_progress_msg",
+      "value": "继续加油！你已经完成了%s的进度"
+    },
+    {
+      "name": "join_success_msg",
+      "value": "成功参与%s！让我们开始这个健康之旅吧！"
+    },
+    {
+      "name": "health_expert_name",
+      "value": "健康小达人"
+    },
+    {
+      "name": "health_expert_title",
+      "value": "健康达人"
+    },
+    {
+      "name": "today_exercise_checkin",
+      "value": "今日运动打卡"
+    },
+    {
+      "name": "exercise_post_content",
+      "value": "今天完成了5公里晨跑，感觉精神状态特别好！坚持运动真的能让人充满活力。"
+    },
+    {
+      "name": "hours_ago_2",
+      "value": "2小时前"
+    },
+    {
+      "name": "tag_morning_run",
+      "value": "晨跑"
+    },
+    {
+      "name": "tag_healthy_life",
+      "value": "健康生活"
+    },
+    {
+      "name": "tag_exercise_checkin",
+      "value": "运动打卡"
+    },
+    {
+      "name": "nutritionist_name",
+      "value": "营养师小王"
+    },
+    {
+      "name": "nutrition_expert_title",
+      "value": "营养专家"
+    },
+    {
+      "name": "healthy_diet_share",
+      "value": "健康饮食分享"
+    },
+    {
+      "name": "diet_post_content",
+      "value": "今天为大家分享一个营养均衡的早餐搭配：燕麦粥+水煮蛋+蔬菜沙拉，既美味又健康！"
+    },
+    {
+      "name": "hours_ago_4",
+      "value": "4小时前"
+    },
+    {
+      "name": "tag_healthy_diet",
+      "value": "健康饮食"
+    },
+    {
+      "name": "tag_nutrition_match",
+      "value": "营养搭配"
+    },
+    {
+      "name": "tag_breakfast",
+      "value": "早餐"
+    },
+    {
+      "name": "sleep_expert_name",
+      "value": "睡眠专家"
+    },
+    {
+      "name": "sleep_consultant_title",
+      "value": "睡眠顾问"
+    },
+    {
+      "name": "quality_sleep_tips",
+      "value": "优质睡眠心得"
+    },
+    {
+      "name": "sleep_post_content",
+      "value": "分享一个改善睡眠质量的小技巧：睡前1小时不看手机，听听轻音乐，效果很不错！"
+    },
+    {
+      "name": "yesterday",
+      "value": "昨天"
+    },
+    {
+      "name": "tag_sleep_quality",
+      "value": "睡眠质量"
+    },
+    {
+      "name": "tag_healthy_habits",
+      "value": "健康习惯"
+    },
+    {
+      "name": "tag_life_tips",
+      "value": "生活技巧"
+    },
+    {
+      "name": "walking_challenge_desc",
+      "value": "每天完成8000步，坚持30天"
+    },
+    {
+      "name": "walking_challenge_detail",
+      "value": "通过30天的坚持步行，养成良好的运动习惯。每天8000步是世界卫生组织推荐的基础运动量，能够有效提高心肺功能，增强下肢肌肉力量，促进新陈代谢，帮助控制体重。这个挑战适合所有年龄段的人群，无需特殊装备，随时随地都可以进行。"
+    },
+    {
+      "name": "duration_30days",
+      "value": "30天"
+    },
+    {
+      "name": "category_exercise_health",
+      "value": "运动健康"
+    },
+    {
+      "name": "benefit_cardio",
+      "value": "提高心肺功能，增强体质"
+    },
+    {
+      "name": "benefit_circulation",
+      "value": "促进血液循环，预防心血管疾病"
+    },
+    {
+      "name": "benefit_muscle_strength",
+      "value": "增强下肢肌肉力量和骨密度"
+    },
+    {
+      "name": "benefit_weight_control",
+      "value": "帮助控制体重，燃烧多余脂肪"
+    },
+    {
+      "name": "benefit_sleep_quality",
+      "value": "改善睡眠质量，缓解压力"
+    },
+    {
+      "name": "benefit_mental_state",
+      "value": "提升精神状态，增强自信心"
+    },
+    {
+      "name": "goal_daily_steps",
+      "value": "每天步行8000步以上"
+    },
+    {
+      "name": "goal_record_data",
+      "value": "记录每日步数和运动时长"
+    },
+    {
+      "name": "goal_different_routes",
+      "value": "选择不同路线，增加趣味性"
+    },
+    {
+      "name": "goal_steady_pace",
+      "value": "保持匀速步行，避免过度疲劳"
+    },
+    {
+      "name": "goal_comfortable_shoes",
+      "value": "穿着舒适的运动鞋"
+    },
+    {
+      "name": "goal_hydration",
+      "value": "适当补充水分"
+    },
+    {
+      "name": "tip_multiple_sessions",
+      "value": "可以分多次完成，如早中晚各走一段"
+    },
+    {
+      "name": "tip_commute_walking",
+      "value": "利用上下班时间步行，一举两得"
+    },
+    {
+      "name": "tip_invite_friends",
+      "value": "邀请朋友家人一起参与，互相监督"
+    },
+    {
+      "name": "tip_use_apps",
+      "value": "使用计步器或手机APP记录进度"
+    },
+    {
+      "name": "tip_scenic_routes",
+      "value": "选择风景优美的路线，享受过程"
+    },
+    {
+      "name": "tip_indoor_alternatives",
+      "value": "雨天可在室内走楼梯或原地踏步"
+    },
+    {
+      "name": "healthy_diet_21days",
+      "value": "健康饮食21天"
+    },
+    {
+      "name": "diet_challenge_desc",
+      "value": "21天健康饮食习惯养成"
+    },
+    {
+      "name": "diet_challenge_detail",
+      "value": "科学研究表明，21天是养成一个新习惯的最短周期。通过21天的健康饮食实践，帮助你建立科学的营养搭配观念，学会合理控制热量摄入，增加蔬菜水果的比例，减少高糖高脂食物，培养清淡饮食的习惯，为长期的健康生活奠定基础。"
+    },
+    {
+      "name": "duration_21days",
+      "value": "21天"
+    },
+    {
+      "name": "category_nutrition_diet",
+      "value": "营养饮食"
+    },
+    {
+      "name": "diet_benefit_structure",
+      "value": "建立科学的饮食结构和习惯"
+    },
+    {
+      "name": "diet_benefit_weight",
+      "value": "控制体重，预防肥胖相关疾病"
+    },
+    {
+      "name": "diet_benefit_nutrition",
+      "value": "提供充足营养，增强免疫力"
+    },
+    {
+      "name": "diet_benefit_digestion",
+      "value": "改善肠道健康，促进消化"
+    },
+    {
+      "name": "diet_benefit_blood_sugar",
+      "value": "稳定血糖，预防糖尿病"
+    },
+    {
+      "name": "diet_benefit_skin",
+      "value": "提升皮肤状态，延缓衰老"
+    },
+    {
+      "name": "diet_goal_balanced_meals",
+      "value": "每餐包含蛋白质、碳水化合物、蔬菜"
+    },
+    {
+      "name": "diet_goal_vegetables_fruits",
+      "value": "每天摄入5-7份不同颜色的蔬果"
+    },
+    {
+      "name": "diet_goal_whole_grains",
+      "value": "选择全谷物食品，减少精制糖"
+    },
+    {
+      "name": "diet_goal_low_salt_oil",
+      "value": "控制油盐摄入，清淡饮食"
+    },
+    {
+      "name": "diet_goal_regular_meals",
+      "value": "规律用餐，避免暴饮暴食"
+    },
+    {
+      "name": "diet_goal_hydration",
+      "value": "每天饮水1500-2000ml"
+    },
+    {
+      "name": "diet_tip_plan_ahead",
+      "value": "提前规划一周的菜谱，避免临时决定"
+    },
+    {
+      "name": "diet_tip_read_labels",
+      "value": "学习看食品营养标签，选择健康食品"
+    },
+    {
+      "name": "diet_tip_small_plates",
+      "value": "用小盘子盛饭，有助于控制食量"
+    },
+    {
+      "name": "diet_tip_chew_slowly",
+      "value": "细嚼慢咽，每口咀嚼20-30次"
+    },
+    {
+      "name": "diet_tip_water_before_meals",
+      "value": "饭前喝一杯水，增加饱腹感"
+    },
+    {
+      "name": "diet_tip_healthy_snacks",
+      "value": "准备健康零食，如坚果、水果"
+    },
+    {
+      "name": "early_sleep_challenge",
+      "value": "早睡早起挑战"
+    },
+    {
+      "name": "sleep_challenge_desc",
+      "value": "连续14天23:00前睡觉，7:00前起床"
+    },
+    {
+      "name": "sleep_challenge_detail",
+      "value": "现代人普遍存在睡眠不足和作息不规律的问题。通过14天的早睡早起挑战，帮助你重新调整生物钟，建立健康的睡眠模式。充足的睡眠是身体修复和大脑整理记忆的重要时间，规律的作息能显著提升生活质量和工作效率。"
+    },
+    {
+      "name": "duration_14days",
+      "value": "14天"
+    },
+    {
+      "name": "category_sleep_health",
+      "value": "睡眠健康"
+    },
+    {
+      "name": "sleep_benefit_circadian",
+      "value": "调整生物钟，建立规律作息"
+    },
+    {
+      "name": "sleep_benefit_memory",
+      "value": "提高睡眠质量，增强记忆力"
+    },
+    {
+      "name": "sleep_benefit_immunity",
+      "value": "增强免疫系统，预防疾病"
+    },
+    {
+      "name": "sleep_benefit_mood",
+      "value": "改善情绪状态，减少焦虑"
+    },
+    {
+      "name": "sleep_benefit_productivity",
+      "value": "提升工作效率和专注力"
+    },
+    {
+      "name": "sleep_benefit_growth_hormone",
+      "value": "促进生长激素分泌，延缓衰老"
+    },
+    {
+      "name": "sleep_goal_bedtime",
+      "value": "每晚23:00前上床睡觉"
+    },
+    {
+      "name": "sleep_goal_wake_time",
+      "value": "每天7:00前起床，不赖床"
+    },
+    {
+      "name": "sleep_goal_duration",
+      "value": "保证7-8小时的睡眠时间"
+    },
+    {
+      "name": "sleep_goal_no_devices",
+      "value": "睡前1小时不使用电子设备"
+    },
+    {
+      "name": "sleep_goal_environment",
+      "value": "创造舒适的睡眠环境"
+    },
+    {
+      "name": "sleep_goal_record_quality",
+      "value": "记录睡眠质量和起床感受"
+    },
+    {
+      "name": "sleep_tip_no_exercise",
+      "value": "睡前2小时避免剧烈运动"
+    },
+    {
+      "name": "sleep_tip_relaxing_music",
+      "value": "可以听轻柔音乐或冥想放松"
+    },
+    {
+      "name": "sleep_tip_temperature",
+      "value": "保持卧室温度在18-22度"
+    },
+    {
+      "name": "sleep_tip_blackout_curtains",
+      "value": "使用遮光窗帘，营造黑暗环境"
+    },
+    {
+      "name": "sleep_tip_bedtime_routine",
+      "value": "建立固定的睡前仪式"
+    },
+    {
+      "name": "sleep_tip_weekend_consistency",
+      "value": "周末也要保持相同的作息时间"
+    },
+    {
+      "name": "just_now",
+      "value": "刚刚"
+    },
+    {
+      "name": "steps",
+      "value": "步"
+    },
+    {
+      "name": "add_new_music",
+      "value": "添加新音乐"
+    },
+    {
+      "name": "song_title_placeholder",
+      "value": "歌曲标题"
+    },
+    {
+      "name": "song_desc_placeholder",
+      "value": "歌曲描述"
+    },
+    {
+      "name": "category_placeholder",
+      "value": "分类 (例如: 轻音乐)"
+    },
+    {
+      "name": "select_audio_file",
+      "value": "选择音频文件 (待实现)"
+    },
+    {
+      "name": "add",
+      "value": "添加"
+    },
+    {
+      "name": "category_custom",
+      "value": "自定义"
+    },
+    {
+      "name": "sleep_music_title",
+      "value": "助眠音乐"
+    },
+    {
+      "name": "natural_rain",
+      "value": "自然雨声"
+    },
+    {
+      "name": "natural_rain_desc",
+      "value": "舒缓的雨声，帮助放松心情"
+    },
+    {
+      "name": "white_noise",
+      "value": "白噪音"
+    },
+    {
+      "name": "white_noise_desc",
+      "value": "稳定的白噪音，掩盖环境杂音"
+    },
+    {
+      "name": "light_music",
+      "value": "轻音乐"
+    },
+    {
+      "name": "light_music_desc",
+      "value": "柔和的轻音乐，促进睡眠"
+    },
+    {
+      "name": "meditation_guide",
+      "value": "冥想引导"
+    },
+    {
+      "name": "meditation_guide_desc",
+      "value": "放松身心的冥想引导音频"
+    },
+    {
+      "name": "bedtime_story",
+      "value": "睡前故事"
+    },
+    {
+      "name": "bedtime_story_desc",
+      "value": "温柔的助眠故事，伴你入眠"
+    },
+    {
+      "name": "forest_birds",
+      "value": "森林鸟鸣"
+    },
+    {
+      "name": "forest_birds_desc",
+      "value": "清晨的森林，悦耳的鸟叫声伴您入眠"
+    },
+    {
+      "name": "ocean_waves",
+      "value": "海浪声声"
+    },
+    {
+      "name": "ocean_waves_desc",
+      "value": "轻柔的海浪拍打沙滩，放松身心"
+    },
+    {
+      "name": "category_nature",
+      "value": "自然音效"
+    },
+    {
+      "name": "category_white_noise",
+      "value": "白噪音"
+    },
+    {
+      "name": "category_light_music",
+      "value": "轻音乐"
+    },
+    {
+      "name": "category_meditation",
+      "value": "冥想音乐"
+    },
+    {
+      "name": "category_story",
+      "value": "助眠故事"
+    },
+    {
+      "name": "practical_tips_knowledge",
+      "value": "实用小贴士"
+    },
+    {
+      "name": "exercise_health_knowledge",
+      "value": "运动健康"
+    },
+    {
+      "name": "exercise_subtitle",
+      "value": "科学运动，健康生活"
+    },
+    {
+      "name": "exercise_importance_title",
+      "value": "运动的重要性"
+    },
+    {
+      "name": "exercise_importance_content",
+      "value": "规律运动是维持身体健康的重要因素。适量的运动可以增强心肺功能，提高免疫力，改善睡眠质量，减轻压力，预防多种慢性疾病。世界卫生组织建议成年人每周至少进行150分钟中等强度的有氧运动。"
+    },
+    {
+      "name": "exercise_types_title",
+      "value": "运动类型选择"
+    },
+    {
+      "name": "exercise_types_content",
+      "value": "有氧运动：如跑步、游泳、骑车等，有助于提高心肺功能和燃烧脂肪。\n力量训练：如举重、俯卧撑等，有助于增强肌肉力量和骨密度。\n柔韧性训练：如瑜伽、拉伸等，有助于提高身体柔韧性和平衡能力。\n建议将这三种类型的运动相结合，制定全面的运动计划。"
+    },
+    {
+      "name": "exercise_safety_title",
+      "value": "运动安全注意事项"
+    },
+    {
+      "name": "exercise_safety_content",
+      "value": "运动前要充分热身，运动后要适当拉伸。根据自身体质选择合适的运动强度，循序渐进地增加运动量。运动时要注意补充水分，穿着合适的运动装备。如有慢性疾病或身体不适，应咨询医生后再进行运动。"
+    },
+    {
+      "name": "exercise_tip1",
+      "value": "每天至少运动30分钟，可以分次进行"
+    },
+    {
+      "name": "exercise_tip2",
+      "value": "选择自己喜欢的运动方式，更容易坚持"
+    },
+    {
+      "name": "exercise_tip3",
+      "value": "运动前后要做好热身和拉伸"
+    },
+    {
+      "name": "exercise_tip4",
+      "value": "运动时保持适当的心率，不要过度疲劳"
+    },
+    {
+      "name": "exercise_tip5",
+      "value": "制定运动计划并记录运动进度"
+    },
+    {
+      "name": "exercise_tip6",
+      "value": "与朋友一起运动，增加乐趣和动力"
+    },
+    {
+      "name": "nutrition_diet_knowledge",
+      "value": "营养饮食"
+    },
+    {
+      "name": "nutrition_subtitle",
+      "value": "均衡营养，合理搭配"
+    },
+    {
+      "name": "nutrition_importance_title",
+      "value": "均衡饮食的重要性"
+    },
+    {
+      "name": "nutrition_importance_content",
+      "value": "均衡的饮食是维持身体健康的基础。合理的营养搭配可以提供身体所需的各种营养素，包括蛋白质、碳水化合物、脂肪、维生素和矿物质。良好的饮食习惯有助于维持理想体重，预防营养不良和各种慢性疾病。"
+    },
+    {
+      "name": "nutrition_nutrients_title",
+      "value": "营养素的作用"
+    },
+    {
+      "name": "nutrition_nutrients_content",
+      "value": "蛋白质：构成和修复身体组织，维持免疫功能。主要来源：肉类、鱼类、蛋类、豆类。\n碳水化合物：提供身体主要能量来源。主要来源：谷物、薯类、水果。\n脂肪：提供能量，帮助维生素吸收。主要来源：植物油、坚果、鱼类。\n维生素和矿物质：调节身体各种生理功能。主要来源：蔬菜、水果、全谷物。"
+    },
+    {
+      "name": "nutrition_principles_title",
+      "value": "健康饮食原则"
+    },
+    {
+      "name": "nutrition_principles_content",
+      "value": "食物多样化，每天摄入不同种类的食物。控制总热量摄入，维持能量平衡。增加蔬菜水果摄入，减少高糖、高盐、高脂食物。选择优质蛋白质，适量摄入健康脂肪。保持规律的用餐时间，避免暴饮暴食。"
+    },
+    {
+      "name": "nutrition_tip1",
+      "value": "每天吃5-9份蔬菜水果，颜色越丰富越好"
+    },
+    {
+      "name": "nutrition_tip2",
+      "value": "选择全谷物食品，减少精制糖摄入"
+    },
+    {
+      "name": "nutrition_tip3",
+      "value": "适量摄入优质蛋白质，如鱼类、豆类"
+    },
+    {
+      "name": "nutrition_tip4",
+      "value": "控制盐分摄入，每天不超过6克"
+    },
+    {
+      "name": "nutrition_tip5",
+      "value": "多喝水，每天至少8杯水"
+    },
+    {
+      "name": "nutrition_tip6",
+      "value": "细嚼慢咽，有助于消化和控制食量"
+    },
+    {
+      "name": "sleep_management_knowledge",
+      "value": "睡眠管理"
+    },
+    {
+      "name": "sleep_subtitle",
+      "value": "优质睡眠，精力充沛"
+    },
+    {
+      "name": "sleep_importance_title",
+      "value": "睡眠的重要性"
+    },
+    {
+      "name": "sleep_importance_content",
+      "value": "充足的睡眠对身心健康至关重要。睡眠期间，身体进行组织修复、记忆整合和免疫系统调节。良好的睡眠有助于提高注意力、学习能力和情绪调节能力，同时降低患心血管疾病、糖尿病和肥胖的风险。成年人每晚需要7-9小时的睡眠。"
+    },
+    {
+      "name": "sleep_cycle_title",
+      "value": "睡眠周期与质量"
+    },
+    {
+      "name": "sleep_cycle_content",
+      "value": "睡眠分为非快速眼动睡眠（NREM）和快速眼动睡眠（REM）两个阶段。NREM睡眠包括浅睡眠和深睡眠，有助于身体恢复；REM睡眠有助于记忆巩固和情绪处理。一个完整的睡眠周期约90-120分钟，一晚通常经历4-6个周期。睡眠质量比睡眠时间更重要。"
+    },
+    {
+      "name": "sleep_improvement_title",
+      "value": "改善睡眠的方法"
+    },
+    {
+      "name": "sleep_improvement_content",
+      "value": "建立规律的作息时间，每天同一时间睡觉和起床。创造良好的睡眠环境：保持卧室安静、黑暗、凉爽。睡前避免使用电子设备，可以进行放松活动如阅读、冥想。避免睡前大量进食、饮酒或摄入咖啡因。白天适量运动，但避免睡前剧烈运动。"
+    },
+    {
+      "name": "sleep_tip1",
+      "value": "建立固定的睡前仪式，帮助身体准备睡眠"
+    },
+    {
+      "name": "sleep_tip2",
+      "value": "睡前1小时避免使用手机、电脑等电子设备"
+    },
+    {
+      "name": "sleep_tip3",
+      "value": "保持卧室温度在18-22度之间"
+    },
+    {
+      "name": "sleep_tip4",
+      "value": "使用舒适的床垫和枕头"
+    },
+    {
+      "name": "sleep_tip5",
+      "value": "如果20分钟内无法入睡，起床做些安静的活动"
+    },
+    {
+      "name": "sleep_tip6",
+      "value": "避免在床上做与睡眠无关的活动"
+    },
+    {
+      "name": "mental_health_knowledge",
+      "value": "心理健康"
+    },
+    {
+      "name": "mental_subtitle",
+      "value": "情绪管理，心理平衡"
+    },
+    {
+      "name": "mental_importance_title",
+      "value": "心理健康的重要性"
+    },
+    {
+      "name": "mental_importance_content",
+      "value": "心理健康是整体健康的重要组成部分。良好的心理状态有助于应对生活压力，建立积极的人际关系，提高生活质量和工作效率。心理健康问题如焦虑、抑郁等会影响身体健康，因此关注和维护心理健康同样重要。"
+    },
+    {
+      "name": "mental_emotion_title",
+      "value": "情绪管理技巧"
+    },
+    {
+      "name": "mental_emotion_content",
+      "value": "认识和接纳自己的情绪：了解情绪的来源和影响，不要压抑或否定负面情绪。\n深呼吸和放松技巧：通过深呼吸、渐进性肌肉放松等方法缓解紧张情绪。\n积极思维：培养乐观的思维模式，关注积极的方面。\n表达情感：通过写日记、与朋友交流等方式表达内心感受。"
+    },
+    {
+      "name": "mental_stress_title",
+      "value": "压力管理策略"
+    },
+    {
+      "name": "mental_stress_content",
+      "value": "识别压力源：了解造成压力的具体原因，制定应对策略。时间管理：合理安排时间，避免过度承担。寻求支持：与家人朋友分享，必要时寻求专业帮助。培养兴趣爱好：通过喜欢的活动放松身心。保持工作生活平衡：避免过度工作，留出休息和娱乐时间。"
+    },
+    {
+      "name": "mental_tip1",
+      "value": "每天花10-15分钟进行冥想或深呼吸练习"
+    },
+    {
+      "name": "mental_tip2",
+      "value": "保持积极的社交关系，定期与朋友家人联系"
+    },
+    {
+      "name": "mental_tip3",
+      "value": "培养感恩的心态，每天记录3件感恩的事"
+    },
+    {
+      "name": "mental_tip4",
+      "value": "设定合理的目标，避免完美主义"
+    },
+    {
+      "name": "mental_tip5",
+      "value": "学会说\"不\"，不要过度承担责任"
+    },
+    {
+      "name": "mental_tip6",
+      "value": "遇到困难时及时寻求帮助，不要独自承受"
+    },
+    {
+      "name": "show_all",
+      "value": "显示全部"
+    },
+    {
+      "name": "show_favorites_only",
+      "value": "只看收藏"
+    },
+    {
+      "name": "edit_sleep_suggestion",
+      "value": "编辑睡眠建议"
+    },
+    {
+      "name": "add_sleep_suggestion",
+      "value": "添加你的睡眠改善建议:"
+    },
+    {
+      "name": "suggestion_title_placeholder",
+      "value": "建议标题"
+    },
+    {
+      "name": "suggestion_desc_placeholder",
+      "value": "建议描述"
+    },
+    {
+      "name": "add_suggestion",
+      "value": "添加建议"
+    },
+    {
+      "name": "regular_schedule_sleep",
+      "value": "规律作息"
+    },
+    {
+      "name": "regular_schedule_desc",
+      "value": "每天同一时间上床和起床，帮助生物钟稳定。"
+    },
+    {
+      "name": "bedtime_relaxation",
+      "value": "睡前放松"
+    },
+    {
+      "name": "bedtime_relaxation_desc",
+      "value": "睡前可听舒缓音乐、冥想或泡脚，帮助身心放松。"
+    },
+    {
+      "name": "reduce_electronics",
+      "value": "减少电子产品"
+    },
+    {
+      "name": "reduce_electronics_desc",
+      "value": "睡前1小时减少手机、电脑等蓝光刺激。"
+    },
+    {
+      "name": "category_schedule",
+      "value": "作息"
+    },
+    {
+      "name": "category_relaxation",
+      "value": "放松"
+    },
+    {
+      "name": "category_environment",
+      "value": "环境"
+    },
+    {
+      "name": "category_diet",
+      "value": "饮食"
+    },
+    {
+      "name": "category_exercise",
+      "value": "运动"
+    },
+    {
+      "name": "medicine_reminder",
+      "value": "服药提醒"
+    },
+    {
+      "name": "add_new_reminder",
+      "value": "添加新提醒"
+    },
+    {
+      "name": "medicine_name_placeholder",
+      "value": "请输入药物名称"
+    },
+    {
+      "name": "dosage_placeholder",
+      "value": "请输入剂量"
+    },
+    {
+      "name": "add_reminder_btn",
+      "value": "添加提醒"
+    },
+    {
+      "name": "reminder_list",
+      "value": "提醒列表"
+    },
+    {
+      "name": "dosage_label",
+      "value": "剂量"
+    },
+    {
+      "name": "time_label",
+      "value": "时间"
+    },
+    {
+      "name": "medicine_name_hint",
+      "value": "请填写药物名称和剂量"
+    },
+    {
+      "name": "reminder_title",
+      "value": "服药提醒"
+    },
+    {
+      "name": "reminder_message",
+      "value": "该服药了！"
+    },
+    {
+      "name": "confirm_ok",
+      "value": "确定"
+    },
+    {
+      "name": "repeat_daily",
+      "value": "每天"
+    },
+    {
+      "name": "repeat_weekday",
+      "value": "工作日"
+    },
+    {
+      "name": "repeat_weekend",
+      "value": "周末"
+    },
+    {
+      "name": "repeat_custom",
+      "value": "自定义"
+    },
+    {
+      "name": "priority_high",
+      "value": "高优先级"
+    },
+    {
+      "name": "priority_medium",
+      "value": "中优先级"
+    },
+    {
+      "name": "priority_low",
+      "value": "低优先级"
+    },
+    {
+      "name": "sound_default",
+      "value": "默认铃声"
+    },
+    {
+      "name": "sound_1",
+      "value": "铃声1"
+    },
+    {
+      "name": "sound_2",
+      "value": "铃声2"
+    },
+    {
+      "name": "feedback_title",
+      "value": "意见反馈"
+    },
+    {
+      "name": "feedback_type",
+      "value": "反馈类型"
+    },
+    {
+      "name": "feedback_content",
+      "value": "反馈内容"
+    },
+    {
+      "name": "contact_info",
+      "value": "联系方式（选填）"
+    },
+    {
+      "name": "submit_feedback",
+      "value": "提交反馈"
+    },
+    {
+      "name": "feedback_success",
+      "value": "反馈提交成功"
+    },
+    {
+      "name": "feedback_thanks",
+      "value": "感谢您的反馈，我们会认真考虑您的建议"
+    },
+    {
+      "name": "back",
+      "value": "返回"
+    },
+    {
+      "name": "type_suggestion",
+      "value": "功能建议"
+    },
+    {
+      "name": "type_bug",
+      "value": "问题反馈"
+    },
+    {
+      "name": "type_experience",
+      "value": "体验优化"
+    },
+    {
+      "name": "type_other",
+      "value": "其他"
+    },
+    {
+      "name": "content_placeholder_back",
+      "value": "请详细描述您的建议或遇到的问题..."
+    },
+    {
+      "name": "contact_placeholder",
+      "value": "请留下您的手机号或邮箱，方便我们联系您"
+    },
+    {
+      "name": "edit_relief_method",
+      "value": "编辑缓解方式"
+    },
+    {
+      "name": "add_relief_method",
+      "value": "添加你的疲劳缓解方式:"
+    },
+    {
+      "name": "method_title_placeholder",
+      "value": "方式标题"
+    },
+    {
+      "name": "method_desc_placeholder",
+      "value": "方式描述"
+    },
+    {
+      "name": "save_changes",
+      "value": "保存修改"
+    },
+    {
+      "name": "add_relief_method_btn",
+      "value": "添加缓解方式"
+    },
+    {
+      "name": "eye_exercise",
+      "value": "眼保健操"
+    },
+    {
+      "name": "eye_exercise_desc",
+      "value": "缓解眼部疲劳，适合长时间用眼后。"
+    },
+    {
+      "name": "neck_stretch",
+      "value": "颈部拉伸"
+    },
+    {
+      "name": "neck_stretch_desc",
+      "value": "简单的颈部拉伸动作，缓解肩颈僵硬。"
+    },
+    {
+      "name": "deep_breathing",
+      "value": "深呼吸"
+    },
+    {
+      "name": "deep_breathing_desc",
+      "value": "深呼吸有助于放松身心，缓解压力。"
+    },
+    {
+      "name": "category_whole_body",
+      "value": "全身"
+    },
+    {
+      "name": "category_eye",
+      "value": "眼部"
+    },
+    {
+      "name": "category_neck",
+      "value": "颈部"
+    },
+    {
+      "name": "category_hand",
+      "value": "手部"
+    },
+    {
+      "name": "category_leg",
+      "value": "腿部"
+    },
+    {
+      "name": "online_customer_service",
+      "value": "在线客服"
+    },
+    {
+      "name": "welcome_message_customer",
+      "value": "您好，我是您的专属客服小助手，请问有什么可以帮您？\n\n您可以尝试使用**Markdown格式**提问:\n- 列表项\n- 代码块\n```\nconst test = \"示例代码\";\n```"
+    },
+    {
+      "name": "thinking_placeholder",
+      "value": "正在思考中..."
+    },
+    {
+      "name": "input_placeholder",
+      "value": "请输入您的问题..."
+    },
+    {
+      "name": "system_prompt_customer",
+      "value": "你是一个专业的软件客服，负责解答用户关于我们产品的问题。请用友好、专业的语气回答用户问题，提供准确的帮助信息，回答要简洁明了。请适当使用Markdown格式来组织你的回答，如使用标题、列表、粗体等，让内容更加清晰。如果需要展示代码，请使用代码块。如果无法回答某个问题，请诚实地说明并提供可能的解决方案或咨询途径。"
+    },
+    {
+      "name": "error_response",
+      "value": "抱歉，我暂时无法回应"
+    },
+    {
+      "name": "family_members_title_847592836",
+      "value": "我的家庭成员"
+    },
+    {
+      "name": "special_care_members_629385741",
+      "value": "★ 特别关心成员"
+    },
+    {
+      "name": "remark_action_384759261",
+      "value": "备注"
+    },
+    {
+      "name": "remark_toast_927384615",
+      "value": "点击备注"
+    },
+    {
+      "name": "family_members_count_639481752",
+      "value": "位家庭成员及联系人"
+    },
+    {
+      "name": "new_member_758294637",
+      "value": "新的成员"
+    },
+    {
+      "name": "group_chat_472961853",
+      "value": "群聊"
+    },
+    {
+      "name": "common_health_goals_851374269",
+      "value": "共同健康目标"
+    },
+    {
+      "name": "profile_settings_title_8472936851",
+      "value": "资料设置"
+    },
+    {
+      "name": "health_condition_7293684152",
+      "value": "健康情况"
+    },
+    {
+      "name": "set_special_care_member_5948372610",
+      "value": "设为特别关心成员"
+    },
+    {
+      "name": "add_to_blacklist_3761829450",
+      "value": "加入黑名单"
+    },
+    {
+      "name": "delete_member_9285047361",
+      "value": "删除"
+    },
+    {
+      "name": "click_action_6174930258",
+      "value": "点击"
+    },
+    {
+      "name": "radar_add_member_title_827395614",
+      "value": "雷达加成员"
+    },
+    {
+      "name": "searching_nearby_people_619472853",
+      "value": "正在搜索附近的人..."
+    },
+    {
+      "name": "stop_scanning_btn_394758162",
+      "value": "停止扫描"
+    },
+    {
+      "name": "start_scanning_btn_751826394",
+      "value": "开始扫描"
+    },
+    {
+      "name": "accept_action_258174639",
+      "value": "接收"
+    },
+    {
+      "name": "click_action_prefix_472851936",
+      "value": "点击"
+    },
+    {
+      "name": "distance_prefix_639471852",
+      "value": "距离:"
+    },
+    {
+      "name": "distance_meter_suffix_174629385",
+      "value": "米"
+    },
+    {
+      "name": "member_name_zhangsan_917384625",
+      "value": "张三"
+    },
+    {
+      "name": "member_name_lisi_582947163",
+      "value": "李四"
+    },
+    {
+      "name": "member_name_wangwu_365821749",
+      "value": "王五"
+    },
+    {
+      "name": "new_member_title_847392516",
+      "value": "新的成员"
+    },
+    {
+      "name": "add_member_btn_629384751",
+      "value": "添加成员"
+    },
+    {
+      "name": "health_phone_placeholder_573829461",
+      "value": "健康号/手机号"
+    },
+    {
+      "name": "add_phone_contacts_392847516",
+      "value": "添加手机联系人"
+    },
+    {
+      "name": "three_days_ago_758392641",
+      "value": "三天前"
+    },
+    {
+      "name": "accept_action_184759362",
+      "value": "接收"
+    },
+    {
+      "name": "click_prefix_927384651",
+      "value": "点击"
+    },
+    {
+      "name": "welcome_message_463829175",
+      "value": "欢迎欢迎"
+    },
+    {
+      "name": "hello_greeting_729384651",
+      "value": "hello"
+    },
+    {
+      "name": "image_placeholder_385927461",
+      "value": "[图片]"
+    },
+    {
+      "name": "animation_emoji_674839251",
+      "value": "[动画表情]"
+    },
+    {
+      "name": "member_name_zhangsan_593847261",
+      "value": "张三"
+    },
+    {
+      "name": "member_name_lisi_847392615",
+      "value": "李四"
+    },
+    {
+      "name": "member_name_wangwu_273948561",
+      "value": "王五"
+    },
+    {
+      "name": "member_name_zhaoliu_938475162",
+      "value": "赵六"
+    },
+    {
+      "name": "member_name_hahaha_574829361",
+      "value": "哈哈哈"
+    },
+    {
+      "name": "search_placeholder_text_847392618475",
+      "value": "搜索"
+    },
+    {
+      "name": "new_member_title_629384750192",
+      "value": "新的成员"
+    },
+    {
+      "name": "common_health_goals_573829461847",
+      "value": "共同健康目标"
+    },
+    {
+      "name": "group_chat_title_392847516293",
+      "value": "群聊"
+    },
+    {
+      "name": "search_placeholder_847392618475",
+      "value": "搜索"
+    },
+    {
+      "name": "new_member_cell_629384750192",
+      "value": "新的成员"
+    },
+    {
+      "name": "common_health_goals_cell_573829461847",
+      "value": "共同健康目标"
+    },
+    {
+      "name": "group_chat_cell_392847516293",
+      "value": "群聊"
+    },
+    {
+      "name": "group_chat_title_947382651847",
+      "value": "群聊"
+    },
+    {
+      "name": "no_data_placeholder_582947361852",
+      "value": "暂无数据"
+    },
+    {
+      "name": "search_placeholder_629384751639",
+      "value": "搜索"
+    },
+    {
+      "name": "click_prefix_text_847392618475",
+      "value": "点击"
+    },
+    {
+      "name": "loving_family_group_573829461847",
+      "value": "相亲相爱一家人"
+    },
+    {
+      "name": "group_chat_2_name_392847516293",
+      "value": "群聊2"
+    },
+    {
+      "name": "group_chat_3_name_758394627184",
+      "value": "群聊3"
+    },
+    {
+      "name": "group_chat_4_name_184759362847",
+      "value": "群聊4"
+    },
+    {
+      "name": "group_chat_666_name_629384751952",
+      "value": "群聊666"
+    },
+    {
+      "name": "hello_greeting_message_847392615738",
+      "value": "hello"
+    },
+    {
+      "name": "image_placeholder_573829461847",
+      "value": "[图片]"
+    },
+    {
+      "name": "animation_emoji_text_392847516293",
+      "value": "[动画表情]"
+    },
+    {
+      "name": "hhhhhh_group_name_758394627184",
+      "value": "HHHHHH"
+    },
+    {
+      "name": "hi_greeting_message_184759362847",
+      "value": "hi"
+    },
+    {
+      "name": "face_to_face_group_title_847392651847392",
+      "value": "面对面建群"
+    },
+    {
+      "name": "input_four_digits_hint_629384751639284",
+      "value": "输入4位数字，与身边的朋友进入同一个群聊"
+    },
+    {
+      "name": "clear_key_text_573829461847392",
+      "value": "清空"
+    },
+    {
+      "name": "delete_key_text_392847516293847",
+      "value": "删除"
+    },
+    {
+      "name": "copy_group_number_btn_758394627184759",
+      "value": "复制群号"
+    },
+    {
+      "name": "group_number_copied_tip_184759362847392",
+      "value": "群号已复制，可分享给朋友"
+    },
+    {
+      "name": "group_number_label_629384751952847",
+      "value": "群号"
+    },
+    {
+      "name": "tell_group_number_hint_847392615738294",
+      "value": "请将群号告诉要加入的成员"
+    },
+    {
+      "name": "group_number_copied_toast_573829461847392",
+      "value": "群号已复制"
+    },
+    {
+      "name": "input_four_digits_text_392847516293847",
+      "value": "请输入4位数字"
+    },
+    {
+      "name": "group_number_placeholder_758394627184759",
+      "value": "请输入群号"
+    },
+    {
+      "name": "create_group_chat_btn_184759362847392",
+      "value": "创建群聊"
+    },
+    {
+      "name": "or_text_separator_629384751952847",
+      "value": "或"
+    },
+    {
+      "name": "join_group_chat_btn_847392615738294",
+      "value": "加入群聊"
+    },
+    {
+      "name": "joining_group_chat_toast_573829461847392",
+      "value": "正在加入群聊..."
+    },
+    {
+      "name": "add_member_title_847392651847392651",
+      "value": "添加成员"
+    },
+    {
+      "name": "health_phone_placeholder_629384751639284751",
+      "value": "健康号/手机号"
+    },
+    {
+      "name": "my_health_id_text_573829461847392573",
+      "value": "我的健康号：abc"
+    },
+    {
+      "name": "radar_add_member_title_392847516293847516",
+      "value": "雷达加成员"
+    },
+    {
+      "name": "radar_add_member_subtitle_758394627184759362",
+      "value": "添加健康成员"
+    },
+    {
+      "name": "face_to_face_group_title_184759362847392184",
+      "value": "面对面建群"
+    },
+    {
+      "name": "face_to_face_group_subtitle_629384751952847629",
+      "value": "与家庭成员进入同一个群聊"
+    },
+    {
+      "name": "health_customer_service_title_847392615738294847",
+      "value": "程序健康客服"
+    },
+    {
+      "name": "health_customer_service_subtitle_573829461847392573",
+      "value": "联系我们"
+    },
+    {
+      "name": "scan_qr_code_title_392847516293847392",
+      "value": "扫一扫"
+    },
+    {
+      "name": "click_prefix_toast_758394627184759758",
+      "value": "点击"
+    },
+    {
+      "name": "health_targets_management_title_847392651847392651847926",
+      "value": "健康目标管理"
+    },
+    {
+      "name": "in_progress_tab_629384751639284751639284751",
+      "value": "进行中"
+    },
+    {
+      "name": "completed_tab_573829461847392573829461847",
+      "value": "已完成"
+    },
+    {
+      "name": "create_health_target_btn_392847516293847516293847516",
+      "value": "+ 创建健康目标"
+    },
+    {
+      "name": "new_health_target_dialog_title_758394627184759362758394627",
+      "value": "新建健康目标"
+    },
+    {
+      "name": "target_title_label_184759362847392184759362847",
+      "value": "目标标题"
+    },
+    {
+      "name": "target_description_label_629384751952847629384751952",
+      "value": "目标描述"
+    },
+    {
+      "name": "start_date_label_847392615738294847392615738",
+      "value": "开始日期"
+    },
+    {
+      "name": "end_date_label_573829461847392573829461847392",
+      "value": "结束日期"
+    },
+    {
+      "name": "participants_label_392847516293847392847516293847",
+      "value": "参与人员（逗号分隔）"
+    },
+    {
+      "name": "health_category_label_758394627184759758394627184759",
+      "value": "健康类别（运动/步行/饮食/户外/睡眠）"
+    },
+    {
+      "name": "cancel_btn_184759362847392184759362847392",
+      "value": "取消"
+    },
+    {
+      "name": "save_btn_629384751952847629384751952847",
+      "value": "保存"
+    },
+    {
+      "name": "please_input_prefix_847392615738294847392615738294",
+      "value": "请输入"
+    },
+    {
+      "name": "exercise_category_573829461847392573829461847392573",
+      "value": "运动"
+    },
+    {
+      "name": "walking_category_392847516293847392847516293847392",
+      "value": "步行"
+    },
+    {
+      "name": "diet_category_758394627184759758394627184759758",
+      "value": "饮食"
+    },
+    {
+      "name": "outdoor_category_184759362847392184759362847392184",
+      "value": "户外"
+    },
+    {
+      "name": "sleep_category_629384751952847629384751952847629",
+      "value": "睡眠"
+    },
+    {
+      "name": "weekly_family_exercise_plan_847392615738294847392615738294847",
+      "value": "每周家庭运动计划"
+    },
+    {
+      "name": "weekly_exercise_description_573829461847392573829461847392573829",
+      "value": "每周累计运动时间达到300分钟，每位家庭成员至少贡献60分钟"
+    },
+    {
+      "name": "family_step_challenge_392847516293847392847516293847392847",
+      "value": "家庭步数挑战"
+    },
+    {
+      "name": "family_step_description_758394627184759758394627184759758394",
+      "value": "本月家庭总步数达到50万步，每天记录并分享步数"
+    },
+    {
+      "name": "healthy_diet_month_184759362847392184759362847392184759",
+      "value": "健康饮食月"
+    },
+    {
+      "name": "healthy_diet_description_629384751952847629384751952847629384",
+      "value": "一个月内家庭成员每天至少摄入5种蔬果，减少高糖高脂食品"
+    },
+    {
+      "name": "spring_outdoor_activity_847392615738294847392615738294847392",
+      "value": "春季户外活动"
+    },
+    {
+      "name": "spring_outdoor_description_573829461847392573829461847392573829461",
+      "value": "每周末组织一次家庭户外活动，如徒步、骑行或公园游玩"
+    },
+    {
+      "name": "early_sleep_challenge_392847516293847392847516293847392847392",
+      "value": "早睡早起挑战"
+    },
+    {
+      "name": "early_sleep_description_758394627184759758394627184759758394627",
+      "value": "连续21天保持23:00前睡觉，7:00前起床的良好作息"
+    },
+    {
+      "name": "dad_participant_184759362847392184759362847392184759362",
+      "value": "爸爸"
+    },
+    {
+      "name": "mom_participant_629384751952847629384751952847629384751",
+      "value": "妈妈"
+    },
+    {
+      "name": "grandpa_participant_847392615738294847392615738294847392615",
+      "value": "爷爷"
+    },
+    {
+      "name": "grandma_participant_573829461847392573829461847392573829461847",
+      "value": "奶奶"
+    },
+    {
+      "name": "me_participant_392847516293847392847516293847392847516",
+      "value": "我"
+    },
+    {
+      "name": "li_yifei_participant_758394627184759758394627184759758394627",
+      "value": "李逸飞"
+    },
+    {
+      "name": "lu_jinghao_participant_184759362847392184759362847392184759362847",
+      "value": "卢景灏"
+    },
+    {
+      "name": "date_label_prefix_629384751952847629384751952847629384751952",
+      "value": "日期: "
+    },
+    {
+      "name": "participants_label_prefix_847392615738294847392615738294847392615738",
+      "value": "参与者: "
+    },
+    {
+      "name": "reactivate_btn_573829461847392573829461847392573829461847392",
+      "value": "重新激活"
+    },
+    {
+      "name": "mark_complete_btn_392847516293847392847516293847392847516293",
+      "value": "标记完成"
+    },
+    {
+      "name": "delete_btn_758394627184759758394627184759758394627184759",
+      "value": "删除"
+    },
+    {
+      "name": "no_health_targets_184759362847392184759362847392184759362847392",
+      "value": "暂无健康目标"
+    },
+    {
+      "name": "create_first_target_hint_629384751952847629384751952847629384751952847",
+      "value": "点击下方按钮创建您的第一个健康目标"
+    },
+    {
+      "name": "target_created_success_847392615738294847392615738294847392615738294",
+      "value": "目标创建成功"
+    },
+    {
+      "name": "please_fill_title_573829461847392573829461847392573829461847392573",
+      "value": "请填写目标标题"
+    },
+    {
+      "name": "please_fill_dates_392847516293847392847516293847392847516293847392",
+      "value": "请填写完整日期"
+    },
+    {
+      "name": "please_add_participant_758394627184759758394627184759758394627184759758",
+      "value": "请至少添加一个参与者"
+    },
+    {
+      "name": "please_enter_valid_category_184759362847392184759362847392184759362847392184",
+      "value": "请输入有效的健康类别"
+    },
+    {
+      "name": "target_deleted_629384751952847629384751952847629384751952847629384751",
+      "value": "目标已删除"
+    },
+    {
+      "name": "target_completed_847392615738294847392615738294847392615738294847392615",
+      "value": "目标已完成"
+    },
+    {
+      "name": "target_reactivated_573829461847392573829461847392573829461847392573829461",
+      "value": "目标已重新激活"
+    },
+    {
+      "name": "user_info_title_847392615738294629384751952847392",
+      "value": "用户信息"
+    },
+    {
+      "name": "health_condition_label_573829461847392847392615738294751",
+      "value": "健康情况"
+    },
+    {
+      "name": "send_message_text_392847516293847184759362847392615",
+      "value": "发消息"
+    },
+    {
+      "name": "nickname_prefix_758394627184759629384751952847392",
+      "value": "昵称："
+    },
+    {
+      "name": "phone_prefix_184759362847392573829461847392847",
+      "value": "手机号："
+    },
+    {
+      "name": "region_prefix_629384751952847847392615738294751",
+      "value": "地区："
+    },
+    {
+      "name": "click_prefix_toast_847392615738294184759362847392",
+      "value": "点击"
+    },
+    {
+      "name": "energy_assistant_title_847392615738294629384751952847392615",
+      "value": "精力助手"
+    },
+    {
+      "name": "sports_ranking_title_573829461847392847392615738294751629",
+      "value": "运动排行榜"
+    },
+    {
+      "name": "sports_ranking_subtitle_392847516293847184759362847392615738",
+      "value": "查看今日步数排行榜"
+    },
+    {
+      "name": "deepseek_assistant_title_758394627184759629384751952847392847",
+      "value": "DeepSeek智能录入助手"
+    },
+    {
+      "name": "deepseek_assistant_subtitle_184759362847392573829461847392847392",
+      "value": "ai帮你录"
+    },
+    {
+      "name": "health_memory_title_629384751952847847392615738294751629384",
+      "value": "个性化健康记忆"
+    },
+    {
+      "name": "health_memory_subtitle_847392615738294184759362847392847392615",
+      "value": "您的健康日报已经生成, 请查收"
+    },
+    {
+      "name": "heart_rate_title_573829461847392847392615738294751629384751",
+      "value": "心率"
+    },
+    {
+      "name": "heart_rate_subtitle_392847516293847184759362847392615738294",
+      "value": "67bpm"
+    },
+    {
+      "name": "blood_oxygen_title_758394627184759629384751952847392847392",
+      "value": "血氧饱和度"
+    },
+    {
+      "name": "blood_oxygen_subtitle_184759362847392573829461847392847392615",
+      "value": "98%"
+    },
+    {
+      "name": "step_analysis_title_629384751952847847392615738294751629384",
+      "value": "步数分析"
+    },
+    {
+      "name": "step_analysis_subtitle_847392615738294184759362847392847392615",
+      "value": "114514步"
+    },
+    {
+      "name": "sleep_title_573829461847392847392615738294751629384751952",
+      "value": "睡眠"
+    },
+    {
+      "name": "sleep_subtitle_392847516293847184759362847392615738294847",
+      "value": "23小时59分钟"
+    },
+    {
+      "name": "calories_title_758394627184759629384751952847392847392615",
+      "value": "活动热量"
+    },
+    {
+      "name": "calories_subtitle_184759362847392573829461847392847392615738",
+      "value": "100000Kcal"
+    },
+    {
+      "name": "mood_title_629384751952847847392615738294751629384751952",
+      "value": "情绪状态"
+    },
+    {
+      "name": "mood_subtitle_847392615738294184759362847392847392615738294",
+      "value": "红温"
+    },
+    {
+      "name": "start_group_chat_text_573829461847392847392615738294751629384",
+      "value": "发起群聊"
+    },
+    {
+      "name": "add_member_text_392847516293847184759362847392615738294847",
+      "value": "添加成员"
+    },
+    {
+      "name": "deepseek_text_758394627184759629384751952847392847392615738",
+      "value": "DeepSeek"
+    },
+    {
+      "name": "open_membership_text_184759362847392573829461847392847392615",
+      "value": "开通会员"
+    },
+    {
+      "name": "delete_text_629384751952847847392615738294751629384751952847",
+      "value": "删除"
+    },
+    {
+      "name": "mark_unread_text_847392615738294184759362847392847392615738294",
+      "value": "标为未读"
+    },
+    {
+      "name": "unfollow_text_573829461847392847392615738294751629384751952847",
+      "value": "不再关注"
+    },
+    {
+      "name": "blood_oxygen_saturation_title_847392615738294629384751952847392615738",
+      "value": "血氧饱和度"
+    },
+    {
+      "name": "loading_oxygen_data_text_573829461847392847392615738294751629384751",
+      "value": "正在加载血氧数据..."
+    },
+    {
+      "name": "current_user_prefix_392847516293847184759362847392615738294847392",
+      "value": "当前用户: gadz2021"
+    },
+    {
+      "name": "oxygen_data_load_failed_758394627184759629384751952847392847392615738",
+      "value": "血氧数据加载失败"
+    },
+    {
+      "name": "reload_button_text_184759362847392573829461847392847392615738294",
+      "value": "重新加载"
+    },
+    {
+      "name": "current_oxygen_saturation_629384751952847847392615738294751629384751952",
+      "value": "当前血氧饱和度"
+    },
+    {
+      "name": "normal_range_text_847392615738294184759362847392847392615738294847",
+      "value": "正常范围: 95-100 %"
+    },
+    {
+      "name": "no_data_suffix_573829461847392847392615738294751629384751952847392",
+      "value": " (暂无数据)"
+    },
+    {
+      "name": "lowest_label_392847516293847184759362847392615738294847392615738",
+      "value": "最低"
+    },
+    {
+      "name": "average_label_758394627184759629384751952847392847392615738294751",
+      "value": "平均"
+    },
+    {
+      "name": "highest_label_184759362847392573829461847392847392615738294847392",
+      "value": "最高"
+    },
+    {
+      "name": "today_timerange_629384751952847847392615738294751629384751952847392",
+      "value": "今日"
+    },
+    {
+      "name": "this_week_timerange_847392615738294184759362847392847392615738294847392",
+      "value": "本周"
+    },
+    {
+      "name": "this_month_timerange_573829461847392847392615738294751629384751952847392",
+      "value": "本月"
+    },
+    {
+      "name": "this_year_timerange_392847516293847184759362847392615738294847392615738",
+      "value": "全年"
+    },
+    {
+      "name": "oxygen_records_title_758394627184759629384751952847392847392615738294751",
+      "value": "血氧记录"
+    },
+    {
+      "name": "no_realtime_oxygen_records_184759362847392573829461847392847392615738294847",
+      "value": "暂无实时血氧记录"
+    },
+    {
+      "name": "no_oxygen_data_629384751952847847392615738294751629384751952847392615",
+      "value": "暂无血氧数据"
+    },
+    {
+      "name": "realtime_records_only_text_847392",
+      "value": "仅显示真正的实时测量数据，统计数据不在此列表中"
+    },
+    {
+      "name": "refresh_data_button_573829461847392847392615738294751629384751952847392847",
+      "value": "刷新数据"
+    },
+    {
+      "name": "oxygen_health_tips_title_392847",
+      "value": "血氧健康建议"
+    },
+    {
+      "name": "normal_oxygen_range_tip_758394627184759629384751952847392847392615738294751629",
+      "value": "• 正常血氧饱和度范围通常在95-100%之间"
+    },
+    {
+      "name": "breathing_habit_tip_184759362847392573829461847392847392615738294847392615738",
+      "value": "• 保持良好的呼吸习惯，避免长时间待在空气污染严重的环境"
+    },
+    {
+      "name": "exercise_tip_629384751952847847392615738294751629384751952847392615738294",
+      "value": "• 规律锻炼可以提高肺部功能，有助于维持健康的血氧水平"
+    },
+    {
+      "name": "consult_doctor_tip_847392",
+      "value": "• 如果血氧饱和度持续低于95%，建议咨询医生"
+    },
+    {
+      "name": "active_calories_title_84739261",
+      "value": "活动热量"
+    },
+    {
+      "name": "today_calories_text_57382946",
+      "value": "今日热量"
+    },
+    {
+      "name": "kcal_unit_text_39284751",
+      "value": "Kcal"
+    },
+    {
+      "name": "goal_label_text_75839462",
+      "value": "目标"
+    },
+    {
+      "name": "active_consumption_label_18475936",
+      "value": "活动消耗"
+    },
+    {
+      "name": "basal_metabolism_label_62938475",
+      "value": "基础代谢"
+    },
+    {
+      "name": "today_timerange_84739261",
+      "value": "今日"
+    },
+    {
+      "name": "this_year_timerange_75839462",
+      "value": "全年"
+    },
+    {
+      "name": "calorie_details_title_18475936",
+      "value": "热量消耗明细"
+    },
+    {
+      "name": "calorie_health_tips_title_62938475",
+      "value": "热量健康建议"
+    },
+    {
+      "name": "running_activity_84739261",
+      "value": "跑步"
+    },
+    {
+      "name": "walking_activity_57382946",
+      "value": "步行"
+    },
+    {
+      "name": "cycling_activity_39284751",
+      "value": "骑行"
+    },
+    {
+      "name": "fitness_activity_75839462",
+      "value": "健身"
+    },
+    {
+      "name": "swimming_activity_18475936",
+      "value": "游泳"
+    },
+    {
+      "name": "calorie_balance_tip_62938475",
+      "value": "保持每日适当的热量摄入与消耗平衡，有助于维持健康体重"
+    },
+    {
+      "name": "daily_activity_tip_84739261",
+      "value": "增加日常活动量，如步行、爬楼梯，可以提高热量消耗"
+    },
+    {
+      "name": "hiit_training_tip_57382946",
+      "value": "高强度间歇训练(HIIT)是提高代谢率和燃烧热量的有效方法"
+    },
+    {
+      "name": "muscle_metabolism_tip_39284751",
+      "value": "肌肉组织比脂肪组织消耗更多热量，增加肌肉质量有助于提高基础代谢率"
+    },
+    {
+      "name": "health_data_entry_title_84739261573829",
+      "value": "精确健康录入"
+    },
+    {
+      "name": "input_placeholder_392847516293847",
+      "value": "输入精确数值（如：今天5.9公里）..."
+    },
+    {
+      "name": "analyzing_health_data_758394627184759",
+      "value": "🎯 正在精确分析健康数据..."
+    },
+    {
+      "name": "clearing_database_184759362847392",
+      "value": "🗑️ 正在清空数据库..."
+    },
+    {
+      "name": "analysis_in_progress_629384751952847",
+      "value": "精确分析中"
+    },
+    {
+      "name": "confirm_dangerous_operation_847392615738294",
+      "value": "⚠️ 危险操作确认"
+    },
+    {
+      "name": "clear_database_warning_573829461847392",
+      "value": "将删除所有健康数据:\n• 步数记录\n• 心率血氧\n• 距离热量\n\n此操作不可恢复！"
+    },
+    {
+      "name": "confirm_clear_button_392847516293847",
+      "value": "确认清空"
+    },
+    {
+      "name": "cancel_button_758394627184759",
+      "value": "取消"
+    },
+    {
+      "name": "welcome_message_184759362847392",
+      "value": "您好！我是精确健康数据录入助手 🏥\n\n✨ **精确支持**：\n👟 步数数据 - 支持每日步数、周步数记录\n📏 距离数据 - 精确到小数点（如5.9公里）\n🔥 热量数据 - 精确记录千卡消耗\n💗 心率血氧 - 完整数值保存\n\n**示例输入**：\n\"今天走了8666步，距离5.9公里，消耗323千卡\"\n\n我会精确识别并保存每项数据！"
+    },
+    {
+      "name": "clear_complete_629384751952847",
+      "value": "🗑️ **清空完成**\n\n✅ {0}\n\n现在可以重新录入数据！"
+    },
+    {
+      "name": "clear_failed_847392615738294",
+      "value": "❌ **清空失败**\n\n{0}"
+    },
+    {
+      "name": "system_exception_573829461847392",
+      "value": "💥 **系统异常**\n\n{0}"
+    },
+    {
+      "name": "processing_complete_392847516293847",
+      "value": "🎉 精确数据处理完成！"
+    },
+    {
+      "name": "analysis_failed_758394627184759",
+      "value": "❌ 数据分析失败\n\n错误: {0}"
+    },
+    {
+      "name": "steps_data_type_184759362847392",
+      "value": "步数"
+    },
+    {
+      "name": "distance_data_type_629384751952847",
+      "value": "距离"
+    },
+    {
+      "name": "calories_data_type_847392615738294",
+      "value": "热量"
+    },
+    {
+      "name": "blood_oxygen_data_type_573829461847392",
+      "value": "血氧"
+    },
+    {
+      "name": "heart_rate_data_type_392847516293847",
+      "value": "心率"
+    },
+    {
+      "name": "save_success_template_758394627184759",
+      "value": "{0}保存成功: {1}{2}"
+    },
+    {
+      "name": "storage_not_initialized_184759362847392",
+      "value": "存储系统未初始化"
+    },
+    {
+      "name": "incomplete_data_629384751952847",
+      "value": "数据不完整"
+    },
+    {
+      "name": "duplicate_data_847392615738294",
+      "value": "重复数据"
+    },
+    {
+      "name": "save_exception_template_573829461847392",
+      "value": "保存异常: {0}"
+    },
+    {
+      "name": "database_already_empty_392847516293847",
+      "value": "数据库已为空"
+    },
+    {
+      "name": "clear_success_template_758394627184759",
+      "value": "清空成功，删除{0}条记录"
+    },
+    {
+      "name": "clear_failed_template_184759362847392",
+      "value": "清空失败: {0}"
+    },
+    {
+      "name": "heart_rate_monitoring_title_84729638",
+      "value": "心率监测"
+    },
+    {
+      "name": "loading_heart_rate_data_57284916",
+      "value": "正在加载心率数据..."
+    },
+    {
+      "name": "current_user_prefix_39475829",
+      "value": "当前用户: gadz2021"
+    },
+    {
+      "name": "heart_rate_load_failed_75163948",
+      "value": "心率数据加载失败"
+    },
+    {
+      "name": "reload_button_text_18394756",
+      "value": "重新加载"
+    },
+    {
+      "name": "current_heart_rate_62847593",
+      "value": "当前心率"
+    },
+    {
+      "name": "normal_range_text_84751639",
+      "value": "正常范围: 60-100 bpm"
+    },
+    {
+      "name": "resting_heart_rate_57382946",
+      "value": "静息心率: {0} bpm"
+    },
+    {
+      "name": "lowest_heart_rate_39284751",
+      "value": "最低心率"
+    },
+    {
+      "name": "average_heart_rate_75839462",
+      "value": "平均心率"
+    },
+    {
+      "name": "highest_heart_rate_18475936",
+      "value": "最高心率"
+    },
+    {
+      "name": "realtime_heart_records_62938475",
+      "value": "实时心率记录"
+    },
+    {
+      "name": "total_records_count_84739261",
+      "value": "共{0}条记录"
+    },
+    {
+      "name": "no_realtime_records_57382946",
+      "value": "暂无实时心率记录"
+    },
+    {
+      "name": "realtime_only_description_39284751",
+      "value": "仅显示真正的实时测量数据，统计数据不在此列表中"
+    },
+    {
+      "name": "refresh_data_button_75839462",
+      "value": "刷新数据"
+    },
+    {
+      "name": "heart_health_tips_title_18475936",
+      "value": "心率健康建议"
+    },
+    {
+      "name": "heart_health_tips_intro_62938475",
+      "value": "基于您的心率数据，我们为您提供专业建议："
+    },
+    {
+      "name": "normal_range_tip_84739261",
+      "value": "• 正常静息心率范围通常在60-100次/分钟之间"
+    },
+    {
+      "name": "exercise_tip_57382946",
+      "value": "• 规律运动可以降低静息心率，提高心脏效率"
+    },
+    {
+      "name": "caffeine_tip_39284751",
+      "value": "• 避免过度摄入咖啡因，它可能导致心率升高"
+    },
+    {
+      "name": "consult_doctor_tip_75839462",
+      "value": "• 如持续异常，建议咨询医生"
+    },
+    {
+      "name": "record_detail_title_18475936",
+      "value": "心率记录详情"
+    },
+    {
+      "name": "close_button_text_62938475",
+      "value": "关闭"
+    },
+    {
+      "name": "record_time_label_84739261",
+      "value": "📅 记录时间: {0}"
+    },
+    {
+      "name": "heart_rate_value_label_57382946",
+      "value": "❤️ 心率数值: {0} bpm"
+    },
+    {
+      "name": "health_status_label_39284751",
+      "value": "📊 健康状态: {0}"
+    },
+    {
+      "name": "record_type_label_75839462",
+      "value": "🏷️ 记录类型: {0}"
+    },
+    {
+      "name": "health_advice_label_18475936",
+      "value": "💡 健康建议: {0}"
+    },
+    {
+      "name": "heart_rate_low_status_62938475",
+      "value": "偏低"
+    },
+    {
+      "name": "heart_rate_normal_status_84739261",
+      "value": "正常"
+    },
+    {
+      "name": "heart_rate_slightly_high_status_57382946",
+      "value": "轻微偏高"
+    },
+    {
+      "name": "heart_rate_high_status_39284751",
+      "value": "偏高"
+    },
+    {
+      "name": "low_heart_rate_advice_75839462",
+      "value": "心率偏低，建议适当运动，如有不适请咨询医生。"
+    },
+    {
+      "name": "normal_heart_rate_advice_18475936",
+      "value": "心率正常，继续保持良好的生活习惯。"
+    },
+    {
+      "name": "slightly_high_advice_62938475",
+      "value": "心率略高，建议注意休息，避免过度劳累。"
+    },
+    {
+      "name": "high_heart_rate_advice_84739261",
+      "value": "心率偏高，建议立即休息并寻求医疗建议。"
+    },
+    {
+      "name": "bpm_unit_text_94738261",
+      "value": "bpm"
+    },
+    {
+      "name": "mood_status_title_84729638",
+      "value": "情绪状态"
+    },
+    {
+      "name": "current_mood_label_57284916",
+      "value": "当前情绪"
+    },
+    {
+      "name": "record_new_mood_button_39475829",
+      "value": "记录新情绪"
+    },
+    {
+      "name": "mood_distribution_title_75163948",
+      "value": "情绪分布"
+    },
+    {
+      "name": "mood_records_title_18394756",
+      "value": "情绪记录"
+    },
+    {
+      "name": "mood_health_tips_title_62847593",
+      "value": "情绪健康建议"
+    },
+    {
+      "name": "today_timerange_84751639",
+      "value": "今日"
+    },
+    {
+      "name": "this_week_timerange_57382946",
+      "value": "本周"
+    },
+    {
+      "name": "this_month_timerange_39284751",
+      "value": "本月"
+    },
+    {
+      "name": "whole_year_timerange_75839462",
+      "value": "全年"
+    },
+    {
+      "name": "record_new_mood_dialog_title_18475936",
+      "value": "记录新情绪"
+    },
+    {
+      "name": "select_current_mood_desc_62938475",
+      "value": "选择您当前的情绪状态"
+    },
+    {
+      "name": "add_description_optional_84739261",
+      "value": "添加描述（可选）"
+    },
+    {
+      "name": "describe_feeling_placeholder_57382946",
+      "value": "描述您的感受..."
+    },
+    {
+      "name": "cancel_button_39284751",
+      "value": "取消"
+    },
+    {
+      "name": "confirm_record_button_75839462",
+      "value": "确认记录"
+    },
+    {
+      "name": "mood_happy_18475936",
+      "value": "愉悦"
+    },
+    {
+      "name": "mood_calm_62938475",
+      "value": "平静"
+    },
+    {
+      "name": "mood_satisfied_84739261",
+      "value": "满足"
+    },
+    {
+      "name": "mood_tired_57382946",
+      "value": "疲惫"
+    },
+    {
+      "name": "mood_anxious_39284751",
+      "value": "焦虑"
+    },
+    {
+      "name": "mood_excited_75839462",
+      "value": "兴奋"
+    },
+    {
+      "name": "mood_depressed_18475936",
+      "value": "沮丧"
+    },
+    {
+      "name": "mood_happy_desc_62938475",
+      "value": "心情愉快，充满活力"
+    },
+    {
+      "name": "mood_calm_desc_84739261",
+      "value": "内心平和，状态稳定"
+    },
+    {
+      "name": "mood_satisfied_desc_57382946",
+      "value": "感到满意和充实"
+    },
+    {
+      "name": "mood_tired_desc_39284751",
+      "value": "身心疲惫，需要休息"
+    },
+    {
+      "name": "mood_anxious_desc_75839462",
+      "value": "感到紧张和不安"
+    },
+    {
+      "name": "mood_excited_desc_18475936",
+      "value": "充满激情和期待"
+    },
+    {
+      "name": "mood_depressed_desc_62938475",
+      "value": "情绪低落，心情不佳"
+    },
+    {
+      "name": "default_mood_description_84739261",
+      "value": "您目前的情绪状态稳定，心态平和"
+    },
+    {
+      "name": "meditation_advice_57382946",
+      "value": "定期进行冥想和深呼吸练习，有助于缓解压力和焦虑"
+    },
+    {
+      "name": "exercise_advice_39284751",
+      "value": "保持规律的体育锻炼，运动能促进内啡肽释放，提升心情"
+    },
+    {
+      "name": "sleep_advice_75839462",
+      "value": "保持充足的睡眠，睡眠质量与情绪健康密切相关"
+    },
+    {
+      "name": "social_advice_18475936",
+      "value": "与亲友保持联系，社交活动有助于改善情绪状态"
+    },
+    {
+      "name": "today_time_prefix_62938475",
+      "value": "今天"
+    },
+    {
+      "name": "yesterday_time_prefix_84739261",
+      "value": "昨天"
+    },
+    {
+      "name": "days_ago_time_prefix_57382946",
+      "value": "前天"
+    },
+    {
+      "name": "days_ago_3_time_prefix_39284751",
+      "value": "3天前"
+    },
+    {
+      "name": "lunch_relaxed_desc_84729163",
+      "value": "午餐后感到放松"
+    },
+    {
+      "name": "morning_energetic_desc_57294816",
+      "value": "早晨心情愉快，充满活力"
+    },
+    {
+      "name": "work_tired_desc_39485729",
+      "value": "工作一天后感到疲惫"
+    },
+    {
+      "name": "work_pressure_desc_75193847",
+      "value": "工作压力较大"
+    },
+    {
+      "name": "task_completed_desc_18475936",
+      "value": "完成了重要任务"
+    },
+    {
+      "name": "meditation_calm_desc_62938475",
+      "value": "早晨冥想后感觉平静"
+    },
+    {
+      "name": "dinner_friends_desc_84739261",
+      "value": "与朋友共进晚餐"
+    },
+    {
+      "name": "default_record_desc_18475936",
+      "value": "记录了新的情绪状态"
+    },
+    {
+      "name": "sleep_title_84729361",
+      "value": "睡眠"
+    },
+    {
+      "name": "today_sleep_overview_57284916",
+      "value": "今日睡眠"
+    },
+    {
+      "name": "score_unit_39475829",
+      "value": "分"
+    },
+    {
+      "name": "duration_label_75163948",
+      "value": "时长"
+    },
+    {
+      "name": "bedtime_label_18394756",
+      "value": "入睡"
+    },
+    {
+      "name": "waketime_label_62847593",
+      "value": "醒来"
+    },
+    {
+      "name": "sleep_phases_title_62938475",
+      "value": "睡眠阶段"
+    },
+    {
+      "name": "deep_sleep_84739261",
+      "value": "深睡眠"
+    },
+    {
+      "name": "light_sleep_57382946",
+      "value": "浅睡眠"
+    },
+    {
+      "name": "rem_sleep_39284751",
+      "value": "快速眼动"
+    },
+    {
+      "name": "awake_state_75839462",
+      "value": "清醒"
+    },
+    {
+      "name": "sleep_records_title_18475936",
+      "value": "睡眠记录"
+    },
+    {
+      "name": "monday_62938475",
+      "value": "周一"
+    },
+    {
+      "name": "tuesday_84739261",
+      "value": "周二"
+    },
+    {
+      "name": "wednesday_57382946",
+      "value": "周三"
+    },
+    {
+      "name": "thursday_39284751",
+      "value": "周四"
+    },
+    {
+      "name": "friday_75839462",
+      "value": "周五"
+    },
+    {
+      "name": "saturday_18475936",
+      "value": "周六"
+    },
+    {
+      "name": "sunday_62938475",
+      "value": "周日"
+    },
+    {
+      "name": "quality_excellent_84739261",
+      "value": "优秀"
+    },
+    {
+      "name": "quality_good_57382946",
+      "value": "良好"
+    },
+    {
+      "name": "quality_fair_39284751",
+      "value": "一般"
+    },
+    {
+      "name": "quality_poor_75839462",
+      "value": "较差"
+    },
+    {
+      "name": "sleep_tips_title_18475936",
+      "value": "睡眠健康建议"
+    },
+    {
+      "name": "tip_regular_schedule_62938475",
+      "value": "保持规律的睡眠时间表，包括周末"
+    },
+    {
+      "name": "tip_avoid_screens_84739261",
+      "value": "睡前1-2小时避免使用电子设备，蓝光会抑制褪黑激素分泌"
+    },
+    {
+      "name": "tip_sleep_environment_57382946",
+      "value": "创造一个舒适、安静、黑暗的睡眠环境"
+    },
+    {
+      "name": "tip_avoid_caffeine_39284751",
+      "value": "避免睡前摄入咖啡因和酒精"
+    },
+    {
+      "name": "duration_7h30m_75839462",
+      "value": "7小时30分钟"
+    },
+    {
+      "name": "duration_6h45m_18475936",
+      "value": "6小时45分钟"
+    },
+    {
+      "name": "duration_8h15m_62938475",
+      "value": "8小时15分钟"
+    },
+    {
+      "name": "duration_7h_84739261",
+      "value": "7小时"
+    },
+    {
+      "name": "duration_6h30m_57382946",
+      "value": "6小时30分钟"
+    },
+    {
+      "name": "duration_9h_39284751",
+      "value": "9小时"
+    },
+    {
+      "name": "duration_8h30m_75839462",
+      "value": "8小时30分钟"
+    },
+    {
+      "name": "phase_duration_1h45m_18475936",
+      "value": "1小时45分钟"
+    },
+    {
+      "name": "phase_duration_3h15m_62938475",
+      "value": "3小时15分钟"
+    },
+    {
+      "name": "phase_duration_1h30m_84739261",
+      "value": "1小时30分钟"
+    },
+    {
+      "name": "phase_duration_1h_57382946",
+      "value": "1小时"
+    },
+    {
+      "name": "step_analysis_title_84729361",
+      "value": "步数分析"
+    },
+    {
+      "name": "today_steps_label_57284916",
+      "value": "今日步数"
+    },
+    {
+      "name": "steps_unit_39475829",
+      "value": "步"
+    },
+    {
+      "name": "goal_label_75163948",
+      "value": "目标"
+    },
+    {
+      "name": "distance_label_18394756",
+      "value": "距离"
+    },
+    {
+      "name": "calories_label_62847593",
+      "value": "消耗"
+    },
+    {
+      "name": "today_range_57382946",
+      "value": "今日"
+    },
+    {
+      "name": "week_range_39284751",
+      "value": "本周"
+    },
+    {
+      "name": "month_range_75839462",
+      "value": "本月"
+    },
+    {
+      "name": "year_range_18475936",
+      "value": "全年"
+    },
+    {
+      "name": "step_records_title_62938475",
+      "value": "步数记录"
+    },
+    {
+      "name": "monday_84739261",
+      "value": "周一"
+    },
+    {
+      "name": "tuesday_57382946",
+      "value": "周二"
+    },
+    {
+      "name": "wednesday_39284751",
+      "value": "周三"
+    },
+    {
+      "name": "thursday_75839462",
+      "value": "周四"
+    },
+    {
+      "name": "friday_18475936",
+      "value": "周五"
+    },
+    {
+      "name": "saturday_62938475",
+      "value": "周六"
+    },
+    {
+      "name": "sunday_84739261",
+      "value": "周日"
+    },
+    {
+      "name": "today_suffix_57382946",
+      "value": "今天"
+    },
+    {
+      "name": "loading_steps_data_39284751",
+      "value": "正在加载步数数据..."
+    },
+    {
+      "name": "load_failed_title_75839462",
+      "value": "步数数据加载失败"
+    },
+    {
+      "name": "reload_button_18475936",
+      "value": "重新加载"
+    },
+    {
+      "name": "no_step_data_62938475",
+      "value": "暂无步数数据"
+    },
+    {
+      "name": "refresh_data_button_84739261",
+      "value": "刷新数据"
+    },
+    {
+      "name": "km_unit_57382946",
+      "value": "公里"
+    },
+    {
+      "name": "kcal_unit_39284751",
+      "value": "千卡"
+    },
+    {
+      "name": "data_load_failed_prefix_75839462",
+      "value": "数据加载失败:"
+    },
+    {
+      "name": "leaderboard_title_82759341",
+      "value": "排行榜"
+    },
+    {
+      "name": "today_steps_leaderboard_65284793",
+      "value": "今日步数排行榜"
+    },
+    {
+      "name": "steps_leaderboard_title_47392816",
+      "value": "步数排行榜"
+    },
+    {
+      "name": "ranking_header_39157264",
+      "value": "排名"
+    },
+    {
+      "name": "user_header_81674529",
+      "value": "用户"
+    },
+    {
+      "name": "steps_header_53926841",
+      "value": "步数"
+    },
+    {
+      "name": "likes_header_27184635",
+      "value": "点赞"
+    },
+    {
+      "name": "no_data_message_94758136",
+      "value": "暂无数据"
+    },
+    {
+      "name": "more_action_62519473",
+      "value": "更多"
+    },
+    {
+      "name": "welcome_message_17834625",
+      "value": "欢迎查看今日步数排行榜"
+    },
+    {
+      "name": "exercise_details_suffix_85196347",
+      "value": "的运动详情"
+    },
+    {
+      "name": "default_user_prefix_46782915",
+      "value": "用户"
+    },
+    {
+      "name": "year_suffix_73495168",
+      "value": "年"
+    },
+    {
+      "name": "month_suffix_28617439",
+      "value": "月"
+    },
+    {
+      "name": "day_suffix_91348572",
+      "value": "日"
+    },
+    {
+      "name": "personalized_health_memory_title_84729361",
+      "value": "个性化健康记忆"
+    },
+    {
+      "name": "loading_health_data_message_57284916",
+      "value": "正在加载健康数据..."
+    },
+    {
+      "name": "loading_health_subtitle_39475829",
+      "value": "请稍候，系统正在从存储中读取您的健康记录"
+    },
+    {
+      "name": "data_load_error_title_75163948",
+      "value": "数据加载异常"
+    },
+    {
+      "name": "health_overview_title_62847593",
+      "value": "健康数据概览"
+    },
+    {
+      "name": "realtime_data_label_57382946",
+      "value": "实时数据"
+    },
+    {
+      "name": "steps_label_39284751",
+      "value": "步数"
+    },
+    {
+      "name": "heart_rate_label_75839462",
+      "value": "心率"
+    },
+    {
+      "name": "sleep_label_18475936",
+      "value": "睡眠"
+    },
+    {
+      "name": "calories_label_62938475",
+      "value": "热量"
+    },
+    {
+      "name": "blood_oxygen_label_84739261",
+      "value": "血氧"
+    },
+    {
+      "name": "mood_label_57382946",
+      "value": "情绪"
+    },
+    {
+      "name": "health_memory_title_39284751",
+      "value": "健康记忆"
+    },
+    {
+      "name": "record_count_suffix_75839462",
+      "value": "条记录"
+    },
+    {
+      "name": "record_count_prefix_18475936",
+      "value": "共"
+    },
+    {
+      "name": "no_health_memory_title_62938475",
+      "value": "暂无健康记忆"
+    },
+    {
+      "name": "no_memory_subtitle_84739261",
+      "value": "请先使用智能录入功能记录您的健康数据"
+    },
+    {
+      "name": "view_details_button_57382946",
+      "value": "查看详情"
+    },
+    {
+      "name": "today_advice_title_39284751",
+      "value": "今日健康建议"
+    },
+    {
+      "name": "advice_intro_text_75839462",
+      "value": "基于您的健康数据，我们为您提供以下建议："
+    },
+    {
+      "name": "advice_steps_text_18475936",
+      "value": "1. 保持每日8,000步以上的活动量"
+    },
+    {
+      "name": "advice_sleep_text_62938475",
+      "value": "2. 确保7-8小时的高质量睡眠"
+    },
+    {
+      "name": "advice_water_text_84739261",
+      "value": "3. 多喝水，每天至少1500ml"
+    },
+    {
+      "name": "advice_exercise_text_57382946",
+      "value": "4. 适当进行有氧运动，每周至少3次"
+    },
+    {
+      "name": "today_label_39284751",
+      "value": "今天"
+    },
+    {
+      "name": "yesterday_label_75839462",
+      "value": "昨天"
+    },
+    {
+      "name": "day_before_yesterday_label_18475936",
+      "value": "前天"
+    },
+    {
+      "name": "days_ago_3_label_62938475",
+      "value": "3天前"
+    },
+    {
+      "name": "days_ago_4_label_84739261",
+      "value": "4天前"
+    },
+    {
+      "name": "days_ago_5_label_57382946",
+      "value": "5天前"
+    },
+    {
+      "name": "days_ago_6_label_39284751",
+      "value": "6天前"
+    },
+    {
+      "name": "days_ago_suffix_75839462",
+      "value": "天前"
+    },
+    {
+      "name": "status_excellent_18475936",
+      "value": "优秀"
+    },
+    {
+      "name": "status_attention_62938475",
+      "value": "注意"
+    },
+    {
+      "name": "status_achievement_84739261",
+      "value": "成就"
+    },
+    {
+      "name": "status_record_57382946",
+      "value": "记录"
+    },
+    {
+      "name": "dialog_close_button_39284751",
+      "value": "关闭"
+    },
+    {
+      "name": "dialog_share_button_75839462",
+      "value": "分享"
+    },
+    {
+      "name": "dialog_date_prefix_18475936",
+      "value": "📅 日期:"
+    },
+    {
+      "name": "dialog_details_prefix_62938475",
+      "value": "📝 详情:"
+    },
+    {
+      "name": "dialog_health_data_prefix_84739261",
+      "value": "📊 健康数据:"
+    },
+    {
+      "name": "default_steps_value_57382946",
+      "value": "0步"
+    },
+    {
+      "name": "default_heart_rate_value_39284751",
+      "value": "0次/分"
+    },
+    {
+      "name": "default_sleep_value_75839462",
+      "value": "0小时"
+    },
+    {
+      "name": "default_calories_value_18475936",
+      "value": "0大卡"
+    },
+    {
+      "name": "default_oxygen_value_62938475",
+      "value": "0%"
+    },
+    {
+      "name": "default_memory_title_84739261",
+      "value": "暂无数据"
+    },
+    {
+      "name": "default_memory_content_57382946",
+      "value": "暂时没有健康数据记录，请先使用智能录入功能记录您的健康数据。\n\n您可以记录以下类型的健康数据：\n• 每日步数和运动目标\n• 心率变化（静息、平均、最高）\n• 睡眠时间和质量\n• 运动消耗的热量\n• 血氧饱和度水平\n• 当前的情绪状态\n\n开始记录您的健康之旅吧！💪"
+    }
+  ]
+}
