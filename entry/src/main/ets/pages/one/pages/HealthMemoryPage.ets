@@ -180,12 +180,29 @@ export struct HealthMemoryPage {
 
     try {
       console.info(`[健康数据] === 开始加载健康数据，用户ID: ${this.userId} ===`);
-      let healthResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 7);
+      // 获取7天完整历史数据用于生成健康记忆
+      let healthResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 7, false);
       console.info(`[健康数据] === 健康数据响应: ${JSON.stringify(healthResponse)} ===`);
 
       if (healthResponse.success && healthResponse.data && healthResponse.data.length > 0) {
+        // 处理所有历史数据用于生成健康记忆
         this.groupHealthDataByDate(healthResponse.data);
         console.info(`[健康数据] === 健康数据处理完成，共${healthResponse.data.length}条记录 ===`);
+
+        // 单独处理今日数据用于实时数据显示
+        const today: string = new Date().toISOString().split('T')[0];
+        const todayData: HealthDataRequest | undefined = healthResponse.data.find((item: HealthDataRequest) => {
+          const itemDate: string = (item.record_date || '').replace(/'/g, '');
+          return itemDate === today;
+        });
+
+        if (todayData) {
+          console.info(`[健康数据] === 找到今日实时数据用于概览显示 ===`);
+          // 更新今日数据到概览中
+          this.updateTodayOverviewData(todayData);
+        } else {
+          console.warn('[健康数据] === 今日无实时数据，概览显示历史数据 ===');
+        }
       } else {
         console.warn('[健康数据] === 健康数据为空 ===');
       }
@@ -193,6 +210,13 @@ export struct HealthMemoryPage {
       console.error(`[健康数据] === 数据加载异常: ${error} ===`);
       throw new Error(`网络请求失败: ${error}`);
     }
+  }
+
+  private updateTodayOverviewData(todayData: HealthDataRequest): void {
+    console.info('[今日数据] === 更新今日概览数据 ===');
+    // 这里可以根据需要更新当前健康数据概览
+    // 当前的逻辑是在processHealthDataIntoMemories中设置currentHealthData
+    // 如果需要强制使用今日数据，可以在这里覆盖
   }
 
   private groupHealthDataByDate(healthRecords: HealthDataRequest[]): void {
@@ -241,6 +265,45 @@ export struct HealthMemoryPage {
     dailyData.mood = (record.current_mood || 5).toString();
     dailyData.stepGoal = (record.steps_goal || 10000).toString();
   }
+///这个注释掉的是显示最新(可能不是今天的数据)的逻辑实现
+  // private async processHealthDataIntoMemories(): Promise<void> {
+  //   console.info('[记忆处理] === 开始处理健康数据为记忆 ===');
+  //   let memories: MemoryItem[] = [];
+  //   let sortedDates: string[] = Array.from(this.dailyDataMap.keys()).sort((a: string, b: string) => b.localeCompare(a));
+  //   let recentDates: string[] = sortedDates.slice(0, 7);
+  //
+  //   for (let i: number = 0; i < recentDates.length; i++) {
+  //     let date: string = recentDates[i];
+  //     let dailyData: DailyHealthData = this.dailyDataMap.get(date) as DailyHealthData;
+  //
+  //     if (dailyData) {
+  //       let healthData: HealthData = new HealthData(
+  //         `${dailyData.steps}步`,
+  //         `${dailyData.heartRate}bpm`,
+  //         dailyData.getFormattedSleepHours(),
+  //         dailyData.getFormattedCalories(),
+  //         `${dailyData.oxygenLevel}%`,
+  //         this.getMoodText(parseInt(dailyData.mood)),
+  //         `${dailyData.stepGoal}步`
+  //       );
+  //
+  //       let memory: MemoryItem = this.generateMemoryForDate(date, dailyData, healthData, i);
+  //       memories.push(memory);
+  //       console.info(`[记忆处理] === 生成记忆: ${memory.toString()} ===`);
+  //     }
+  //   }
+  //
+  //   this.memories = memories;
+  //
+  //   if (memories.length > 0) {
+  //     this.currentHealthData = memories[0].healthData;
+  //   } else {
+  //     this.currentHealthData = new HealthData('0步', '0bpm', '0小时', '0千卡', '0%', '一般', '10000步');
+  //   }
+  //
+  //   console.info(`[记忆处理] === 记忆处理完成，共生成${memories.length}条记忆 ===`);
+  // }
+
 
   private async processHealthDataIntoMemories(): Promise<void> {
     console.info('[记忆处理] === 开始处理健康数据为记忆 ===');
@@ -271,10 +334,25 @@ export struct HealthMemoryPage {
 
     this.memories = memories;
 
-    if (memories.length > 0) {
-      this.currentHealthData = memories[0].healthData;
+    // 修改这里：优先查找今日数据，如果没有则使用默认值
+    const today: string = new Date().toISOString().split('T')[0];
+    const todayKey: string = `'${today}'`;
+    const todayData: DailyHealthData | undefined = this.dailyDataMap.get(todayKey);
+
+    if (todayData) {
+      console.info('[记忆处理] === 使用今日数据设置概览 ===');
+      this.currentHealthData = new HealthData(
+        `${todayData.steps}步`,
+        `${todayData.heartRate}bpm`,
+        todayData.getFormattedSleepHours(),
+        todayData.getFormattedCalories(),
+        `${todayData.oxygenLevel}%`,
+        this.getMoodText(parseInt(todayData.mood)),
+        `${todayData.stepGoal}步`
+      );
     } else {
-      this.currentHealthData = new HealthData('0步', '0bpm', '0小时', '0千卡', '0%', '一般', '10000步');
+      console.warn('[记忆处理] === 今日无数据，使用默认值 ===');
+      this.currentHealthData = new HealthData('0步', '0bpm', '0小时', '0千卡', '0%', '无数据', '10000步');
     }
 
     console.info(`[记忆处理] === 记忆处理完成，共生成${memories.length}条记忆 ===`);
@@ -385,7 +463,7 @@ export struct HealthMemoryPage {
 
   private loadDefaultMemories(): void {
     console.info('[默认数据] === 加载默认健康记忆 ===');
-    let defaultHealthData: HealthData = new HealthData('0步', '0bpm', '0小时', '0千卡', '0%', '一般', '10000步');
+    let defaultHealthData: HealthData = new HealthData('0步', '0bpm', '0小时', '0千卡', '0%', '无数据', '10000步');
     let defaultMemory: MemoryItem = new MemoryItem('2025-06-08', '暂无数据', '暂无健康记忆数据，请稍后重试', defaultHealthData);
     this.memories = [defaultMemory];
     this.currentHealthData = defaultHealthData;
@@ -828,12 +906,24 @@ export struct HealthMemoryPage {
   }
 
   private getDateLabel(index: number): string {
-    let labels: string[] = ['今天', '昨天', '前天', '3天前', '4天前', '5天前', '6天前'];
-    if (index < labels.length) {
-      return labels[index];
-    } else {
-      return `${index}天前`;
-    }
+    if (this.memories.length === 0) return '';
+
+    const memoryDate = this.memories[index].date.replace(/'/g, '');
+    const today = new Date().toISOString().split('T')[0];
+    const targetDate = new Date(memoryDate);
+    const currentDate = new Date(today);
+
+    const diffTime = currentDate.getTime() - targetDate.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    console.info(`[日期标签] === 计算日期差值: ${memoryDate} vs ${today}, 相差${diffDays}天 ===`);
+
+    if (diffDays === 0) return '今天';
+    if (diffDays === 1) return '昨天';
+    if (diffDays === 2) return '前天';
+    if (diffDays >= 3 && diffDays <= 7) return `${diffDays}天前`;
+
+    return `${diffDays}天前`;
   }
 
   private getStatusColor(title: string): string {

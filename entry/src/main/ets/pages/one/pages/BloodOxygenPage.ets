@@ -105,7 +105,7 @@ export struct BloodOxygenPage {
 
     try {
       console.info(`[血氧数据] === 开始加载血氧数据，用户ID: ${this.userId} ===`);
-      let oxygenResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 1);
+      let oxygenResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 1, true);
       console.info(`[血氧数据] === 血氧数据响应: ${JSON.stringify(oxygenResponse)} ===`);
 
       if (oxygenResponse.success && oxygenResponse.data && oxygenResponse.data.length > 0) {

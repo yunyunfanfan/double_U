@@ -44,9 +44,9 @@ export struct MoodPage {
 
   aboutToAppear(): void {
     console.info('=== 情绪分析页面初始化开始 ===');
-    this.currentMood = '平静';
+    this.currentMood = '无数据';
     this.moodColor = '#4285F4';
-    this.moodDescription = '保持内心平静';
+    this.moodDescription = '请尝试录入数据';
     this.weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 
     console.info('=== 初始化设置完成，开始加载数据 ===');
@@ -72,9 +72,9 @@ export struct MoodPage {
 
   private resetMoodData(): void {
     console.info('=== 重置情绪数据 ===');
-    this.currentMood = '平静';
+    this.currentMood = '无数据';
     this.moodColor = '#4285F4';
-    this.moodDescription = '保持内心平静';
+    this.moodDescription = '请尝试录入数据';
     this.moodRecords = [];
   }
 
@@ -103,14 +103,14 @@ export struct MoodPage {
 
     try {
       console.info(`=== 开始加载情绪数据，用户ID: ${this.userId} ===`);
-      let moodResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 7);
+      let moodResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 7, true);
       console.info(`=== 情绪数据响应: ${JSON.stringify(moodResponse)} ===`);
 
       if (moodResponse.success && moodResponse.data && moodResponse.data.length > 0) {
         let todayData: HealthDataRequest = moodResponse.data[0];
         console.info(`=== 今日数据: ${JSON.stringify(todayData)} ===`);
 
-        let moodValue: number = todayData.current_mood || 5;
+        let moodValue: number = todayData.current_mood || -1;
         this.currentMood = this.getMoodFromValue(moodValue);
         this.moodColor = this.getMoodColor(this.currentMood);
         this.moodDescription = this.getMoodDescription(this.currentMood);
@@ -159,7 +159,8 @@ export struct MoodPage {
     if (value >= 6) return '满足';
     if (value >= 4) return '平静';
     if (value >= 2) return '疲惫';
-    return '焦虑';
+    if (value >= 0) return '焦虑';
+    return '无数据';
   }
 
   private getMoodDescription(mood: string): string {
@@ -168,6 +169,7 @@ export struct MoodPage {
     if (mood === '平静') return '保持内心平静';
     if (mood === '疲惫') return '感到有些疲惫';
     if (mood === '焦虑') return '情绪较为紧张';
+    if (mood === '无数据') return '等待录入数据'
     return '心情一般';
   }
 
@@ -192,6 +194,7 @@ export struct MoodPage {
     if (mood === '平静') return '😌';
     if (mood === '疲惫') return '😴';
     if (mood === '焦虑') return '😰';
+    if (mood=== '无数据') return '😕';
     return '😐';
   }
 

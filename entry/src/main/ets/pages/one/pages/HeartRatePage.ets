@@ -108,7 +108,7 @@ export struct HeartRatePage {
 
     try {
       console.info(`[心率数据] === 开始加载心率数据，用户ID: ${this.userId} ===`);
-      let heartRateResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 1);
+      let heartRateResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 1, true);
       console.info(`[心率数据] === 心率数据响应: ${JSON.stringify(heartRateResponse)} ===`);
 
       if (heartRateResponse.success && heartRateResponse.data && heartRateResponse.data.length > 0) {

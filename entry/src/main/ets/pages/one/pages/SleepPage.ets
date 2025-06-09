@@ -118,34 +118,50 @@ export struct SleepPage {
 
     try {
       console.info(`=== 开始加载睡眠数据，用户ID: ${this.userId} ===`);
-      let sleepResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 7);
+      // 获取7天历史数据用于周睡眠记录
+      let sleepResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 7, false);
       console.info(`=== 睡眠数据响应: ${JSON.stringify(sleepResponse)} ===`);
 
       if (sleepResponse.success && sleepResponse.data && sleepResponse.data.length > 0) {
-        let todayData: HealthDataRequest = sleepResponse.data[0];
-        console.info(`=== 今日数据: ${JSON.stringify(todayData)} ===`);
+        // 过滤今日数据用于当前睡眠显示
+        const today: string = new Date().toISOString().split('T')[0];
+        const todayData: HealthDataRequest | undefined = sleepResponse.data.find((item: HealthDataRequest) => {
+          const itemDate: string = (item.record_date || '').replace(/'/g, '');
+          return itemDate === today;
+        });
 
-        this.sleepScore = todayData.sleep_score || 0;
-        this.totalSleepTime = this.formatDuration(todayData.sleep_duration || 0);
-        this.bedTime = todayData.sleep_start_time || '00:00';
-        this.wakeTime = todayData.sleep_end_time || '00:00';
+        if (todayData) {
+          console.info(`=== 找到今日数据: ${JSON.stringify(todayData)} ===`);
+          this.sleepScore = todayData.sleep_score || 0;
+          this.totalSleepTime = this.formatDuration(todayData.sleep_duration || 0);
+          this.bedTime = todayData.sleep_start_time || '00:00';
+          this.wakeTime = todayData.sleep_end_time || '00:00';
 
-        this.sleepPhases = [
-          new SleepPhaseData('深睡眠', todayData.deep_sleep_duration || 0),
-          new SleepPhaseData('浅睡眠', todayData.light_sleep_duration || 0),
-          new SleepPhaseData('快速眼动', todayData.rem_sleep_duration || 0),
-          new SleepPhaseData('清醒', todayData.awake_duration || 0)
-        ];
+          this.sleepPhases = [
+            new SleepPhaseData('深睡眠', todayData.deep_sleep_duration || 0),
+            new SleepPhaseData('浅睡眠', todayData.light_sleep_duration || 0),
+            new SleepPhaseData('快速眼动', todayData.rem_sleep_duration || 0),
+            new SleepPhaseData('清醒', todayData.awake_duration || 0)
+          ];
+          console.info(`=== 今日睡眠分数: ${this.sleepScore}, 时长: ${this.totalSleepTime} ===`);
+        } else {
+          console.warn('=== 今日睡眠数据为空，使用默认值 ===');
+          this.sleepScore = 0;
+          this.totalSleepTime = '0小时0分钟';
+          this.bedTime = '00:00';
+          this.wakeTime = '00:00';
+          this.sleepPhases = [
+            new SleepPhaseData('深睡眠', 0),
+            new SleepPhaseData('浅睡眠', 0),
+            new SleepPhaseData('快速眼动', 0),
+            new SleepPhaseData('清醒', 0)
+          ];
+        }
 
-        console.info(`=== 今日睡眠分数: ${this.sleepScore}, 时长: ${this.totalSleepTime} ===`);
-      } else {
-        console.warn('=== 今日睡眠数据为空 ===');
-      }
-
-      if (sleepResponse.success && sleepResponse.data) {
+        // 生成周睡眠记录（使用所有7天数据）
         this.generateWeeklySleepRecords(sleepResponse.data);
       } else {
-        console.warn('=== 周睡眠数据为空或失败 ===');
+        console.warn('=== 睡眠数据为空 ===');
       }
     } catch (error) {
       let errorMessage = error instanceof Error ? error.message : '网络请求失败';

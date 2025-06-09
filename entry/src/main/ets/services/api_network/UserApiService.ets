@@ -55,6 +55,34 @@ export interface HealthDataRequest {
   satisfaction_percentage?: number;
 }
 
+
+export interface FamilyMember {
+  id: number;
+  username: string;
+  phone: string;
+  relationship_name: string;
+  added_at: string;
+}
+
+export interface FamilyMembersResponse {
+  success: boolean;
+  members?: FamilyMember[];
+  message?: string;
+}
+
+export interface UserInfo {
+  id: number;
+  username: string;
+  phone: string;
+}
+
+export interface SearchUserResponse {
+  success: boolean;
+  user?: UserInfo;
+  message?: string;
+}
+
+
 export interface RealtimeDataRequest {
   user_id: number;
   record_date?: string;
@@ -162,7 +190,7 @@ export class HealthDataSummary {
 }
 
 export class UserApiService {
-  private baseUrl: string = 'http://172.23.171.45:5000/api';
+  private baseUrl: string = 'http://172.23.48.158:5000/api';
 
   // 在UserApiService类中添加以下方法
   private currentUserId: number = 1;
@@ -191,7 +219,7 @@ export class UserApiService {
           `${data.blood_oxygen}%`,
           `${data.sleep_score}分`,
           `${data.active_calories}Kcal`,
-          this.getMoodText(data.current_mood || 5)
+          this.getMoodText(data.current_mood || -1)
         );
       } else {
         console.error('[健康数据服务] 获取健康数据失败:', overviewResponse.message);
@@ -208,6 +236,7 @@ export class UserApiService {
     if (value >= 6) return '满足';
     if (value >= 4) return '平静';
     if (value >= 2) return '疲惫';
+    if (value == -1) return '----'
     return '焦虑';
   }
 
@@ -391,10 +420,12 @@ export class UserApiService {
     }
   }
 
-  async getHealthData(userId: number, days: number = 7): Promise<HealthDataResponse> {
+  async getHealthData(userId: number, days: number = 7, onlyToday: boolean = false): Promise<HealthDataResponse> {
     const httpRequest = http.createHttp();
 
     try {
+      console.info(`[健康数据服务] 获取用户${userId}的健康数据，天数: ${days}, 仅今日: ${onlyToday}`);
+
       const response = await httpRequest.request(`${this.baseUrl}/health-data/${userId}?days=${days}`, {
         method: http.RequestMethod.GET,
         connectTimeout: 10000,
@@ -403,8 +434,23 @@ export class UserApiService {
 
       const responseText: string = response.result as string;
       const result: HealthDataResponse = JSON.parse(responseText) as HealthDataResponse;
+
+      // 根据参数决定是否过滤今日数据
+      if (onlyToday && result.success && result.data) {
+        const today: string = new Date().toISOString().split('T')[0];
+        console.info(`[健康数据服务] 过滤今日数据，日期: ${today}`);
+
+        const todayData: HealthDataRequest[] = result.data.filter((item: HealthDataRequest) => {
+          return item.record_date === today;
+        });
+
+        console.info(`[健康数据服务] 今日数据条数: ${todayData.length}`);
+        result.data = todayData;
+      }
+
       return result;
     } catch (error) {
+      console.error(`[健康数据服务] 获取健康数据失败:`, error);
       const errorResponse: HealthDataResponse = {
         success: false,
         message: '网络连接失败'
@@ -542,6 +588,86 @@ export class UserApiService {
         message: '网络连接失败'
       };
       return errorResponse;
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
+  async searchUserByPhone(phone: string, currentUserId: number): Promise<SearchUserResponse> {
+    let httpRequest = http.createHttp();
+
+    try {
+      let response = await httpRequest.request(`${this.baseUrl}/search-users?phone=${phone}&current_user_id=${currentUserId}`, {
+        method: http.RequestMethod.GET,
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      let responseText: string = response.result as string;
+      return JSON.parse(responseText) as SearchUserResponse;
+    } catch (error) {
+      return { success: false, message: '网络连接失败' };
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
+  async addFamilyMember(userId: number, memberId: number, relationshipName: string = '家庭成员'): Promise<RegisterResponse> {
+    let httpRequest = http.createHttp();
+
+    try {
+      let response = await httpRequest.request(`${this.baseUrl}/add-family-member`, {
+        method: http.RequestMethod.POST,
+        header: { 'Content-Type': 'application/json' },
+        extraData: JSON.stringify({ user_id: userId, member_id: memberId, relationship_name: relationshipName }),
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      let responseText: string = response.result as string;
+      return JSON.parse(responseText) as RegisterResponse;
+    } catch (error) {
+      return { success: false, message: '网络连接失败' };
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
+  async createRadarSession(userId: number, radarCode: string): Promise<RegisterResponse> {
+    let httpRequest = http.createHttp();
+
+    try {
+      let response = await httpRequest.request(`${this.baseUrl}/radar-friends`, {
+        method: http.RequestMethod.POST,
+        header: { 'Content-Type': 'application/json' },
+        extraData: JSON.stringify({ user_id: userId, radar_code: radarCode }),
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      let responseText: string = response.result as string;
+      return JSON.parse(responseText) as RegisterResponse;
+    } catch (error) {
+      return { success: false, message: '网络连接失败' };
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
+  async getFamilyMembers(userId: number): Promise<FamilyMembersResponse> {
+    let httpRequest = http.createHttp();
+
+    try {
+      let response = await httpRequest.request(`${this.baseUrl}/family-members/${userId}`, {
+        method: http.RequestMethod.GET,
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      let responseText: string = response.result as string;
+      return JSON.parse(responseText) as FamilyMembersResponse;
+    } catch (error) {
+      return { success: false, message: '网络连接失败' };
     } finally {
       httpRequest.destroy();
     }

@@ -1,6 +1,6 @@
 import { BaseNavigation } from 'JhCommon';
 import { router } from '@kit.ArkUI';
-import { userApiService, HealthDataResponse } from '../../../services/api_network/UserApiService';
+import { userApiService, HealthDataResponse, HealthDataRequest } from '../../../services/api_network/UserApiService';
 import { JhAESPreferencesUtils, kUserDefault_UserInfo } from 'JhCommon';
 
 ///这是步数分析页面
@@ -117,24 +117,34 @@ export struct StepCountPage {
 
     try {
       console.info(`=== 开始加载健康数据，用户ID: ${this.userId} ===`);
-      let healthResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 7);
+      // 获取7天历史数据用于周步数记录
+      let healthResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 7, false);
       console.info(`=== 健康数据响应: ${JSON.stringify(healthResponse)} ===`);
 
       if (healthResponse.success && healthResponse.data && healthResponse.data.length > 0) {
-        let todayData = healthResponse.data[0];
-        console.info(`=== 今日数据: ${JSON.stringify(todayData)} ===`);
+        // 过滤今日数据用于当前步数显示
+        const today: string = new Date().toISOString().split('T')[0];
+        const todayData: HealthDataRequest | undefined = healthResponse.data.find((item: HealthDataRequest) => {
+          const itemDate: string = (item.record_date || '').replace(/'/g, '');
+          return itemDate === today;
+        });
 
-        this.currentSteps = todayData.steps || 0;
-        this.dailyGoal = todayData.steps_goal || 10000;
-        this.distance = `${todayData.distance || 0}公里`;
-        this.calories = `${todayData.active_calories || 0}千卡`;
+        if (todayData) {
+          console.info(`=== 找到今日数据: ${JSON.stringify(todayData)} ===`);
+          this.currentSteps = todayData.steps || 0;
+          this.dailyGoal = todayData.steps_goal || 0;
+          this.distance = `${todayData.distance || 0}公里`;
+          this.calories = `${todayData.active_calories || 0}千卡`;
+          console.info(`=== 今日步数: ${this.currentSteps}, 目标: ${this.dailyGoal} ===`);
+        } else {
+          console.warn('=== 今日步数数据为空，使用默认值 ===');
+          this.currentSteps = 0;
+          this.dailyGoal = 0;
+          this.distance = '0公里';
+          this.calories = '0千卡';
+        }
 
-        console.info(`=== 今日步数: ${this.currentSteps}, 目标: ${this.dailyGoal} ===`);
-      } else {
-        console.warn('=== 今日健康数据为空 ===');
-      }
-
-      if (healthResponse.success && healthResponse.data) {
+        // 生成周步数记录（使用所有7天数据）
         console.info(`=== 开始处理周数据，数据长度: ${healthResponse.data.length} ===`);
         let weeklyStepData: WeeklyStepData[] = [];
 
@@ -158,7 +168,7 @@ export struct StepCountPage {
         console.info(`=== 周数据处理完成，总计${weeklyStepData.length}条 ===`);
         this.generateWeeklyDisplayDataFromDatabase(weeklyStepData);
       } else {
-        console.warn('=== 周数据为空或失败 ===');
+        console.warn('=== 步数数据为空 ===');
       }
 
       this.hasDataLoaded = true;

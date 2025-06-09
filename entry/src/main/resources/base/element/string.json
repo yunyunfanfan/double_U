@@ -5314,6 +5314,14 @@
     {
       "name": "default_memory_content_57382946",
       "value": "No health data recorded yet. Please use the smart input feature to record your health data.\n\nYou can record the following types of health data:\n• Daily steps and exercise goals\n• Heart rate changes (resting, average, maximum)\n• Sleep time and quality\n• Exercise calories burned\n• Blood oxygen saturation levels\n• Current mood status\n\nStart your health journey! 💪"
+    },
+    {
+      "name": "permission_read_media",
+      "value": "需要访问相册选择头像图片"
+    },
+    {
+      "name": "permission_write_media",
+      "value": "需要保存头像图片到本地"
     }
   ]
 }

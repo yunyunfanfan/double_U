@@ -94,27 +94,37 @@ export struct CaloriesPage {
 
     try {
       console.info(`=== 开始加载热量数据，用户ID: ${this.userId} ===`);
-      let calorieResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 7);
+      // 获取7天历史数据用于周热量记录
+      let calorieResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 7, false);
       console.info(`=== 热量数据响应: ${JSON.stringify(calorieResponse)} ===`);
 
       if (calorieResponse.success && calorieResponse.data && calorieResponse.data.length > 0) {
-        let todayData: HealthDataRequest = calorieResponse.data[0];
-        console.info(`=== 今日数据: ${JSON.stringify(todayData)} ===`);
+        // 过滤今日数据用于当前热量显示
+        const today: string = new Date().toISOString().split('T')[0];
+        const todayData: HealthDataRequest | undefined = calorieResponse.data.find((item: HealthDataRequest) => {
+          const itemDate: string = (item.record_date || '').replace(/'/g, '');
+          return itemDate === today;
+        });
 
-        this.activeCalories = todayData.active_calories || 0;
-        this.caloriesGoal = todayData.calories_goal || 2000;
-        this.restingCalories = todayData.basic_metabolism_calories || 0;
-        this.totalCalories = this.activeCalories + this.restingCalories;
+        if (todayData) {
+          console.info(`=== 找到今日数据: ${JSON.stringify(todayData)} ===`);
+          this.activeCalories = todayData.active_calories || 0;
+          this.caloriesGoal = todayData.calories_goal || 2000;
+          this.restingCalories = todayData.basic_metabolism_calories || 0;
+          this.totalCalories = this.activeCalories + this.restingCalories;
+          console.info(`=== 今日热量: 活动=${this.activeCalories}, 基础=${this.restingCalories}, 总计=${this.totalCalories} ===`);
+        } else {
+          console.warn('=== 今日热量数据为空，使用默认值 ===');
+          this.activeCalories = 0;
+          this.caloriesGoal = 0;
+          this.restingCalories = 0;
+          this.totalCalories = 0;
+        }
 
-        console.info(`=== 今日热量: 活动=${this.activeCalories}, 基础=${this.restingCalories}, 总计=${this.totalCalories} ===`);
-      } else {
-        console.warn('=== 今日热量数据为空 ===');
-      }
-
-      if (calorieResponse.success && calorieResponse.data) {
+        // 生成周热量记录（使用所有7天数据）
         this.generateWeeklyCalorieRecords(calorieResponse.data);
       } else {
-        console.warn('=== 周热量数据为空或失败 ===');
+        console.warn('=== 热量数据为空 ===');
       }
     } catch (error) {
       console.error(`=== 数据加载异常: ${error} ===`);

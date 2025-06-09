@@ -26,7 +26,34 @@ def init_database():
         )
     ''')
 
-        # 在现有的users表创建语句后添加
+    # 家庭成员关系表
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS family_members (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            member_id INTEGER NOT NULL,
+            relationship_name TEXT DEFAULT '家庭成员',
+            added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            status INTEGER DEFAULT 1,
+            FOREIGN KEY (user_id) REFERENCES users (id),
+            FOREIGN KEY (member_id) REFERENCES users (id),
+            UNIQUE(user_id, member_id)
+        )
+    ''')
+
+    # 面对面加好友临时表
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS friend_radar (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            radar_code TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            expires_at TIMESTAMP NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    ''')
+
+    # 在现有的users表创建语句后添加
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS health_data (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -54,10 +81,10 @@ def init_database():
             rem_sleep_duration INTEGER DEFAULT 0,
             awake_duration INTEGER DEFAULT 0,
             active_calories REAL DEFAULT 0,
-            calories_goal REAL DEFAULT 2000,
+            calories_goal REAL DEFAULT 8000,
             activity_calories REAL DEFAULT 0,
             basic_metabolism_calories REAL DEFAULT 0,
-            current_mood INTEGER DEFAULT 5,
+            current_mood INTEGER DEFAULT -1,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users (id),
             UNIQUE(user_id, record_date)
@@ -553,7 +580,7 @@ def get_overview(user_id):
                 'sleep_score': 0,
                 'active_calories': 0,
                 'blood_oxygen': 0,
-                'current_mood': 5
+                'current_mood': -1
             }
             print(f"[{datetime.now()}] 用户{user_id}今日无健康数据，返回默认值")
         
@@ -614,6 +641,151 @@ def get_weekly_sleep(user_id):
             })
         
         return jsonify({'success': True, 'data': result})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'获取失败: {str(e)}'}), 500
+
+
+@app.route('/api/search-users', methods=['GET'])
+def search_users():
+    try:
+        phone = request.args.get('phone', '').strip()
+        current_user_id = int(request.args.get('current_user_id', 0))
+        
+        if not phone or not current_user_id:
+            return jsonify({'success': False, 'message': '参数缺失'}), 400
+        
+        conn = get_db_connection()
+        user = conn.execute('''
+            SELECT id, username, phone FROM users 
+            WHERE phone = ? AND id != ?
+        ''', (phone, current_user_id)).fetchone()
+        
+        conn.close()
+        
+        if user:
+            return jsonify({
+                'success': True,
+                'user': {
+                    'id': user['id'],
+                    'username': user['username'],
+                    'phone': user['phone']
+                }
+            })
+        else:
+            return jsonify({'success': False, 'message': '用户不存在'})
+            
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'搜索失败: {str(e)}'}), 500
+
+@app.route('/api/add-family-member', methods=['POST'])
+def add_family_member():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        member_id = data.get('member_id')
+        relationship_name = data.get('relationship_name', '家庭成员')
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # 双向添加家庭成员关系
+        cursor.execute('''
+            INSERT OR IGNORE INTO family_members (user_id, member_id, relationship_name)
+            VALUES (?, ?, ?)
+        ''', (user_id, member_id, relationship_name))
+        
+        cursor.execute('''
+            INSERT OR IGNORE INTO family_members (user_id, member_id, relationship_name)
+            VALUES (?, ?, ?)
+        ''', (member_id, user_id, relationship_name))
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'success': True, 'message': '添加家庭成员成功'})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'添加失败: {str(e)}'}), 500
+
+@app.route('/api/radar-friends', methods=['POST'])
+def create_radar_session():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        radar_code = data.get('radar_code')
+        
+        expires_at = (datetime.now() + timedelta(minutes=5)).isoformat()
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # 清理过期记录
+        cursor.execute('DELETE FROM friend_radar WHERE expires_at < ?', (datetime.now().isoformat(),))
+        
+        # 检查是否有匹配的雷达码
+        existing = cursor.execute('''
+            SELECT user_id FROM friend_radar 
+            WHERE radar_code = ? AND user_id != ?
+        ''', (radar_code, user_id)).fetchone()
+        
+        if existing:
+            # 找到匹配，添加为家庭成员
+            other_user_id = existing['user_id']
+            
+            cursor.execute('''
+                INSERT OR IGNORE INTO family_members (user_id, member_id)
+                VALUES (?, ?), (?, ?)
+            ''', (user_id, other_user_id, other_user_id, user_id))
+            
+            # 清理雷达记录
+            cursor.execute('DELETE FROM friend_radar WHERE radar_code = ?', (radar_code,))
+            
+            conn.commit()
+            conn.close()
+            
+            return jsonify({'success': True, 'message': '添加家庭成员成功', 'matched': True})
+        else:
+            # 没有匹配，创建新记录
+            cursor.execute('''
+                INSERT OR REPLACE INTO friend_radar (user_id, radar_code, expires_at)
+                VALUES (?, ?, ?)
+            ''', (user_id, radar_code, expires_at))
+            
+            conn.commit()
+            conn.close()
+            
+            return jsonify({'success': True, 'message': '等待匹配中...', 'matched': False})
+            
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'操作失败: {str(e)}'}), 500
+
+@app.route('/api/family-members/<int:user_id>', methods=['GET'])
+def get_family_members(user_id):
+    try:
+        conn = get_db_connection()
+        
+        members = conn.execute('''
+            SELECT u.id, u.username, u.phone, fm.relationship_name, fm.added_at
+            FROM family_members fm
+            JOIN users u ON fm.member_id = u.id
+            WHERE fm.user_id = ? AND fm.status = 1
+            ORDER BY fm.added_at DESC
+        ''', (user_id,)).fetchall()
+        
+        conn.close()
+        
+        result = []
+        for member in members:
+            result.append({
+                'id': member['id'],
+                'username': member['username'],
+                'phone': member['phone'],
+                'relationship_name': member['relationship_name'],
+                'added_at': member['added_at']
+            })
+        
+        return jsonify({'success': True, 'members': result})
         
     except Exception as e:
         return jsonify({'success': False, 'message': f'获取失败: {str(e)}'}), 500

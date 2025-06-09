@@ -6,6 +6,8 @@ import { BaseNavigation, JhSetCell, KColors, JhAESPreferencesUtils, kUserDefault
 import { UserModel } from '../../model/UserModel';
 import { router } from '@kit.ArkUI';
 import { UserCredentials, kUserDefault_UserCredentials } from '../../login/pages/CodeLoginPage'
+import { picker } from '@kit.CoreFileKit';
+import { BusinessError } from '@kit.BasicServicesKit';
 
 //个人信息页面
 
@@ -23,6 +25,12 @@ interface ServerUserInfo {
   healthCode?: string;
 }
 
+interface AvatarInfo {
+  localPath: string;
+  serverUrl: string;
+  uploadStatus: 'uploading' | 'success' | 'failed' | 'none';
+}
+
 @Entry
 @Preview
 @Component
@@ -35,6 +43,84 @@ struct WxPersonInfoPage {
   @State showPaiYiPaiDialog: boolean = false
   @State healthCode: string = ''
   @State showHealthCodeDialog: boolean = false
+  @State avatarInfo: AvatarInfo = {
+    localPath: '',
+    serverUrl: '',
+    uploadStatus: 'none'
+  }
+
+  // 从相册选择图片
+  private async selectImageFromGallery(): Promise<void> {
+    try {
+      console.info('[头像选择] 开始从相册选择图片');
+
+      const photoSelectOptions = new picker.PhotoSelectOptions();
+      photoSelectOptions.MIMEType = picker.PhotoViewMIMETypes.IMAGE_TYPE;
+      photoSelectOptions.maxSelectNumber = 1;
+
+      const photoPicker = new picker.PhotoViewPicker();
+      const selectResult: picker.PhotoSelectResult = await photoPicker.select(photoSelectOptions);
+
+      if (selectResult && selectResult.photoUris && selectResult.photoUris.length > 0) {
+        const selectedUri: string = selectResult.photoUris[0];
+        console.info(`[头像选择] 选择的图片URI: ${selectedUri}`);
+
+        this.avatarInfo.localPath = selectedUri;
+        await this.uploadAvatarToServer(selectedUri);
+      } else {
+        console.warn('[头像选择] 未选择任何图片');
+      }
+    } catch (error) {
+      const err = error as BusinessError;
+      console.error(`[头像选择] 选择图片失败: ${err.message}`);
+    }
+  }
+
+  // 上传头像到服务器
+  private async uploadAvatarToServer(imagePath: string): Promise<void> {
+    try {
+      console.info('[头像上传] 开始上传头像到服务器');
+      this.avatarInfo.uploadStatus = 'uploading';
+
+      // TODO: 这里实现实际的上传逻辑
+      // const uploadResult = await this.uploadImageToAPI(imagePath);
+
+      // 模拟上传过程
+      await new Promise<void>((resolve: (value: void) => void) => {
+        setTimeout(() => {
+          resolve();
+        }, 2000);
+      });
+
+      // 模拟上传成功，保存到本地存储
+      this.avatarInfo.serverUrl = imagePath; // 临时使用本地路径
+      this.avatarInfo.uploadStatus = 'success';
+
+      // 更新用户信息
+      let userInfo = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as ServerUserInfo;
+      if (userInfo) {
+        userInfo.avatarUrl = imagePath;
+        JhAESPreferencesUtils.saveModel(kUserDefault_UserInfo, userInfo);
+      }
+
+      console.info('[头像上传] 头像上传成功');
+    } catch (error) {
+      const err = error as BusinessError;
+      console.error(`[头像上传] 上传失败: ${err.message}`);
+      this.avatarInfo.uploadStatus = 'failed';
+    }
+  }
+
+  // 获取显示的头像源
+  private getAvatarSource(): string | Resource {
+    if (this.avatarInfo.localPath) {
+      return this.avatarInfo.localPath;
+    }
+    if (this.avatarInfo.serverUrl) {
+      return this.avatarInfo.serverUrl;
+    }
+    return $rawfile("wechat/mine/default_avatar.jpg");
+  }
 
   build() {
     Column() {
@@ -359,6 +445,7 @@ struct WxPersonInfoPage {
               this.rightBuilder1()
             },
             clickCallBack: (): void => {
+              this.selectImageFromGallery()
             },
           })
           JhSetCell({
@@ -393,13 +480,31 @@ struct WxPersonInfoPage {
 
   @Builder
   rightBuilder1() {
-    Image('https://gitee.com/zhaozehe/zako/raw/master/ic_535a5f26fa59f35f023467562ae1388e.png')
-      .width(55)
-      .height(55)
-      .borderRadius(5)
-      .alt($rawfile("wechat/mine/default_avatar.jpg"))
-      .onError(() => {
-      })
+    Stack() {
+      Image(this.getAvatarSource())
+        .width(55)
+        .height(55)
+        .borderRadius(5)
+        .objectFit(ImageFit.Cover)
+        .onError(() => {
+          console.error('[头像显示] 头像加载失败')
+        })
+
+      // 上传状态遮罩
+      if (this.avatarInfo.uploadStatus === 'uploading') {
+        Column() {
+          LoadingProgress()
+            .width(20)
+            .height(20)
+            .color('#FFFFFF')
+        }
+        .width(55)
+        .height(55)
+        .borderRadius(5)
+        .backgroundColor('rgba(0,0,0,0.5)')
+        .justifyContent(FlexAlign.Center)
+      }
+    }
   }
 
   @Builder
@@ -411,6 +516,7 @@ struct WxPersonInfoPage {
   }
 
   aboutToAppear() {
+    console.info('[个人信息页面] 页面初始化开始')
     let userInfo = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as ServerUserInfo;
     if (userInfo && userInfo.userName) {
       this.name = userInfo.userName;
@@ -422,6 +528,10 @@ struct WxPersonInfoPage {
       if (userInfo.healthCode) {
         this.healthCode = userInfo.healthCode;
       }
+      if (userInfo.avatarUrl) {
+        this.avatarInfo.serverUrl = userInfo.avatarUrl;
+      }
     }
+    console.info(`[个人信息页面] 用户信息加载完成: ${this.name}`)
   }
 }
