@@ -190,7 +190,7 @@ export class HealthDataSummary {
 }
 
 export class UserApiService {
-  private baseUrl: string = 'http://172.23.48.158:5000/api';
+  private baseUrl: string = 'http://47.121.218.164:5000/api';
 
   // 在UserApiService类中添加以下方法
   private currentUserId: number = 1;
