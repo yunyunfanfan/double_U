@@ -5,6 +5,8 @@ import bcrypt
 from datetime import datetime
 import re
 from datetime import datetime, timedelta
+import os
+import base64
 
 app = Flask(__name__)
 CORS(app)
@@ -16,15 +18,19 @@ def init_database():
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
     
+    # 修改users表创建语句，直接包含avatar_url字段
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             phone TEXT UNIQUE NOT NULL,
             username TEXT UNIQUE NOT NULL,
             password_hash TEXT NOT NULL,
+            avatar_url TEXT DEFAULT '',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+
+
 
     # 家庭成员关系表
     cursor.execute('''
@@ -82,7 +88,6 @@ def init_database():
             awake_duration INTEGER DEFAULT 0,
             active_calories REAL DEFAULT 0,
             calories_goal REAL DEFAULT 8000,
-            activity_calories REAL DEFAULT 0,
             basic_metabolism_calories REAL DEFAULT 0,
             current_mood INTEGER DEFAULT -1,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -431,7 +436,7 @@ def save_health_data():
         'current_blood_oxygen', 'min_blood_oxygen', 'avg_blood_oxygen', 'max_blood_oxygen',
         'sleep_score', 'sleep_duration', 'sleep_start_time', 'sleep_end_time',
         'deep_sleep_duration', 'light_sleep_duration', 'rem_sleep_duration', 'awake_duration',
-        'active_calories', 'calories_goal', 'activity_calories', 'basic_metabolism_calories',
+        'active_calories', 'calories_goal',  'basic_metabolism_calories',
         'current_mood'
         ]
         
@@ -598,11 +603,11 @@ def get_overview(user_id):
         
         # 修复：添加current_mood字段和TRIM处理
         overview = conn.execute('''
-            SELECT steps, avg_heart_rate, sleep_score, active_calories, current_blood_oxygen, current_mood
+            SELECT steps, avg_heart_rate, sleep_score, active_calories, basic_metabolism_calories, current_blood_oxygen, current_mood
             FROM health_data 
-            WHERE user_id = ? AND TRIM(record_date, "'") = ?
+            WHERE user_id = ? AND record_date = ?
         ''', (user_id, today)).fetchone()
-        
+                    
         conn.close()
         
         if overview:
@@ -611,16 +616,17 @@ def get_overview(user_id):
                 'avg_heart_rate': overview['avg_heart_rate'] or 0,
                 'sleep_score': overview['sleep_score'] or 0,
                 'active_calories': overview['active_calories'] or 0,
+                'basic_metabolism_calories': overview['basic_metabolism_calories'] or 0,
                 'blood_oxygen': overview['current_blood_oxygen'] or 0,
                 'current_mood': overview['current_mood'] or 5
             }
-            print(f"[{datetime.now()}] 健康概览数据查询成功: {result}")
         else:
             result = {
                 'steps': 0,
                 'avg_heart_rate': 0,
                 'sleep_score': 0,
                 'active_calories': 0,
+                'basic_metabolism_calories': 0,
                 'blood_oxygen': 0,
                 'current_mood': -1
             }
@@ -972,6 +978,159 @@ def get_family_members(user_id):
         
         return jsonify({'success': True, 'members': result})
         
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'获取失败: {str(e)}'}), 500
+
+@app.route('/api/ai-health-data', methods=['POST'])
+def save_ai_health_data():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        record_date = data.get('record_date', datetime.now().strftime('%Y-%m-%d'))
+        
+        # 获取AI解析的健康数据
+        steps = data.get('steps')
+        distance = data.get('distance') 
+        calories = data.get('calories')
+        heart_rate = data.get('heart_rate')
+        blood_oxygen = data.get('blood_oxygen')
+        sleep_duration = data.get('sleep_duration')
+        
+        print(f"[{datetime.now()}] AI健康数据录入: 用户{user_id}, 日期{record_date}")
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # 构建更新字段
+        update_fields = []
+        values = [user_id, record_date]
+        
+        if steps is not None:
+            update_fields.append('steps = ?')
+            values.append(steps)
+        if distance is not None:
+            update_fields.append('distance = ?') 
+            values.append(distance)
+        if calories is not None:
+            update_fields.append('active_calories = ?')
+            values.append(calories)
+        if heart_rate is not None:
+            update_fields.append('avg_heart_rate = ?')
+            values.append(heart_rate)
+        if blood_oxygen is not None:
+            update_fields.append('avg_blood_oxygen = ?')
+            values.append(blood_oxygen)
+        if sleep_duration is not None:
+            update_fields.append('sleep_duration = ?')
+            values.append(sleep_duration)
+        
+        if update_fields:
+            # 使用INSERT OR REPLACE更新健康数据
+            set_clause = ', '.join(update_fields)
+            sql = f'''
+                INSERT OR REPLACE INTO health_data 
+                (user_id, record_date, {', '.join([field.split(' = ')[0] for field in update_fields])}, updated_at) 
+                VALUES (?, ?, {', '.join(['?' for _ in update_fields])}, CURRENT_TIMESTAMP)
+            '''
+            cursor.execute(sql, values)
+            
+            conn.commit()
+            conn.close()
+            
+            print(f"[{datetime.now()}] AI健康数据保存成功")
+            
+            return jsonify({
+                'success': True,
+                'message': 'AI健康数据保存成功'
+            })
+        else:
+            conn.close()
+            return jsonify({
+                'success': False,
+                'message': '没有有效的健康数据'
+            }), 400
+            
+    except Exception as e:
+        print(f"[{datetime.now()}] AI健康数据保存异常: {e}")
+        return jsonify({
+            'success': False, 
+            'message': f'保存失败: {str(e)}'
+        }), 500
+    
+@app.route('/api/upload-avatar', methods=['POST'])
+def upload_avatar():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        avatar_base64 = data.get('avatar_file')
+        
+        if not user_id or not avatar_base64:
+            return jsonify({'success': False, 'message': '参数缺失'}), 400
+        
+        print(f"[{datetime.now()}] 头像上传请求: 用户{user_id}")
+        
+        # 解码base64图片
+        try:
+            image_data = base64.b64decode(avatar_base64.split(',')[1] if ',' in avatar_base64 else avatar_base64)
+        except Exception as e:
+            return jsonify({'success': False, 'message': '图片格式错误'}), 400
+        
+        # 生成唯一文件名
+        filename = f"avatar_{user_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
+        
+        # 保存文件到服务器
+        upload_folder = 'static/avatars'
+        os.makedirs(upload_folder, exist_ok=True)
+        file_path = os.path.join(upload_folder, filename)
+        
+        with open(file_path, 'wb') as f:
+            f.write(image_data)
+        
+        # 生成访问URL
+        avatar_url = f"/static/avatars/{filename}"
+        
+        # 更新数据库
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('UPDATE users SET avatar_url = ? WHERE id = ?', (avatar_url, user_id))
+        conn.commit()
+        conn.close()
+        
+        print(f"[{datetime.now()}] 头像上传成功: 用户{user_id}, 文件{filename}")
+        
+        return jsonify({
+            'success': True,
+            'message': '头像上传成功',
+            'avatar_url': avatar_url
+        })
+        
+    except Exception as e:
+        print(f"[{datetime.now()}] 头像上传异常: {e}")
+        return jsonify({'success': False, 'message': f'上传失败: {str(e)}'}), 500
+
+@app.route('/api/user-profile/<int:user_id>', methods=['GET'])
+def get_user_profile(user_id):
+    try:
+        conn = get_db_connection()
+        user = conn.execute('''
+            SELECT id, username, phone, avatar_url FROM users 
+            WHERE id = ?
+        ''', (user_id,)).fetchone()
+        conn.close()
+        
+        if user:
+            return jsonify({
+                'success': True,
+                'data': {
+                    'user_id': user['id'],
+                    'username': user['username'],
+                    'phone': user['phone'],
+                    'avatar_url': user['avatar_url'] or ''
+                }
+            })
+        else:
+            return jsonify({'success': False, 'message': '用户不存在'}), 404
+            
     except Exception as e:
         return jsonify({'success': False, 'message': f'获取失败: {str(e)}'}), 500
 

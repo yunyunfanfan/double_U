@@ -35,6 +35,7 @@ python后端的数据库开发
 
 今天是周日, 我今天走了8667步, 目标是9090步, 距离走了5.4公里, 消耗了322千卡热量, 本周周一走了8655步, 周二走了10222步, 周三走了4666步, 周四走了9999步, 周五走了2456步, 周六走了4446步,  上个周日走了6767步
 
+当前的步数是5000步, 当前心率是78, 睡眠7小时, 当前血氧是99%, 当前心情是焦虑
 
 以下是ai避免报错prompt :
 输出中文
@@ -99,3 +100,87 @@ dicksuck真能录实现数据录入
 主题深色/浅色切换
 健康档案的假数据怎么办
 
+//users 表 - 用户基础信息表
+phone  手机号
+username  用户名
+password_hash  密码哈希
+created_at  注册时间
+
+//family_members 表 - 家庭成员关系表
+id  关系记录唯一标识ID
+user_id  主用户ID，关联users表
+member_id  成员用户ID，关联users表
+relationship_name  关系名称，默认为"家庭成员"
+added_at  添加关系的时间
+status  关系状态，1=有效，0=无效
+
+//id  雷达记录唯一标识ID
+user_id   用户ID，关联users表
+radar_code  雷达匹配码，用于面对面加好友
+created_at  创建时间
+expires_at	失效时间
+
+//health_data 表 - 健康数据主表
+id	健康数据记录唯一标识ID
+user_id		用户ID，关联users表
+record_date	记录日期，格式YYYY-MM-DD
+steps		当日步数
+steps_goal		步数目标，默认10000步
+distance			行走距离，单位公里
+calories_burned	REAL		消耗的总热量，单位千卡
+current_heart_rate		当前心率，单位次/分
+resting_heart_rate		静息心率，单位次/分
+min_heart_rate	最低心率，单位次/分
+avg_heart_rate		平均心率，单位次/分
+max_heart_rate		最高心率，单位次/分
+current_blood_oxygen		当前血氧饱和度，单位%
+min_blood_oxygen		最低血氧饱和度，单位%
+avg_blood_oxygen		平均血氧饱和度，单位%
+max_blood_oxygen		最高血氧饱和度，单位%
+sleep_score		睡眠质量评分，0-100分
+sleep_duration		睡眠时长，单位分钟
+sleep_start_time	入睡时间，格式HH:MM
+sleep_end_time	 	起床时间，格式HH:MM
+deep_sleep_duration		深度睡眠时长，单位分钟
+light_sleep_duration		浅度睡眠时长，单位分钟
+rem_sleep_duration		REM睡眠时长，单位分钟
+awake_duration		清醒时长，单位分钟
+active_calories		活动消耗热量，单位千卡
+calories_goal		热量消耗目标，默认8000千卡
+basic_metabolism_calories		基础代谢消耗热量，单位千卡
+current_mood		当前心情状态，1-10分值，-1表示未设置
+updated_at		数据更新时间
+
+//realtime_data 表 - 实时数据表
+id	实时数据记录唯一标识ID
+user_id	用户ID，关联users表
+record_date	记录日期，格式YYYY-MM-DD
+time_stamp	具体时间戳，格式HH:MM:SS
+data_type		数据类型，如heart_rate、blood_oxygen, mood等
+value		数据值
+created_at		数据创建时间
+
+
+//user_points 表 - 用户积分表
+id		积分记录唯一标识ID
+user_id	用户ID，关联users表，唯一
+total_points		用户总积分
+updated_at	积分更新时间
+
+//points_history 表 - 积分历史记录表
+id	INTEGER	PRIMARY KEY AUTOINCREMENT	积分历史记录唯一标识ID
+user_id	INTEGER	NOT NULL, FOREIGN KEY	用户ID，关联users表
+points	INTEGER	NOT NULL	积分变动数值，正数为获得，负数为消耗
+source_type	TEXT	NOT NULL	积分来源类型，如steps、tasks等
+source_data	TEXT	-	积分来源详细数据，JSON格式或描述文本
+record_date	TEXT	NOT NULL	积分记录日期，格式YYYY-MM-DD
+created_at	TIMESTAMP	DEFAULT CURRENT_TIMESTAMP	积分记录创建时间
+
+//steps_records 表 - 步数专门记录表
+字段名	数据类型	约束	含义
+id		步数记录唯一标识ID
+user_id		用户ID，关联users表
+steps		当日步数
+points_earned		通过步数获得的积分
+record_date	记录日期，格式YYYY-MM-DD
+created_at	记录创建时间

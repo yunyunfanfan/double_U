@@ -2,66 +2,22 @@ import { BaseNavigation } from 'JhCommon';
 import { router } from '@kit.ArkUI';
 import { DeepSeekService } from '../../../services/deepseek/DeepSeekService';
 import { LvMarkdownIn, lvText, lvTitle, lvCode, lvLink, LMICallBack } from '@luvi/lv-markdown-in';
-import { preferences } from '@kit.ArkData';
+import { userApiService, HealthDataRequest, RegisterResponse } from '../../../services/api_network/UserApiService';
 
-// 健康数据附加信息类
-class AdditionalHealthInfo {
-  sleepTime: string = '';
-  wakeTime: string = '';
-  minValue: string = '';
-  maxValue: string = '';
-  avgValue: string = '';
-  category: string = '';
-  dayOfWeek: string = '';
-  goalValue: string = '';
-  distance: string = '';
+// 健康数据解析结果类
+class HealthDataParseResult {
+  steps: number = 0;
+  distance: number = 0;
+  calories: number = 0;
+  heart_rate: number = 0;
+  blood_oxygen: number = 0;
+  sleep_duration: number = 0;
+  userMessage: string = '';
 
   constructor() {}
 
   toString(): string {
-    return `AdditionalHealthInfo{category: ${this.category}, dayOfWeek: ${this.dayOfWeek}, goalValue: ${this.goalValue}, distance: ${this.distance}}`;
-  }
-}
-
-// 健康数据类
-class HealthData {
-  timestamp: string = '';
-  type: string = '';
-  value: string = '';
-  unit: string = '';
-  additionalInfo: AdditionalHealthInfo = new AdditionalHealthInfo();
-
-  constructor(timestamp: string, type: string, value: string, unit: string, additionalInfo?: AdditionalHealthInfo) {
-    this.timestamp = timestamp;
-    this.type = type;
-    this.value = value;
-    this.unit = unit;
-    if (additionalInfo) {
-      this.additionalInfo = additionalInfo;
-    }
-  }
-
-  toString(): string {
-    return `HealthData{type: ${this.type}, value: ${this.value}${this.unit}, category: ${this.additionalInfo.category}}`;
-  }
-
-  getUniqueId(): string {
-    return `${this.type}_${this.value}_${this.timestamp}_${this.additionalInfo.category}_${this.additionalInfo.dayOfWeek}`;
-  }
-}
-
-// 多健康数据响应类
-class MultiHealthDataResponse {
-  healthDataList: HealthData[] = [];
-  userMessage: string = '';
-
-  constructor(healthDataList: HealthData[], userMessage: string) {
-    this.healthDataList = healthDataList;
-    this.userMessage = userMessage;
-  }
-
-  toString(): string {
-    return `MultiHealthDataResponse{dataCount: ${this.healthDataList.length}, userMessageLength: ${this.userMessage.length}}`;
+    return `HealthDataParseResult{steps: ${this.steps}, distance: ${this.distance}, calories: ${this.calories}}`;
   }
 }
 
@@ -95,42 +51,6 @@ class Message {
   }
 }
 
-// 单个健康数据类
-class SingleHealthData {
-  timestamp: string = '';
-  type: string = '';
-  value: string = '';
-  unit: string = '';
-  additionalInfo: AdditionalHealthInfo = new AdditionalHealthInfo();
-
-  constructor() {}
-}
-
-// 多健康数据包装类
-class MultiHealthDataWrapper {
-  action: string = '';
-  dataList: SingleHealthData[] = [];
-
-  constructor() {}
-}
-
-// 保存结果类
-class SaveResult {
-  success: boolean = false;
-  healthData: HealthData = new HealthData('', '', '', '');
-  message: string = '';
-
-  constructor(success: boolean, healthData: HealthData, message: string) {
-    this.success = success;
-    this.healthData = healthData;
-    this.message = message;
-  }
-
-  toString(): string {
-    return `SaveResult{success: ${this.success}, type: ${this.healthData.type}, message: ${this.message}}`;
-  }
-}
-
 // 流式处理状态类
 class StreamProcessingState {
   isResponseComplete: boolean = false;
@@ -138,7 +58,6 @@ class StreamProcessingState {
   isDataSaved: boolean = false;
   lastProcessedLength: number = 0;
   userFriendlyMessage: string = '';
-  parsedHealthData: HealthData[] = [];
   completionCallbackExecuted: boolean = false;
   processingRequestId: string = '';
 
@@ -150,82 +69,19 @@ class StreamProcessingState {
     this.isDataSaved = false;
     this.lastProcessedLength = 0;
     this.userFriendlyMessage = '';
-    this.parsedHealthData = [];
     this.completionCallbackExecuted = false;
     this.processingRequestId = Date.now().toString() + '_' + Math.random().toString(36).substr(2, 9);
   }
 }
 
-// 数据冲突检测器类
-class DataConflictDetector {
-  static detectTodayStepsConflict(healthDataList: HealthData[]): HealthData[] {
-    const todayWeekDay = '周日';
-    const stepsData = healthDataList.filter((data: HealthData) => data.type === 'steps');
-
-    if (stepsData.length <= 1) {
-      return healthDataList;
-    }
-
-    let todayStepsData: HealthData | undefined = undefined;
-    let lastSundayStepsData: HealthData | undefined = undefined;
-    const otherStepsData: HealthData[] = [];
-
-    stepsData.forEach((data: HealthData) => {
-      const category = data.additionalInfo.category;
-      const dayOfWeek = data.additionalInfo.dayOfWeek;
-
-      if (DataConflictDetector.isTodayStepsCategory(category) && (dayOfWeek === todayWeekDay || dayOfWeek === '')) {
-        if (todayStepsData === undefined) {
-          todayStepsData = data;
-        }
-      } else if (category.includes('上周日') || category.includes('上个周日')) {
-        lastSundayStepsData = data;
-      } else {
-        otherStepsData.push(data);
-      }
-    });
-
-    const resolvedStepsData: HealthData[] = [];
-
-    if (todayStepsData && lastSundayStepsData) {
-      resolvedStepsData.push(todayStepsData as HealthData);
-    } else {
-      if (todayStepsData) {
-        resolvedStepsData.push(todayStepsData as HealthData);
-      }
-      if (lastSundayStepsData) {
-        resolvedStepsData.push(lastSundayStepsData as HealthData);
-      }
-    }
-
-    resolvedStepsData.push(...otherStepsData);
-
-    const nonStepsData = healthDataList.filter((data: HealthData) => data.type !== 'steps');
-    const finalDataList = [...resolvedStepsData, ...nonStepsData];
-
-    return finalDataList;
-  }
-
-  private static isTodayStepsCategory(category: string): boolean {
-    const todayCategories = ['当日步数', '今日步数', '每日步数', '今天步数'];
-    return todayCategories.some((cat: string) => category.includes(cat));
-  }
-}
-
-// 数据库清空结果类
-class DatabaseClearResult {
+// AI保存结果类
+class AISaveResult {
   success: boolean = false;
-  recordsCleared: number = 0;
   message: string = '';
 
-  constructor(success: boolean, recordsCleared: number, message: string) {
+  constructor(success: boolean, message: string) {
     this.success = success;
-    this.recordsCleared = recordsCleared;
     this.message = message;
-  }
-
-  toString(): string {
-    return `DatabaseClearResult{success: ${this.success}, recordsCleared: ${this.recordsCleared}}`;
   }
 }
 
@@ -242,22 +98,19 @@ export struct HealthDataEntryPage {
   private cancelStream: (() => void) | null = null;
   private scrollerRef: Scroller = new Scroller();
   private inputController: TextInputController = new TextInputController();
-  private preferencesHelper: preferences.Preferences | null = null;
-  private globalSavedDataIds: Set<string> = new Set();
   private streamState: StreamProcessingState = new StreamProcessingState();
+  private currentUserId: number = 1; // 实际应从登录状态获取
 
   aboutToAppear(): void {
     this.initializeSystem();
   }
 
   private async initializeSystem(): Promise<void> {
-    await this.initPreferences();
-
     const currentTime = new Date().toLocaleString('zh-CN');
 
     const welcomeMessage = new Message(
       'assistant',
-      getContext(this).resourceManager.getStringSync($r('app.string.welcome_message_184759362847392')),
+      '您好！我是健康数据录入助手，请告诉我您的健康数据，我会帮您精确记录到数据库中。',
       new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
     );
 
@@ -284,57 +137,44 @@ export struct HealthDataEntryPage {
 
 【严格格式要求】三段式回复：
 
-第一段：JSON数据块
-\`\`\`json
-{
-  "action": "save_multiple_health_data",
-  "dataList": [
-    {
-      "timestamp": "2025-05-31 04:17:42",
-      "type": "distance",
-      "value": "5.9",
-      "unit": "公里",
-      "additionalInfo": {
-        "category": "行走距离",
-        "dayOfWeek": "${todayWeekDay}",
-        "goalValue": "",
-        "distance": "",
-        "sleepTime": "",
-        "wakeTime": "",
-        "minValue": "",
-        "maxValue": "",
-        "avgValue": ""
-      }
-    }
-  ]
-}
-\`\`\`
+第一段：数据录入块
+=== 数据录入 ===
+步数:17777
+距离:5.9
+热量:976
+心率:66
+血氧:97
+睡眠:474
 
-第二段：---SPLIT---
+第二段：分隔符
+=== 用户反馈 ===
 
 第三段：简洁确认
 ✅ 精确数据已保存！
 📏 距离：5.9公里（精确记录）
+🚶 步数：17777步
+❤️ 心率：66次/分
+🫁 血氧：97%
+🔥 热量：976千卡
+😴 睡眠：474分钟
 
 【数值精度要求】
-- 距离：必须保留小数（如5.9公里、6.2公里）
-- 步数：整数（如8666步）
-- 热量：支持小数（如323千卡、323.5千卡）
-- 心率：整数（如72次/分）
-- 血氧：整数（如98%）
+- 距离：必须保留小数（如5.9、6.2）
+- 步数：整数（如8666）
+- 热量：支持小数（如323、323.5）
+- 心率：整数（如72）
+- 血氧：整数（如98）
+- 睡眠：分钟数（如474表示7小时54分钟）
 
-【数据类型】
-- steps: 步数（步）
-- distance: 距离（公里）- 关键：保留小数
-- calories: 热量（千卡）
-- heart_rate: 心率（次/分）
-- blood_oxygen: 血氧（%）
+【数据类型对应】
+- 步数 → steps（步）
+- 距离 → distance（公里）
+- 热量 → calories（千卡）
+- 心率 → heart_rate（次/分）
+- 血氧 → blood_oxygen（%）
+- 睡眠 → sleep_duration（分钟）
 
-【周几识别规则】
-- 今天：${todayWeekDay}
-- 支持：周一到周日、上个周六等
-
-【关键】value字段必须保持原始精度，绝不截断小数！`;
+【关键】数值必须保持原始精度，绝不截断小数！`;
   }
 
   private configureUITheme(): void {
@@ -346,237 +186,104 @@ export struct HealthDataEntryPage {
     lvLink.setTextColor("#4CAF50");
   }
 
-  private async initPreferences(): Promise<void> {
-    try {
-      this.preferencesHelper = await preferences.getPreferences(getContext(), 'health_data');
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '未知错误';
-    }
-  }
+  private parseHealthDataFromAI(aiResponse: string): HealthDataParseResult {
+    console.info('[健康数据解析] 开始解析AI回复');
 
-  private async clearHealthDatabase(): Promise<DatabaseClearResult> {
-    try {
-      if (!this.preferencesHelper) {
-        const errorMsg = getContext(this).resourceManager.getStringSync($r('app.string.storage_not_initialized_184759362847392'));
-        return new DatabaseClearResult(false, 0, errorMsg);
-      }
-
-      const existingData = await this.preferencesHelper.get('health_records', '[]') as string;
-      const healthRecords: HealthData[] = JSON.parse(existingData);
-      const recordCount = healthRecords.length;
-
-      if (recordCount === 0) {
-        const emptyMsg = getContext(this).resourceManager.getStringSync($r('app.string.database_already_empty_392847516293847'));
-        return new DatabaseClearResult(true, 0, emptyMsg);
-      }
-
-      await this.preferencesHelper.put('health_records', '[]');
-      await this.preferencesHelper.flush();
-      this.globalSavedDataIds.clear();
-
-      const successTemplate = getContext(this).resourceManager.getStringSync($r('app.string.clear_success_template_758394627184759'));
-      const successMessage = successTemplate.replace('{0}', recordCount.toString());
-      return new DatabaseClearResult(true, recordCount, successMessage);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '未知错误';
-      const failTemplate = getContext(this).resourceManager.getStringSync($r('app.string.clear_failed_template_184759362847392'));
-      return new DatabaseClearResult(false, 0, failTemplate.replace('{0}', errorMessage));
-    }
-  }
-
-  private showClearDatabaseConfirm(): void {
-    AlertDialog.show({
-      title: getContext(this).resourceManager.getStringSync($r('app.string.confirm_dangerous_operation_847392615738294')),
-      message: getContext(this).resourceManager.getStringSync($r('app.string.clear_database_warning_573829461847392')),
-      primaryButton: {
-        value: getContext(this).resourceManager.getStringSync($r('app.string.confirm_clear_button_392847516293847')),
-        fontColor: '#FF5722',
-        action: async () => {
-          await this.executeClearDatabase();
-        }
-      },
-      secondaryButton: {
-        value: getContext(this).resourceManager.getStringSync($r('app.string.cancel_button_758394627184759')),
-        fontColor: '#4CAF50',
-        action: () => {
-        }
-      }
-    });
-  }
-
-  private async executeClearDatabase(): Promise<void> {
-    this.isClearingDatabase = true;
+    const result = new HealthDataParseResult();
 
     try {
-      const clearResult = await this.clearHealthDatabase();
-
-      const currentTime = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-
-      const resultMessage = new Message(
-        'assistant',
-        clearResult.success
-          ? getContext(this).resourceManager.getStringSync($r('app.string.clear_complete_629384751952847')).replace('{0}', clearResult.message)
-          : getContext(this).resourceManager.getStringSync($r('app.string.clear_failed_847392615738294')).replace('{0}', clearResult.message),
-        currentTime
-      );
-      this.messages.push(resultMessage);
-
-      this.updateCounter++;
-      this.messages = [...this.messages];
-      this.scrollToBottom();
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '未知错误';
-
-      const exceptionMessage = new Message(
-        'assistant',
-        getContext(this).resourceManager.getStringSync($r('app.string.system_exception_573829461847392')).replace('{0}', errorMessage),
-        new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
-      );
-      this.messages.push(exceptionMessage);
-      this.updateCounter++;
-      this.messages = [...this.messages];
-    } finally {
-      this.isClearingDatabase = false;
-    }
-  }
-
-  private async saveHealthDataSingle(healthData: HealthData, sessionId: string): Promise<SaveResult> {
-    try {
-      if (!this.preferencesHelper) {
-        const errorMsg = getContext(this).resourceManager.getStringSync($r('app.string.storage_not_initialized_184759362847392'));
-        return new SaveResult(false, healthData, errorMsg);
-      }
-
-      if (!healthData.type || !healthData.value || !healthData.timestamp) {
-        const errorMsg = getContext(this).resourceManager.getStringSync($r('app.string.incomplete_data_629384751952847'));
-        return new SaveResult(false, healthData, errorMsg);
-      }
-
-      const dataId = healthData.getUniqueId();
-      if (this.globalSavedDataIds.has(dataId)) {
-        const errorMsg = getContext(this).resourceManager.getStringSync($r('app.string.duplicate_data_847392615738294'));
-        return new SaveResult(false, healthData, errorMsg);
-      }
-
-      const existingData = await this.preferencesHelper.get('health_records', '[]') as string;
-      const healthRecords: HealthData[] = JSON.parse(existingData);
-
-      healthRecords.push(healthData);
-      this.globalSavedDataIds.add(dataId);
-
-      await this.preferencesHelper.put('health_records', JSON.stringify(healthRecords));
-      await this.preferencesHelper.flush();
-
-      const typeDescMap: Record<string, string> = {
-        'steps': getContext(this).resourceManager.getStringSync($r('app.string.steps_data_type_184759362847392')),
-        'distance': getContext(this).resourceManager.getStringSync($r('app.string.distance_data_type_629384751952847')),
-        'calories': getContext(this).resourceManager.getStringSync($r('app.string.calories_data_type_847392615738294')),
-        'blood_oxygen': getContext(this).resourceManager.getStringSync($r('app.string.blood_oxygen_data_type_573829461847392')),
-        'heart_rate': getContext(this).resourceManager.getStringSync($r('app.string.heart_rate_data_type_392847516293847'))
-      };
-      const typeDesc = typeDescMap[healthData.type] || healthData.type;
-
-      const successTemplate = getContext(this).resourceManager.getStringSync($r('app.string.save_success_template_758394627184759'));
-      const successMsg = successTemplate.replace('{0}', typeDesc).replace('{1}', healthData.value).replace('{2}', healthData.unit);
-
-      return new SaveResult(true, healthData, successMsg);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '未知错误';
-      const exceptionTemplate = getContext(this).resourceManager.getStringSync($r('app.string.save_exception_template_573829461847392'));
-      return new SaveResult(false, healthData, exceptionTemplate.replace('{0}', errorMessage));
-    }
-  }
-
-  private async batchSaveHealthData(healthDataList: HealthData[]): Promise<SaveResult[]> {
-    const sessionId = `batch_${Date.now()}`;
-
-    const resolvedDataList = DataConflictDetector.detectTodayStepsConflict(healthDataList);
-
-    const saveResults: SaveResult[] = [];
-
-    for (let i = 0; i < resolvedDataList.length; i++) {
-      const healthData = resolvedDataList[i];
-
-      const saveResult = await this.saveHealthDataSingle(healthData, sessionId);
-      saveResults.push(saveResult);
-
-      if (i < resolvedDataList.length - 1) {
-        await new Promise<void>((resolve) => {
-          setTimeout(() => { resolve(); }, 50);
-        });
-      }
-    }
-
-    return saveResults;
-  }
-
-  private parseMultiHealthDataResponseEnhanced(aiResponse: string): MultiHealthDataResponse {
-    try {
-      let jsonPart = '';
+      let dataPart = '';
       let userPart = '';
 
-      if (aiResponse.includes('---SPLIT---')) {
-        const parts = aiResponse.split('---SPLIT---');
-        jsonPart = parts[0].trim();
+      if (aiResponse.includes('=== 数据录入 ===') && aiResponse.includes('=== 用户反馈 ===')) {
+        const parts = aiResponse.split('=== 用户反馈 ===');
+        dataPart = parts[0].replace('=== 数据录入 ===', '').trim();
         userPart = parts[1] ? parts[1].trim() : '';
       } else {
-        jsonPart = aiResponse;
+        dataPart = aiResponse;
         userPart = aiResponse;
       }
 
-      const healthDataList: HealthData[] = [];
+      console.info(`[健康数据解析] 数据部分: ${dataPart}`);
 
-      if (jsonPart.length > 0) {
-        const jsonCodeBlockPattern = /```json\s*([\s\S]*?)\s*```/;
-        const jsonMatch = jsonPart.match(jsonCodeBlockPattern);
+      // 使用正则表达式提取数据
+      const patterns: Record<string, RegExp> = {
+        'steps': /步数[:：]\s*(\d+)/,
+        'distance': /距离[:：]\s*([\d.]+)/,
+        'calories': /热量[:：]\s*([\d.]+)/,
+        'heart_rate': /心率[:：]\s*(\d+)/,
+        'blood_oxygen': /血氧[:：]\s*(\d+)/,
+        'sleep_duration': /睡眠[:：]\s*(\d+)/
+      };
 
-        if (jsonMatch) {
-          const jsonStr = jsonMatch[1].trim();
-
-          try {
-            const parsedData = JSON.parse(jsonStr) as MultiHealthDataWrapper;
-
-            if (parsedData.dataList && parsedData.dataList.length > 0) {
-              for (let i = 0; i < parsedData.dataList.length; i++) {
-                const dataItem = parsedData.dataList[i];
-
-                if (!dataItem.type || !dataItem.value || !dataItem.timestamp) {
-                  continue;
-                }
-
-                const additionalInfo = new AdditionalHealthInfo();
-                if (dataItem.additionalInfo) {
-                  additionalInfo.sleepTime = dataItem.additionalInfo.sleepTime || '';
-                  additionalInfo.wakeTime = dataItem.additionalInfo.wakeTime || '';
-                  additionalInfo.minValue = dataItem.additionalInfo.minValue || '';
-                  additionalInfo.maxValue = dataItem.additionalInfo.maxValue || '';
-                  additionalInfo.avgValue = dataItem.additionalInfo.avgValue || '';
-                  additionalInfo.category = dataItem.additionalInfo.category || '实时';
-                  additionalInfo.dayOfWeek = dataItem.additionalInfo.dayOfWeek || '';
-                  additionalInfo.goalValue = dataItem.additionalInfo.goalValue || '';
-                  additionalInfo.distance = dataItem.additionalInfo.distance || '';
-                }
-
-                const healthData = new HealthData(
-                  dataItem.timestamp,
-                  dataItem.type,
-                  dataItem.value,
-                  dataItem.unit || '',
-                  additionalInfo
-                );
-
-                healthDataList.push(healthData);
-              }
+      Object.keys(patterns).forEach((key: string) => {
+        const match = dataPart.match(patterns[key]);
+        if (match) {
+          const value = parseFloat(match[1]);
+          if (!isNaN(value)) {
+            switch (key) {
+              case 'steps':
+                result.steps = Math.floor(value);
+                break;
+              case 'distance':
+                result.distance = value;
+                break;
+              case 'calories':
+                result.calories = value;
+                break;
+              case 'heart_rate':
+                result.heart_rate = Math.floor(value);
+                break;
+              case 'blood_oxygen':
+                result.blood_oxygen = Math.floor(value);
+                break;
+              case 'sleep_duration':
+                result.sleep_duration = Math.floor(value);
+                break;
             }
-          } catch (parseError) {
+            console.info(`[健康数据解析] 提取${key}: ${value}`);
           }
         }
-      }
+      });
 
-      return new MultiHealthDataResponse(healthDataList, userPart || aiResponse);
+      result.userMessage = userPart || '数据录入完成';
+
+      console.info(`[健康数据解析] 解析结果: ${result.toString()}`);
+      return result;
 
     } catch (error) {
-      return new MultiHealthDataResponse([], aiResponse);
+      console.error('[健康数据解析] 解析异常:', error);
+      result.userMessage = aiResponse;
+      return result;
+    }
+  }
+
+  private async saveHealthDataToBackend(parseResult: HealthDataParseResult): Promise<AISaveResult> {
+    try {
+      console.info('[后端保存] 开始保存健康数据到后端');
+
+      const requestData: HealthDataRequest = {
+        user_id: this.currentUserId,
+        record_date: new Date().toISOString().split('T')[0],
+        steps: parseResult.steps,
+        distance: parseResult.distance,
+        active_calories: parseResult.calories,
+        avg_heart_rate: parseResult.heart_rate,
+        avg_blood_oxygen: parseResult.blood_oxygen,
+        sleep_duration: parseResult.sleep_duration
+      };
+
+      // 调用后端API保存健康数据
+      const response: RegisterResponse = await userApiService.saveHealthData(requestData);
+
+      console.info(`[后端保存] 保存结果: ${response.success}, 消息: ${response.message}`);
+
+      return new AISaveResult(response.success, response.message);
+
+    } catch (error) {
+      console.error('[后端保存] 保存异常:', error);
+      const errorMessage = error instanceof Error ? error.message : '网络连接失败';
+      return new AISaveResult(false, `保存失败: ${errorMessage}`);
     }
   }
 
@@ -585,6 +292,7 @@ export struct HealthDataEntryPage {
       try {
         this.scrollerRef.scrollEdge(Edge.Bottom);
       } catch (err) {
+        console.error('[滚动] 滚动到底部失败:', err);
       }
     }, 100);
   }
@@ -607,7 +315,7 @@ export struct HealthDataEntryPage {
       const aiMessageIndex = this.messages.length;
       const aiMsg = new Message(
         'assistant',
-        getContext(this).resourceManager.getStringSync($r('app.string.analyzing_health_data_758394627184759')),
+        '正在分析您的健康数据...',
         new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
         true
       );
@@ -622,6 +330,13 @@ export struct HealthDataEntryPage {
 
         (chunk: string) => {
           fullAIResponse = chunk;
+          // 实时解析并显示用户友好信息
+          const parseResult = this.parseHealthDataFromAI(fullAIResponse);
+          if (parseResult.userMessage) {
+            this.messages[aiMessageIndex].content = parseResult.userMessage;
+            this.updateCounter++;
+            this.messages = [...this.messages];
+          }
         },
 
         async () => {
@@ -636,15 +351,21 @@ export struct HealthDataEntryPage {
             this.messages[aiMessageIndex].isStreaming = false;
           }
 
-          const finalParseResult = this.parseMultiHealthDataResponseEnhanced(fullAIResponse);
-          const healthDataList = finalParseResult.healthDataList;
-          const finalUserMessage = finalParseResult.userMessage;
+          // 解析AI回复
+          const parseResult = this.parseHealthDataFromAI(fullAIResponse);
 
-          this.messages[aiMessageIndex].content = finalUserMessage || getContext(this).resourceManager.getStringSync($r('app.string.processing_complete_392847516293847'));
+          // 保存到后端数据库
+          const saveResult = await this.saveHealthDataToBackend(parseResult);
 
-          if (healthDataList.length > 0) {
-            const saveResults = await this.batchSaveHealthData(healthDataList);
+          // 更新用户消息
+          let finalMessage = parseResult.userMessage;
+          if (saveResult.success) {
+            finalMessage += '\n\n✅ 数据已成功保存到数据库';
+          } else {
+            finalMessage += `\n\n❌ 数据保存失败: ${saveResult.message}`;
           }
+
+          this.messages[aiMessageIndex].content = finalMessage;
 
           const assistantConversation = new ConversationItem('assistant', fullAIResponse);
           this.conversation.push(assistantConversation);
@@ -658,8 +379,7 @@ export struct HealthDataEntryPage {
         (error: Error) => {
           this.isLoading = false;
           if (this.messages[aiMessageIndex]) {
-            const errorTemplate = getContext(this).resourceManager.getStringSync($r('app.string.analysis_failed_758394627184759'));
-            this.messages[aiMessageIndex].content = errorTemplate.replace('{0}', error.message);
+            this.messages[aiMessageIndex].content = `分析失败: ${error.message}`;
             this.messages[aiMessageIndex].isStreaming = false;
           }
 
@@ -671,6 +391,7 @@ export struct HealthDataEntryPage {
         }
       );
     } catch (err) {
+      console.error('[AI发送] 发送异常:', err);
       this.isLoading = false;
       this.streamState.reset();
       this.scrollToBottom();
@@ -688,11 +409,12 @@ export struct HealthDataEntryPage {
           try {
             router.back();
           } catch (err) {
+            console.error('[导航] 返回失败:', err);
           }
         })
         .width(44).height(44).backgroundColor(Color.Transparent).margin({ left: 12 })
 
-        Text(getContext(this).resourceManager.getStringSync($r('app.string.health_data_entry_title_84739261573829'))).fontSize(20).fontWeight(FontWeight.Bold).fontColor('#333333')
+        Text('AI健康数据录入').fontSize(20).fontWeight(FontWeight.Bold).fontColor('#333333')
           .layoutWeight(1).textAlign(TextAlign.Center)
 
         Button({ type: ButtonType.Circle }) {
@@ -704,7 +426,10 @@ export struct HealthDataEntryPage {
         }
         .onClick(() => {
           if (!this.isClearingDatabase) {
-            this.showClearDatabaseConfirm();
+            // 清空会话记录
+            this.messages = this.messages.slice(0, 1); // 保留欢迎消息
+            this.conversation = this.conversation.slice(0, 2); // 保留系统提示和欢迎消息
+            this.updateCounter++;
           }
         })
         .enabled(!this.isClearingDatabase && !this.isLoading)
@@ -727,13 +452,14 @@ export struct HealthDataEntryPage {
                   Text(msg.time).fontSize(12).fontColor('#999').margin({ bottom: 4 })
 
                   LvMarkdownIn({
-                    text: msg.content || getContext(this).resourceManager.getStringSync($r('app.string.analyzing_health_data_758394627184759')),
+                    text: msg.content || '正在分析您的健康数据...',
                     loadMode: "text",
                     loadCallBack: {
                       success: (r: LMICallBack) => {
                         setTimeout(() => { this.scrollToBottom(); }, 50);
                       },
                       fail: (r: LMICallBack) => {
+                        console.error('[Markdown] 加载失败');
                       }
                     }
                   })
@@ -742,7 +468,7 @@ export struct HealthDataEntryPage {
 
                   if (msg.isStreaming) {
                     Row() {
-                      Text(getContext(this).resourceManager.getStringSync($r('app.string.analysis_in_progress_629384751952847'))).fontSize(12).fontColor('#4CAF50').margin({ right: 8 })
+                      Text('正在分析中').fontSize(12).fontColor('#4CAF50').margin({ right: 8 })
                       ForEach([1, 2, 3], (i: number) => {
                         Text('●').fontSize(14).fontColor('#4CAF50').opacity(0.3 + (i * 0.3))
                       })
@@ -775,24 +501,15 @@ export struct HealthDataEntryPage {
       if (this.isLoading) {
         Row() {
           LoadingProgress().width(28).height(28).color('#4CAF50')
-          Text(getContext(this).resourceManager.getStringSync($r('app.string.analyzing_health_data_758394627184759'))).fontSize(14).fontColor('#4CAF50').margin({ left: 12 })
+          Text('正在分析您的健康数据...').fontSize(14).fontColor('#4CAF50').margin({ left: 12 })
         }
         .justifyContent(FlexAlign.Center).width('100%').padding(12)
         .backgroundColor('#F0F8F0').borderRadius(8).margin({ left: 16, right: 16, bottom: 8 })
       }
 
-      if (this.isClearingDatabase) {
-        Row() {
-          LoadingProgress().width(28).height(28).color('#FF5722')
-          Text(getContext(this).resourceManager.getStringSync($r('app.string.clearing_database_184759362847392'))).fontSize(14).fontColor('#FF5722').margin({ left: 12 })
-        }
-        .justifyContent(FlexAlign.Center).width('100%').padding(12)
-        .backgroundColor('#FFF3E0').borderRadius(8).margin({ left: 16, right: 16, bottom: 8 })
-      }
-
       Row() {
         TextInput({
-          placeholder: getContext(this).resourceManager.getStringSync($r('app.string.input_placeholder_392847516293847')),
+          placeholder: '请输入您的健康数据，如：今天我走了8000步，心率平均72次...',
           text: this.inputContent,
           controller: this.inputController
         })

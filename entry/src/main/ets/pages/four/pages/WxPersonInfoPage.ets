@@ -8,6 +8,10 @@ import { router } from '@kit.ArkUI';
 import { UserCredentials, kUserDefault_UserCredentials } from '../../login/pages/CodeLoginPage'
 import { picker } from '@kit.CoreFileKit';
 import { BusinessError } from '@kit.BasicServicesKit';
+import { userApiService, AvatarUploadResponse, UserProfileResponse } from '../../../services/api_network/UserApiService';
+import { fileIo } from '@kit.CoreFileKit';
+import { util } from '@kit.ArkTS';
+import { UserApiService } from '../../../services/api_network/UserApiService';
 
 //个人信息页面
 
@@ -26,7 +30,6 @@ interface ServerUserInfo {
 }
 
 interface AvatarInfo {
-  localPath: string;
   serverUrl: string;
   uploadStatus: 'uploading' | 'success' | 'failed' | 'none';
 }
@@ -44,10 +47,10 @@ struct WxPersonInfoPage {
   @State healthCode: string = ''
   @State showHealthCodeDialog: boolean = false
   @State avatarInfo: AvatarInfo = {
-    localPath: '',
     serverUrl: '',
     uploadStatus: 'none'
   }
+  @State currentUserId: number = 1
 
   // 从相册选择图片
   private async selectImageFromGallery(): Promise<void> {
@@ -65,7 +68,6 @@ struct WxPersonInfoPage {
         const selectedUri: string = selectResult.photoUris[0];
         console.info(`[头像选择] 选择的图片URI: ${selectedUri}`);
 
-        this.avatarInfo.localPath = selectedUri;
         await this.uploadAvatarToServer(selectedUri);
       } else {
         console.warn('[头像选择] 未选择任何图片');
@@ -82,49 +84,80 @@ struct WxPersonInfoPage {
       console.info('[头像上传] 开始上传头像到服务器');
       this.avatarInfo.uploadStatus = 'uploading';
 
-      // TODO: 这里实现实际的上传逻辑
-      // const uploadResult = await this.uploadImageToAPI(imagePath);
+      // 读取图片文件并转换为base64
+      const file = fileIo.openSync(imagePath);
+      const stat = fileIo.statSync(file.fd);
+      const buffer = new ArrayBuffer(stat.size);
+      fileIo.readSync(file.fd, buffer);
+      fileIo.closeSync(file);
 
-      // 模拟上传过程
-      await new Promise<void>((resolve: (value: void) => void) => {
-        setTimeout(() => {
-          resolve();
-        }, 2000);
-      });
+      // 转换为base64
+      const uint8Array = new Uint8Array(buffer);
+      const base64Helper = new util.Base64Helper();
+      const base64String = base64Helper.encodeToStringSync(uint8Array);
+      const base64Data = `data:image/jpeg;base64,${base64String}`;
 
-      // 模拟上传成功，保存到本地存储
-      this.avatarInfo.serverUrl = imagePath; // 临时使用本地路径
-      this.avatarInfo.uploadStatus = 'success';
+      // 调用API上传
+      const uploadResult: AvatarUploadResponse = await userApiService.uploadAvatar(this.currentUserId, base64Data);
 
-      // 更新用户信息
-      let userInfo = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as ServerUserInfo;
-      if (userInfo) {
-        userInfo.avatarUrl = imagePath;
-        JhAESPreferencesUtils.saveModel(kUserDefault_UserInfo, userInfo);
+      if (uploadResult.success && uploadResult.avatar_url) {
+        this.avatarInfo.serverUrl = uploadResult.avatar_url;
+        this.avatarInfo.uploadStatus = 'success';
+
+        // 更新本地存储的用户信息
+        let userInfo = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as ServerUserInfo;
+        if (userInfo) {
+          userInfo.avatarUrl = uploadResult.avatar_url;
+          JhAESPreferencesUtils.saveModel(kUserDefault_UserInfo, userInfo);
+        }
+
+        console.info('[头像上传] 头像上传成功');
+        JhProgressHUD.showToast('头像上传成功');
+      } else {
+        this.avatarInfo.uploadStatus = 'failed';
+        console.error(`[头像上传] 上传失败: ${uploadResult.message}`);
+        JhProgressHUD.showToast(uploadResult.message || '上传失败');
       }
-
-      console.info('[头像上传] 头像上传成功');
     } catch (error) {
       const err = error as BusinessError;
       console.error(`[头像上传] 上传失败: ${err.message}`);
       this.avatarInfo.uploadStatus = 'failed';
+      JhProgressHUD.showToast('头像上传失败');
+    }
+  }
+
+  // 从服务器加载用户资料
+  private async loadUserProfile(): Promise<void> {
+    try {
+      console.info(`[用户资料] 开始加载用户${this.currentUserId}的资料`);
+
+      const profileResult: UserProfileResponse = await userApiService.getUserProfile(this.currentUserId);
+
+      if (profileResult.success && profileResult.data) {
+        this.name = profileResult.data.username;
+        if (profileResult.data.avatar_url) {
+          this.avatarInfo.serverUrl = profileResult.data.avatar_url;
+        }
+        console.info(`[用户资料] 资料加载成功: ${this.name}`);
+      } else {
+        console.error(`[用户资料] 加载失败: ${profileResult.message}`);
+      }
+    } catch (error) {
+      console.error(`[用户资料] 加载异常: ${error}`);
     }
   }
 
   // 获取显示的头像源
   private getAvatarSource(): string | Resource {
-    if (this.avatarInfo.localPath) {
-      return this.avatarInfo.localPath;
-    }
     if (this.avatarInfo.serverUrl) {
-      return this.avatarInfo.serverUrl;
+      return UserApiService.getAvatarUrl(this.avatarInfo.serverUrl);
     }
     return $rawfile("wechat/mine/default_avatar.jpg");
   }
 
   build() {
     Column() {
-      BaseNavigation({ title: $r('app.string.wxPersonInfo'), bgColor: Color.Transparent })
+      BaseNavigation({ title: '个人信息', bgColor: Color.Transparent })
       this.body()
       if (this.showDialog) {
         this.editDialog()
@@ -154,13 +187,13 @@ struct WxPersonInfoPage {
 
       Column() {
         Column() {
-          Text($r('app.string.edit_name_title'))
+          Text('编辑名字')
             .fontSize(20)
             .fontColor('#333333')
             .fontWeight(FontWeight.Bold)
             .margin({ top: 20, bottom: 20 })
 
-          TextInput({ placeholder: $r('app.string.edit_name_placeholder'), text: this.newName })
+          TextInput({ placeholder: '请输入新名字', text: this.newName })
             .width('90%')
             .height(45)
             .padding(10)
@@ -173,7 +206,7 @@ struct WxPersonInfoPage {
             })
 
           Row() {
-            Button($r('app.string.cancel'))
+            Button('取消')
               .width('45%')
               .height(42)
               .backgroundColor('#EEEEEE')
@@ -185,7 +218,7 @@ struct WxPersonInfoPage {
                 this.newName = this.name
               })
 
-            Button($r('app.string.confirm'))
+            Button('确定')
               .width('45%')
               .height(42)
               .backgroundColor('#1698CE')
@@ -262,13 +295,13 @@ struct WxPersonInfoPage {
 
       Column() {
         Column() {
-          Text($r('app.string.edit_paiyipai_title'))
+          Text('编辑拍一拍')
             .fontSize(20)
             .fontColor('#333333')
             .fontWeight(FontWeight.Bold)
             .margin({ top: 20, bottom: 20 })
 
-          TextInput({ placeholder: $r('app.string.edit_paiyipai_placeholder'), text: this.paiYiPai })
+          TextInput({ placeholder: '请输入拍一拍内容', text: this.paiYiPai })
             .width('90%')
             .height(45)
             .padding(10)
@@ -281,7 +314,7 @@ struct WxPersonInfoPage {
             })
 
           Row() {
-            Button($r('app.string.cancel'))
+            Button('取消')
               .width('45%')
               .height(42)
               .backgroundColor('#EEEEEE')
@@ -292,7 +325,7 @@ struct WxPersonInfoPage {
                 this.showPaiYiPaiDialog = false
               })
 
-            Button($r('app.string.confirm'))
+            Button('确定')
               .width('45%')
               .height(42)
               .backgroundColor('#1698CE')
@@ -348,13 +381,13 @@ struct WxPersonInfoPage {
 
       Column() {
         Column() {
-          Text($r('app.string.edit_healthcode_title'))
+          Text('编辑健康码')
             .fontSize(20)
             .fontColor('#333333')
             .fontWeight(FontWeight.Bold)
             .margin({ top: 20, bottom: 20 })
 
-          TextInput({ placeholder: $r('app.string.edit_healthcode_placeholder'), text: this.healthCode })
+          TextInput({ placeholder: '请输入健康码', text: this.healthCode })
             .width('90%')
             .height(45)
             .padding(10)
@@ -367,7 +400,7 @@ struct WxPersonInfoPage {
             })
 
           Row() {
-            Button($r('app.string.cancel'))
+            Button('取消')
               .width('45%')
               .height(42)
               .backgroundColor('#EEEEEE')
@@ -378,7 +411,7 @@ struct WxPersonInfoPage {
                 this.showHealthCodeDialog = false
               })
 
-            Button($r('app.string.confirm'))
+            Button('确定')
               .width('45%')
               .height(42)
               .backgroundColor('#1698CE')
@@ -440,7 +473,7 @@ struct WxPersonInfoPage {
         Column() {
           JhSetCell({
             cellHeight: 75,
-            title: $r('app.string.avatar'),
+            title: '头像',
             rightWidget: () => {
               this.rightBuilder1()
             },
@@ -450,7 +483,7 @@ struct WxPersonInfoPage {
           })
           JhSetCell({
             cellHeight: _cellH,
-            title: $r('app.string.name'),
+            title: '名字',
             text: this.name,
             clickCallBack: (): void => {
               this.newName = this.name
@@ -459,13 +492,13 @@ struct WxPersonInfoPage {
           })
           JhSetCell({
             cellHeight: _cellH,
-            title: $r('app.string.more'),
+            title: '更多',
             hiddenLine: true
           })
           Blank().height(_rowSpace)
           JhSetCell({
             cellHeight: _cellH,
-            title: $r('app.string.my_address'),
+            title: '我的地址',
             hiddenLine: true,
           })
           Blank().height(15)
@@ -517,7 +550,14 @@ struct WxPersonInfoPage {
 
   aboutToAppear() {
     console.info('[个人信息页面] 页面初始化开始')
+
+    // 获取当前用户ID
     let userInfo = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as ServerUserInfo;
+    if (userInfo && userInfo.userID) {
+      this.currentUserId = parseInt(userInfo.userID);
+    }
+
+    // 加载本地用户信息
     if (userInfo && userInfo.userName) {
       this.name = userInfo.userName;
       if (userInfo.patContent) {
@@ -532,6 +572,10 @@ struct WxPersonInfoPage {
         this.avatarInfo.serverUrl = userInfo.avatarUrl;
       }
     }
+
+    // 从服务器加载最新的用户资料
+    this.loadUserProfile();
+
     console.info(`[个人信息页面] 用户信息加载完成: ${this.name}`)
   }
 }

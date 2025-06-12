@@ -7,10 +7,27 @@
 import { BaseNavigation, JhAESPreferencesUtils, JhSetCell, KColors, kUserDefault_UserInfo } from 'JhCommon'
 import { UserModel } from '../../model/UserModel';
 import { router } from '@kit.ArkUI';
+import { UserApiService, userApiService, UserProfileResponse } from '../../../services/api_network/UserApiService';
 
 const _cellH = 55.0;
 const _leftSpace = 50.0;
 const _rowSpace = 6.0;
+
+interface ServerUserInfo {
+  userID: string;
+  userName: string;
+  phone: string;
+  pwd: string;
+  token: string;
+  avatarUrl: string;
+  patContent?: string;
+  healthCode?: string;
+}
+
+interface AvatarInfo {
+  serverUrl: string;
+  uploadStatus: 'uploading' | 'success' | 'failed' | 'none';
+}
 
 @Entry
 @Preview
@@ -21,6 +38,39 @@ export struct WxMinePage {
   @State topH: number = 0
   @State refreshFlag: number = 0;
   @State userName: string = '';
+  @State avatarInfo: AvatarInfo = {
+    serverUrl: '',
+    uploadStatus: 'none'
+  }
+  @State currentUserId: number = 1
+
+  // 从服务器加载用户资料
+  private async loadUserProfile(): Promise<void> {
+    try {
+      console.info(`[我的页面] 开始从服务器加载用户${this.currentUserId}的资料`);
+
+      const profileResult: UserProfileResponse = await userApiService.getUserProfile(this.currentUserId);
+
+      if (profileResult.success && profileResult.data) {
+        if (profileResult.data.avatar_url) {
+          this.avatarInfo.serverUrl = profileResult.data.avatar_url;
+        }
+        console.info(`[我的页面] 服务器资料加载成功，头像: ${profileResult.data.avatar_url || '无'}`);
+      } else {
+        console.error(`[我的页面] 服务器资料加载失败: ${profileResult.message}`);
+      }
+    } catch (error) {
+      console.error(`[我的页面] 服务器资料加载异常: ${error}`);
+    }
+  }
+
+  // 获取显示的头像源
+  private getAvatarSource(): string | Resource {
+    if (this.avatarInfo.serverUrl) {
+      return UserApiService.getAvatarUrl(this.avatarInfo.serverUrl);
+    }
+    return 'https://gitee.com/zhaozehe/zako/raw/master/ic_535a5f26fa59f35f023467562ae1388e.png';
+  }
 
   aboutToAppear() {
     this.loadUserInfo()
@@ -139,7 +189,10 @@ export struct WxMinePage {
   @Builder
   header() {
     Row() {
-      Image('https://gitee.com/zhaozehe/zako/raw/master/ic_535a5f26fa59f35f023467562ae1388e.png' || $rawfile("wechat/mine/default_avatar.jpg")).width(75).height(75).borderRadius(10)
+      Image(this.getAvatarSource()).width(75).height(75).borderRadius(10)
+        .onError(() => {
+          console.error('[我的页面] 头像加载失败')
+        })
         .onClick(() => {
           this.clickCell($r('app.string.personal_info'))
         })
@@ -188,11 +241,26 @@ export struct WxMinePage {
   }
 
   loadUserInfo() {
-    let userInfo = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as UserModel;
-    if (userInfo) {
-      this.userInfo = userInfo;
-      this.refreshFlag++;
+    console.info('[我的页面] 开始加载用户信息');
+
+    // 获取当前用户ID
+    let userInfo = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as ServerUserInfo;
+    if (userInfo && userInfo.userID) {
+      this.currentUserId = parseInt(userInfo.userID);
     }
+
+    // 加载本地用户信息
+    let userModel = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as UserModel;
+    if (userModel) {
+      this.userInfo = userModel;
+      this.refreshFlag++;
+      console.info(`[我的页面] 本地用户信息加载完成: ${userModel.userName}`);
+    } else {
+      console.warn('[我的页面] 未找到本地用户信息');
+    }
+
+    // 从服务器加载最新的用户资料
+    this.loadUserProfile();
   }
 
   clickCell(title: Resource | string) {

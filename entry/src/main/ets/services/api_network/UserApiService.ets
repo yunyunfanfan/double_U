@@ -7,11 +7,37 @@ export interface RegisterRequest {
 }
 
 
+export interface AvatarUploadResponse {
+  success: boolean;
+  message: string;
+  avatar_url?: string;
+}
+
+export interface UserProfileData {
+  user_id: number;
+  username: string;
+  phone: string;
+  avatar_url: string;
+}
+
+export interface UserProfileResponse {
+  success: boolean;
+  data?: UserProfileData;
+  message?: string;
+}
+
+export interface AvatarUploadRequest {
+  user_id: number;
+  avatar_file: string;
+}
+
+
 export interface HealthOverviewData {
   steps: number;
   avg_heart_rate: number;
   sleep_score: number;
   active_calories: number;
+  basic_metabolism_calories: number;
   blood_oxygen: number;
   current_mood: number;
 }
@@ -191,7 +217,12 @@ export class HealthDataSummary {
 }
 
 export class UserApiService {
-  private baseUrl: string = 'http://172.23.41.252:5000/api';
+  private static readonly BASE_URL: string = 'http://172.23.100.9:5000';
+  private baseUrl: string = `${UserApiService.BASE_URL}/api`;
+
+  static getAvatarUrl(avatarPath: string): string {
+    return avatarPath.startsWith('/static/') ? `${UserApiService.BASE_URL}${avatarPath}` : avatarPath;
+  }
 
   // 在UserApiService类中添加以下方法
   private currentUserId: number = 1;
@@ -199,6 +230,66 @@ export class UserApiService {
   setCurrentUserId(userId: number): void {
     this.currentUserId = userId;
     console.info(`[健康数据服务] 设置当前用户ID: ${userId}`);
+  }
+
+  async uploadAvatar(userId: number, avatarBase64: string): Promise<AvatarUploadResponse> {
+    const httpRequest = http.createHttp();
+
+    try {
+      console.info(`[头像上传] 开始上传用户${userId}的头像`);
+
+      const requestData: AvatarUploadRequest = {
+        user_id: userId,
+        avatar_file: avatarBase64
+      };
+
+      const response = await httpRequest.request(`${this.baseUrl}/upload-avatar`, {
+        method: http.RequestMethod.POST,
+        header: {
+          'Content-Type': 'application/json'
+        },
+        extraData: JSON.stringify(requestData),
+        connectTimeout: 15000,
+        readTimeout: 15000
+      });
+
+      const responseText: string = response.result as string;
+      const result: AvatarUploadResponse = JSON.parse(responseText) as AvatarUploadResponse;
+
+      console.info(`[头像上传] 上传结果: ${result.success}`);
+      return result;
+    } catch (error) {
+      console.error('[头像上传] 上传异常:', error);
+      return {
+        success: false,
+        message: '网络连接失败'
+      };
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
+  async getUserProfile(userId: number): Promise<UserProfileResponse> {
+    const httpRequest = http.createHttp();
+
+    try {
+      const response = await httpRequest.request(`${this.baseUrl}/user-profile/${userId}`, {
+        method: http.RequestMethod.GET,
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      const responseText: string = response.result as string;
+      const result: UserProfileResponse = JSON.parse(responseText) as UserProfileResponse;
+      return result;
+    } catch (error) {
+      return {
+        success: false,
+        message: '网络连接失败'
+      };
+    } finally {
+      httpRequest.destroy();
+    }
   }
 
   async getLatestHealthData(): Promise<HealthDataSummary> {
@@ -219,7 +310,7 @@ export class UserApiService {
           `${data.avg_heart_rate}bpm`,
           `${data.blood_oxygen}%`,
           `${data.sleep_score}分`,
-          `${data.active_calories}Kcal`,
+          `${(data.active_calories || 0) + (data.basic_metabolism_calories || 0)}Kcal`,
           this.getMoodText(data.current_mood || -1)
         );
       } else {
@@ -453,6 +544,39 @@ export class UserApiService {
     } catch (error) {
       console.error(`[健康数据服务] 获取健康数据失败:`, error);
       const errorResponse: HealthDataResponse = {
+        success: false,
+        message: '网络连接失败'
+      };
+      return errorResponse;
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
+  async saveAIHealthData(healthData: HealthDataRequest): Promise<RegisterResponse> {
+    const httpRequest = http.createHttp();
+
+    try {
+      console.info(`[AI健康数据] 保存用户${healthData.user_id}的健康数据`);
+
+      const response = await httpRequest.request(`${this.baseUrl}/ai-health-data`, {
+        method: http.RequestMethod.POST,
+        header: {
+          'Content-Type': 'application/json'
+        },
+        extraData: JSON.stringify(healthData),
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      const responseText: string = response.result as string;
+      const result: RegisterResponse = JSON.parse(responseText) as RegisterResponse;
+
+      console.info(`[AI健康数据] 保存结果: ${result.success}`);
+      return result;
+    } catch (error) {
+      console.error('[AI健康数据] 保存异常:', error);
+      const errorResponse: RegisterResponse = {
         success: false,
         message: '网络连接失败'
       };

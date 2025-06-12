@@ -224,7 +224,7 @@ export struct HealthMemoryPage {
 
     for (let i: number = 0; i < healthRecords.length; i++) {
       let record: HealthDataRequest = healthRecords[i];
-      let dateStr: string = record.record_date || '';
+      let dateStr: string = (record.record_date || '').replace(/'/g, ''); // 移除引号
 
       if (!dateStr) {
         console.warn(`[数据分组] === 跳过无日期记录: ${JSON.stringify(record)} ===`);
@@ -336,8 +336,7 @@ export struct HealthMemoryPage {
 
     // 修改这里：优先查找今日数据，如果没有则使用默认值
     const today: string = new Date().toISOString().split('T')[0];
-    const todayKey: string = `'${today}'`;
-    const todayData: DailyHealthData | undefined = this.dailyDataMap.get(todayKey);
+    const todayData: DailyHealthData | undefined = this.dailyDataMap.get(today);
 
     if (todayData) {
       console.info('[记忆处理] === 使用今日数据设置概览 ===');

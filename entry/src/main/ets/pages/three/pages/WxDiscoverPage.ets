@@ -1,11 +1,28 @@
-import { BaseNavigation, JhProgressHUD, JhSetCell, KColors } from 'JhCommon'
+import { BaseNavigation, JhProgressHUD, JhSetCell, KColors, JhAESPreferencesUtils, kUserDefault_UserInfo } from 'JhCommon'
 import { router } from '@kit.ArkUI';
+import { UserApiService, userApiService, UserProfileResponse } from '../../../services/api_network/UserApiService';
 
 ///这是第二页主页
 
 const _cellH = 55.0;
 const _leftSpace = 50.0;
 const _rowSpace = 6.0;
+
+interface ServerUserInfo {
+  userID: string;
+  userName: string;
+  phone: string;
+  pwd: string;
+  token: string;
+  avatarUrl: string;
+  patContent?: string;
+  healthCode?: string;
+}
+
+interface AvatarInfo {
+  serverUrl: string;
+  uploadStatus: 'uploading' | 'success' | 'failed' | 'none';
+}
 
 @Entry
 @Preview
@@ -21,6 +38,39 @@ export struct WxDiscoverPage {
   @State fatigueReliefText: string = '';
   @State diseaseMedicationText: string = '';
   @State clickActionText: string = '';
+  @State avatarInfo: AvatarInfo = {
+    serverUrl: '',
+    uploadStatus: 'none'
+  }
+  @State currentUserId: number = 1
+
+  // 从服务器加载用户资料
+  private async loadUserProfile(): Promise<void> {
+    try {
+      console.info(`[发现页面] 开始从服务器加载用户${this.currentUserId}的资料`);
+
+      const profileResult: UserProfileResponse = await userApiService.getUserProfile(this.currentUserId);
+
+      if (profileResult.success && profileResult.data) {
+        if (profileResult.data.avatar_url) {
+          this.avatarInfo.serverUrl = profileResult.data.avatar_url;
+        }
+        console.info(`[发现页面] 服务器资料加载成功，头像: ${profileResult.data.avatar_url || '无'}`);
+      } else {
+        console.error(`[发现页面] 服务器资料加载失败: ${profileResult.message}`);
+      }
+    } catch (error) {
+      console.error(`[发现页面] 服务器资料加载异常: ${error}`);
+    }
+  }
+
+  // 获取显示的头像源
+  private getAvatarSource(): string | Resource {
+    if (this.avatarInfo.serverUrl) {
+      return UserApiService.getAvatarUrl(this.avatarInfo.serverUrl);
+    }
+    return 'https://gitee.com/zhaozehe/zako/raw/master/ic_535a5f26fa59f35f023467562ae1388e.png';
+  }
 
   aboutToAppear(): void {
     this.titleText = getContext(this).resourceManager.getStringSync($r('app.string.device_and_others_title'));
@@ -33,6 +83,21 @@ export struct WxDiscoverPage {
     this.fatigueReliefText = getContext(this).resourceManager.getStringSync($r('app.string.fatigue_relief'));
     this.diseaseMedicationText = getContext(this).resourceManager.getStringSync($r('app.string.disease_medication'));
     this.clickActionText = getContext(this).resourceManager.getStringSync($r('app.string.click_action'));
+
+    this.loadUserInfo();
+  }
+
+  loadUserInfo(): void {
+    console.info('[发现页面] 开始加载用户信息');
+
+    // 获取当前用户ID
+    let userInfo = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as ServerUserInfo;
+    if (userInfo && userInfo.userID) {
+      this.currentUserId = parseInt(userInfo.userID);
+    }
+
+    // 从服务器加载最新的用户资料
+    this.loadUserProfile();
   }
 
   build() {
@@ -123,9 +188,14 @@ export struct WxDiscoverPage {
   rightBuilder() {
     Row() {
       Badge({ value: '', position: BadgePosition.RightTop, style: { badgeSize: 6, badgeColor: '#FA2A2D' } }) {
-        Image('https://gitee.com/zhaozehe/zako/raw/master/ic_535a5f26fa59f35f023467562ae1388e.png')
+        Image(this.getAvatarSource())
           .width(30).height(30)
           .margin({ top: 2.5, left: 2.5 })
+          .borderRadius(15)
+          .objectFit(ImageFit.Cover)
+          .onError(() => {
+            console.error('[发现页面] 头像加载失败')
+          })
       }
       .width(35).height(35)
     }
