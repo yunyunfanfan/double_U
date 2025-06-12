@@ -104,6 +104,48 @@ def init_database():
             UNIQUE(user_id, record_date, time_stamp, data_type)
         )
     ''')
+
+    # 在 init_database() 函数中添加以下表创建语句：
+
+    # 用户积分表
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS user_points (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            total_points INTEGER DEFAULT 0,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id),
+            UNIQUE(user_id)
+        )
+    ''')
+
+    # 积分记录表
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS points_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            points INTEGER NOT NULL,
+            source_type TEXT NOT NULL,
+            source_data TEXT,
+            record_date TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    ''')
+
+    # 步数记录表（专门用于步数和积分）
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS steps_records (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            steps INTEGER NOT NULL,
+            points_earned INTEGER NOT NULL,
+            record_date TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id),
+            UNIQUE(user_id, record_date)
+        )
+    ''')
         
     conn.commit()
     conn.close()
@@ -707,6 +749,149 @@ def add_family_member():
         
     except Exception as e:
         return jsonify({'success': False, 'message': f'添加失败: {str(e)}'}), 500
+
+@app.route('/api/steps-record', methods=['POST'])
+def save_steps_record():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        steps = data.get('steps')
+        record_date = data.get('record_date', datetime.now().strftime('%Y-%m-%d'))
+        
+        print(f"[{datetime.now()}] 保存步数记录: 用户{user_id}, 步数{steps}, 日期{record_date}")
+        
+        # 计算积分 (每500步=1积分)
+        points_earned = int(steps // 500)
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # 检查今日是否已有记录
+        existing = cursor.execute('''
+            SELECT steps, points_earned FROM steps_records 
+            WHERE user_id = ? AND record_date = ?
+        ''', (user_id, record_date)).fetchone()
+        
+        if existing:
+            # 更新现有记录
+            old_points = existing['points_earned']
+            cursor.execute('''
+                UPDATE steps_records 
+                SET steps = ?, points_earned = ? 
+                WHERE user_id = ? AND record_date = ?
+            ''', (steps, points_earned, user_id, record_date))
+            
+            # 更新积分差额
+            points_diff = points_earned - old_points
+        else:
+            # 创建新记录
+            cursor.execute('''
+                INSERT INTO steps_records (user_id, steps, points_earned, record_date)
+                VALUES (?, ?, ?, ?)
+            ''', (user_id, steps, points_earned, record_date))
+            points_diff = points_earned
+        
+        # 更新用户总积分
+        cursor.execute('''
+            INSERT OR REPLACE INTO user_points (user_id, total_points, updated_at)
+            VALUES (?, COALESCE((SELECT total_points FROM user_points WHERE user_id = ?), 0) + ?, CURRENT_TIMESTAMP)
+        ''', (user_id, user_id, points_diff))
+        
+        # 记录积分历史
+        if points_diff != 0:
+            cursor.execute('''
+                INSERT INTO points_history (user_id, points, source_type, source_data, record_date)
+                VALUES (?, ?, 'steps', ?, ?)
+            ''', (user_id, points_diff, f'步数: {steps}', record_date))
+        
+        # 同时更新health_data表的步数
+        cursor.execute('''
+            INSERT OR REPLACE INTO health_data (user_id, record_date, steps, updated_at)
+            VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+        ''', (user_id, record_date, steps))
+        
+        # 获取总积分
+        total_points_row = cursor.execute('''
+            SELECT total_points FROM user_points WHERE user_id = ?
+        ''', (user_id,)).fetchone()
+        total_points = total_points_row['total_points'] if total_points_row else 0
+        
+        conn.commit()
+        conn.close()
+        
+        print(f"[{datetime.now()}] 步数保存成功: 获得积分{points_earned}, 总积分{total_points}")
+        
+        return jsonify({
+            'success': True,
+            'message': '步数保存成功',
+            'points_earned': points_earned,
+            'total_points': total_points
+        })
+        
+    except Exception as e:
+        print(f"[{datetime.now()}] 保存步数异常: {e}")
+        return jsonify({'success': False, 'message': f'保存失败: {str(e)}'}), 500
+
+@app.route('/api/steps-history/<int:user_id>', methods=['GET'])
+def get_steps_history(user_id):
+    try:
+        days = int(request.args.get('days', 30))
+        
+        conn = get_db_connection()
+        
+        records = conn.execute('''
+            SELECT * FROM steps_records 
+            WHERE user_id = ? 
+            ORDER BY record_date DESC 
+            LIMIT ?
+        ''', (user_id, days)).fetchall()
+        
+        conn.close()
+        
+        result = []
+        for row in records:
+            result.append({
+                'id': row['id'],
+                'steps': row['steps'],
+                'points_earned': row['points_earned'],
+                'record_date': row['record_date'],
+                'created_at': row['created_at']
+            })
+        
+        return jsonify({'success': True, 'records': result})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'获取失败: {str(e)}'}), 500
+
+@app.route('/api/user-points/<int:user_id>', methods=['GET'])
+def get_user_points(user_id):
+    try:
+        conn = get_db_connection()
+        
+        points_info = conn.execute('''
+            SELECT * FROM user_points WHERE user_id = ?
+        ''', (user_id,)).fetchone()
+        
+        conn.close()
+        
+        if points_info:
+            result = {
+                'user_id': points_info['user_id'],
+                'total_points': points_info['total_points'],
+                'updated_at': points_info['updated_at']
+            }
+        else:
+            result = {
+                'user_id': user_id,
+                'total_points': 0,
+                'updated_at': datetime.now().isoformat()
+            }
+        
+        return jsonify({'success': True, 'data': result})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'获取失败: {str(e)}'}), 500
+
 
 @app.route('/api/radar-friends', methods=['POST'])
 def create_radar_session():

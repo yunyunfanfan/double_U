@@ -5,6 +5,8 @@ export interface RegisterRequest {
   username: string;
   password: string;
 }
+
+
 export interface HealthOverviewData {
   steps: number;
   avg_heart_rate: number;
@@ -54,7 +56,6 @@ export interface HealthDataRequest {
   joy_percentage?: number;
   satisfaction_percentage?: number;
 }
-
 
 export interface FamilyMember {
   id: number;
@@ -190,7 +191,7 @@ export class HealthDataSummary {
 }
 
 export class UserApiService {
-  private baseUrl: string = 'http://47.121.218.164:5000/api';
+  private baseUrl: string = 'http://172.23.41.252:5000/api';
 
   // 在UserApiService类中添加以下方法
   private currentUserId: number = 1;
