@@ -4,25 +4,13 @@
 //"我的"页面
 //是第四页主页
 
-import { BaseNavigation, JhAESPreferencesUtils, JhSetCell, KColors, kUserDefault_UserInfo } from 'JhCommon'
-import { UserModel } from '../../model/UserModel';
+import { BaseNavigation, JhSetCell, KColors } from 'JhCommon'
 import { router } from '@kit.ArkUI';
 import { UserApiService, userApiService, UserProfileResponse } from '../../../services/api_network/UserApiService';
 
 const _cellH = 55.0;
 const _leftSpace = 50.0;
 const _rowSpace = 6.0;
-
-interface ServerUserInfo {
-  userID: string;
-  userName: string;
-  phone: string;
-  pwd: string;
-  token: string;
-  avatarUrl: string;
-  patContent?: string;
-  healthCode?: string;
-}
 
 interface AvatarInfo {
   serverUrl: string;
@@ -33,10 +21,8 @@ interface AvatarInfo {
 @Preview
 @Component
 export struct WxMinePage {
-  userInfo?: UserModel;
   scroller: Scroller = new Scroller()
   @State topH: number = 0
-  @State refreshFlag: number = 0;
   @State userName: string = '';
   @State avatarInfo: AvatarInfo = {
     serverUrl: '',
@@ -52,10 +38,14 @@ export struct WxMinePage {
       const profileResult: UserProfileResponse = await userApiService.getUserProfile(this.currentUserId);
 
       if (profileResult.success && profileResult.data) {
+        // 更新用户名
+        this.userName = profileResult.data.username;
+
+        // 更新头像
         if (profileResult.data.avatar_url) {
           this.avatarInfo.serverUrl = profileResult.data.avatar_url;
         }
-        console.info(`[我的页面] 服务器资料加载成功，头像: ${profileResult.data.avatar_url || '无'}`);
+        console.info(`[我的页面] 服务器资料加载成功，用户名: ${profileResult.data.username}，头像: ${profileResult.data.avatar_url || '无'}`);
       } else {
         console.error(`[我的页面] 服务器资料加载失败: ${profileResult.message}`);
       }
@@ -72,8 +62,42 @@ export struct WxMinePage {
     return 'https://gitee.com/zhaozehe/zako/raw/master/ic_535a5f26fa59f35f023467562ae1388e.png';
   }
 
+  // 获取用户ID
+  private async getUserId(): Promise<void> {
+    try {
+      console.info('[我的页面] === 开始获取用户ID ===');
+      const userInfoStr = AppStorage.get<string>('userInfo');
+
+      if (userInfoStr) {
+        interface UserInfoFromStorage {
+          userId: string;
+          userName: string;
+          phone: string;
+          loginTime: string;
+        }
+
+        const userInfo: UserInfoFromStorage = JSON.parse(userInfoStr) as UserInfoFromStorage;        if (userInfo && userInfo.userId) {
+          this.currentUserId = parseInt(userInfo.userId);
+          console.info(`[我的页面] === 获取到用户ID: ${this.currentUserId} ===`);
+        } else {
+          console.warn('[我的页面] === 未找到用户信息，使用默认ID ===');
+          this.currentUserId = 1;
+        }
+      } else {
+        console.warn('[我的页面] === AppStorage中无用户信息，使用默认ID ===');
+        this.currentUserId = 1;
+      }
+    } catch (error) {
+      console.error(`[我的页面] === 获取用户ID异常: ${error} ===`);
+      this.currentUserId = 1;
+    }
+  }
+
   aboutToAppear() {
-    this.loadUserInfo()
+    console.info('[我的页面] 页面初始化开始');
+    this.getUserId().then(() => {
+      this.loadUserProfile();
+    });
   }
 
   build() {
@@ -89,7 +113,7 @@ export struct WxMinePage {
         leftItem: {},
         rightImgPath: $rawfile("images/ic_set_black.png"),
         rightItemCallBack: () => {
-          this.clickCell($r('app.string.settings'))
+          this.clickCell('设置')
         },
       })
         .hitTestBehavior(HitTestMode.Transparent)
@@ -107,63 +131,63 @@ export struct WxMinePage {
           JhSetCell({
             cellHeight: _cellH,
             leftIcon: $rawfile("wechat/mine/ic_wallet.png"),
-            title: $r('app.string.membership_center'),
+            title: '会员中心',
             hiddenLine: true,
-            clickCallBack: (): void => this.clickCell($r('app.string.membership_center')),
+            clickCallBack: (): void => this.clickCell('会员中心'),
           })
           Blank().height(_rowSpace)
           JhSetCell({
             cellHeight: _cellH,
             lineLeftEdge: _leftSpace,
             leftIcon: $rawfile("wechat/mine/ic_collections.png"),
-            title: $r('app.string.health_records'),
+            title: '健康档案',
             clickCallBack: (): void => {
-              this.clickCell($r('app.string.health_records'))
+              this.clickCell('健康档案')
             },
           })
           JhSetCell({
             cellHeight: _cellH,
             lineLeftEdge: _leftSpace,
             leftIcon: $rawfile("wechat/mine/ic_album.png"),
-            title: $r('app.string.energy_assistant'),
+            title: '能量助手',
             clickCallBack: (): void => {
-              this.clickCell($r('app.string.energy_assistant'))
+              this.clickCell('能量助手')
             },
           })
           JhSetCell({
             cellHeight: _cellH,
             lineLeftEdge: _leftSpace,
             leftIcon: $rawfile("wechat/mine/ic_cards_wallet.png"),
-            title: $r('app.string.knowledge_topics'),
+            title: '知识专题',
             hiddenLine: true,
-            clickCallBack: (): void => this.clickCell($r('app.string.knowledge_topics')),
+            clickCallBack: (): void => this.clickCell('知识专题'),
           })
           Blank().height(_rowSpace)
           JhSetCell({
             cellHeight: _cellH,
             lineLeftEdge: _leftSpace,
             leftIcon: $rawfile("wechat/mine/ic_emotions.png"),
-            title: $r('app.string.health_points'),
+            title: '健康积分',
             hiddenLine: true,
-            clickCallBack: (): void => this.clickCell($r('app.string.health_points')),
+            clickCallBack: (): void => this.clickCell('健康积分'),
           })
           Blank().height(_rowSpace)
           JhSetCell({
             cellHeight: _cellH,
             leftIcon: $rawfile("wechat/mine/ic_settings.png"),
-            title: $r('app.string.settings'),
+            title: '设置',
             hiddenLine: true,
-            clickCallBack: (): void => this.clickCell($r('app.string.settings')),
+            clickCallBack: (): void => this.clickCell('设置'),
           })
           Blank().height(_rowSpace)
           JhSetCell({
             cellHeight: _cellH,
             leftIcon: $rawfile("images/ic_about.png"),
-            title: $r('app.string.check_update'),
-            text: $r('app.string.new_version_available'),
+            title: '检查更新',
+            text: '有新版本',
             textStyle: { fontSize: 14, fontColor: Color.Red },
             hiddenLine: true,
-            clickCallBack: (): void => this.clickCell($r('app.string.check_update')),
+            clickCallBack: (): void => this.clickCell('检查更新'),
           })
           Blank().height(50)
         }
@@ -194,10 +218,10 @@ export struct WxMinePage {
           console.error('[我的页面] 头像加载失败')
         })
         .onClick(() => {
-          this.clickCell($r('app.string.personal_info'))
+          this.clickCell('个人信息')
         })
       Column() {
-        Text(this.userInfo?.userName)
+        Text(this.userName || '加载中...')
           .fontSize(28)
           .fontWeight(FontWeight.Medium)
           .textAlign(TextAlign.Start)
@@ -205,11 +229,11 @@ export struct WxMinePage {
           .textOverflow({ overflow: TextOverflow.Ellipsis })
           .width('100%')
           .onClick(() => {
-            this.clickCell($r('app.string.personal_info'))
+            this.clickCell('个人信息')
           })
         Row() {
           Text() {
-            Span($r('app.string.health_id_prefix'))
+            Span('健康ID: ')
             Span('abc')
           }
           .fontSize(17)
@@ -221,7 +245,7 @@ export struct WxMinePage {
         .margin({ top: 10 })
         .width('100%')
         .onClick(() => {
-          this.clickCell($r('app.string.personal_info'))
+          this.clickCell('个人信息')
         })
       }
       .layoutWeight(1)
@@ -237,62 +261,29 @@ export struct WxMinePage {
   }
 
   onPageShow() {
-    this.loadUserInfo()
-  }
-
-  loadUserInfo() {
-    console.info('[我的页面] 开始加载用户信息');
-
-    // 获取当前用户ID
-    let userInfo = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as ServerUserInfo;
-    if (userInfo && userInfo.userID) {
-      this.currentUserId = parseInt(userInfo.userID);
-    }
-
-    // 加载本地用户信息
-    let userModel = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as UserModel;
-    if (userModel) {
-      this.userInfo = userModel;
-      this.refreshFlag++;
-      console.info(`[我的页面] 本地用户信息加载完成: ${userModel.userName}`);
-    } else {
-      console.warn('[我的页面] 未找到本地用户信息');
-    }
-
-    // 从服务器加载最新的用户资料
+    console.info('[我的页面] 页面显示，重新加载用户资料');
     this.loadUserProfile();
   }
 
-  clickCell(title: Resource | string) {
-    const titleStr = typeof title === 'string' ? title : this.getResourceString(title);
+  clickCell(title: string) {
+    console.info(`[我的页面] 点击功能: ${title}`);
 
-    if (titleStr === this.getResourceString($r('app.string.membership_center'))) {
+    if (title === '会员中心') {
       router.pushUrl({ url: 'pages/four/pages/Membership/MemberShip' })
-    }
-    if (titleStr === this.getResourceString($r('app.string.personal_info'))) {
+    } else if (title === '个人信息') {
       router.pushUrl({ url: 'pages/four/pages/WxPersonInfoPage' })
-    }
-    if (titleStr === this.getResourceString($r('app.string.settings'))) {
+    } else if (title === '设置') {
       router.pushUrl({ url: 'pages/four/pages/setpage/SetPage' })
-    }
-    if (titleStr === this.getResourceString($r('app.string.health_points'))) {
+    } else if (title === '健康积分') {
       router.pushUrl({ url: 'pages/four/pages/jifen/JifenPage' })
-    }
-    if (titleStr === this.getResourceString($r('app.string.knowledge_topics'))) {
+    } else if (title === '知识专题') {
       router.pushUrl({ url: 'pages/four/pages/knowledge/knowledge' })
-    }
-    if (titleStr === this.getResourceString($r('app.string.health_records'))) {
+    } else if (title === '健康档案') {
       router.pushUrl({ url: 'pages/four/pages/health/HealthRecordsPage' })
-    }
-    if (titleStr === this.getResourceString($r('app.string.energy_assistant'))) {
+    } else if (title === '能量助手') {
       router.pushUrl({ url: 'pages/four/pages/energy_assistant/EnergyAssistantPage' })
-    }
-    if (titleStr === this.getResourceString($r('app.string.check_update'))) {
+    } else if (title === '检查更新') {
       router.pushUrl({url: 'pages/four/pages/gengxin/JianChaGengXinPage'})
     }
-  }
-
-  private getResourceString(resource: Resource): string {
-    return getContext(this).resourceManager.getStringSync(resource);
   }
 }

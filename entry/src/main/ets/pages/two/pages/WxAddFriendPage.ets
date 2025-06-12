@@ -6,21 +6,20 @@ import { WxAddFriendModel } from '../models/WxAddFriendModel'
 import { WxAddFriendCell } from '../widgets/WxAddFriendCell'
 import { router } from '@kit.ArkUI';
 
-
 @Entry
 @Preview
 @Component
 struct WxAddFriendPage {
   @State dataArr: WxAddFriendModel[] = []
+  @State searchValue: string = ''
 
   aboutToAppear() {
     this.dataArr = this.getData()
-    // console.error('data', JSON.stringify(this.dataArr))
   }
 
   build() {
     Column() {
-      BaseNavigation({ title: getContext(this).resourceManager.getStringSync($r('app.string.add_member_title_847392651847392651')), bgColor: Color.Transparent })
+      BaseNavigation({ title: '添加成员', bgColor: Color.Transparent })
       Scroll() {
         Column() {
           this.header()
@@ -61,71 +60,67 @@ struct WxAddFriendPage {
   @Builder
   header() {
     Column() {
-      Search({ value: '', placeholder: getContext(this).resourceManager.getStringSync($r('app.string.health_phone_placeholder_629384751639284751')) })
+      Search({ value: this.searchValue, placeholder: '输入完整手机号查找成员' })
         .borderRadius(5)
         .margin(10)
         .backgroundColor(Color.White)
         .onSubmit((value: string) => {
+          console.info('[添加朋友页面] 搜索提交:', value);
+          if (value.trim() !== '') {
+            this.navigateToSearch(value.trim());
+          }
         })
         .onChange((value: string) => {
+          this.searchValue = value;
         })
-      Row() {
-        Text(getContext(this).resourceManager.getStringSync($r('app.string.my_health_id_text_573829461847392573')))
-        Blank().width(10)
-        Image($rawfile('wechat/contacts/add/add_friend_myQR_20x20_@2x.png')).width(20)
-      }
-      .height(60)
     }
   }
 
-  clickCell(item: WxAddFriendModel) {
-    const radarTitle: string = getContext(this).resourceManager.getStringSync($r('app.string.radar_add_member_title_392847516293847516'))
-    const faceToFaceTitle: string = getContext(this).resourceManager.getStringSync($r('app.string.face_to_face_group_title_184759362847392184'))
-    const customerServiceTitle: string = getContext(this).resourceManager.getStringSync($r('app.string.health_customer_service_title_847392615738294847'))
-    const scanTitle: string = getContext(this).resourceManager.getStringSync($r('app.string.scan_qr_code_title_392847516293847392'))
-    const clickPrefix: string = getContext(this).resourceManager.getStringSync($r('app.string.click_prefix_toast_758394627184759758'))
+  private navigateToSearch(searchValue: string): void {
+    console.info('[添加朋友页面] 导航到搜索页面:', searchValue);
+    router.pushUrl({
+      url: 'pages/two/pages/WxSearchUserPage',
+      params: {
+        searchValue: searchValue
+      }
+    });
+  }
 
+  clickCell(item: WxAddFriendModel) {
     switch (item.title) {
-      case radarTitle:
+      case '雷达加成员':
         router.pushUrl({ url: 'pages/two/pages/WxRadarAddMemberPage' });
         break;
-      case faceToFaceTitle:
+      case '面对面添加家庭成员':
         router.pushUrl({ url: 'pages/two/pages/WxFaceToFaceGroupPage' });
         break;
-      case customerServiceTitle:
+      case '健康客服':
         router.pushUrl({ url: 'pages/three/pages/CustomerServicePage' });
         break;
-      case scanTitle:
+      case '扫一扫':
         router.pushUrl({ url: 'pages/two/pages/WxScanPage' });
         break;
       default:
-        JhProgressHUD.showText(`${clickPrefix} ${item.title}`);
+        JhProgressHUD.showText(`点击了 ${item.title}`);
         break;
     }
   }
 
   getData(): WxAddFriendModel[] {
-    const radarTitle: string = getContext(this).resourceManager.getStringSync($r('app.string.radar_add_member_title_392847516293847516'))
-    const radarSubtitle: string = getContext(this).resourceManager.getStringSync($r('app.string.radar_add_member_subtitle_758394627184759362'))
-    const faceToFaceTitle: string = getContext(this).resourceManager.getStringSync($r('app.string.face_to_face_group_title_184759362847392184'))
-    const faceToFaceSubtitle: string = getContext(this).resourceManager.getStringSync($r('app.string.face_to_face_group_subtitle_629384751952847629'))
-    const customerServiceTitle: string = getContext(this).resourceManager.getStringSync($r('app.string.health_customer_service_title_847392615738294847'))
-    const customerServiceSubtitle: string = getContext(this).resourceManager.getStringSync($r('app.string.health_customer_service_subtitle_573829461847392573'))
-
     const dataArr: WxAddFriendModel[] = [
       {
-        'title': radarTitle,
-        'subtitle': radarSubtitle,
+        'title': '雷达加成员',
+        'subtitle': '添加身边的家庭成员',
         'img': 'wechat/contacts/add/add_friend_icon_reda_36x36_@3x.png',
       },
       {
-        'title': faceToFaceTitle,
-        'subtitle': faceToFaceSubtitle,
+        'title': '面对面添加家庭成员',
+        'subtitle': '输入四位数字, 添加身边的家庭成员',
         'img': 'wechat/contacts/add/add_friend_icon_addgroup_36x36_@3x.png',
       },
       {
-        'title': customerServiceTitle,
-        'subtitle': customerServiceSubtitle,
+        'title': '健康客服',
+        'subtitle': '获取健康咨询服务',
         'img': 'wechat/contacts/add/add_friend_icon_search_wework_40x40_@2x.png',
       },
     ];

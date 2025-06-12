@@ -1,6 +1,16 @@
 import { JhSetCell, KColors } from "JhCommon";
 import { WxContactsModel } from "../models/WxContactsModel";
 
+class TopCellItem {
+  title: string;
+  imgUrl: Resource;
+
+  constructor(title: string, imgUrl: Resource) {
+    this.title = title;
+    this.imgUrl = imgUrl;
+  }
+}
+
 const _cellHeight = 50
 const _imgWH = 40
 const _lRSpace = 15
@@ -12,7 +22,7 @@ export struct WxContactsCell {
   model: WxContactsModel = new WxContactsModel();
   searchController: SearchController = new SearchController()
   public onClickCell?: (model: WxContactsModel) => void // 点击cell
-  public onClickTopCell?: (model: ESObject) => void // 点击cell
+  public onClickTopCell?: (model: TopCellItem) => void // 点击cell
 
   build() {
     if (this.index == 0) {
@@ -64,7 +74,7 @@ export struct WxContactsCell {
   header() {
     Column() {
       Row() {
-        Search({ value: '', placeholder: getContext(this).resourceManager.getStringSync($r('app.string.search_placeholder_847392618475')), controller: this.searchController })
+        Search({ value: '', placeholder: '搜索', controller: this.searchController })
           .id('WxContactsPageSearch_ID')
           .borderRadius(5)
           .margin(10)
@@ -75,7 +85,7 @@ export struct WxContactsCell {
       }
       .backgroundColor(KColors.kBgColor)
 
-      ForEach(this.getTopData(), (item: ESObject, index: number) => {
+      ForEach(this.getTopData(), (item: TopCellItem, index: number) => {
         // JhSetCell({
         //   leftIcon: item['imgUrl'],
         //   leftImgWH: 40,
@@ -88,7 +98,7 @@ export struct WxContactsCell {
         JhSetCell({
           leftWidget: (): void => this.leftBuilder(item),
           leftImgWH: 40,
-          title: item['title'] as string,
+          title: item.title,
           titleWidth: 300,
           lineLeftEdge: 65,
           hiddenArrow: true,
@@ -102,27 +112,17 @@ export struct WxContactsCell {
   }
 
   @Builder
-  leftBuilder(item: ESObject) {
-    Image(item['imgUrl'] as Resource)
+  leftBuilder(item: TopCellItem) {
+    Image(item.imgUrl)
       .width(_imgWH).height(_imgWH)
       .borderRadius(5)
       .clip(true)
   }
 
-  getTopData(): ESObject[] {
+  getTopData(): TopCellItem[] {
     return [
-      {
-        'title': getContext(this).resourceManager.getStringSync($r('app.string.new_member_cell_629384750192')),
-        'imgUrl': $rawfile('wechat/contacts/ic_new_friend.png'),
-      },
-      {
-        'title': getContext(this).resourceManager.getStringSync($r('app.string.common_health_goals_cell_573829461847')),
-        'imgUrl': $rawfile('images/picture/together_health.png'),
-      },
-      {
-        'title': getContext(this).resourceManager.getStringSync($r('app.string.group_chat_cell_392847516293')),
-        'imgUrl': $rawfile('wechat/contacts/ic_group_chat.png'),
-      },
+      new TopCellItem('新的成员', $rawfile('wechat/contacts/ic_new_friend.png')),
+      new TopCellItem('共同健康目标', $rawfile('images/picture/together_health.png'))
     ];
   }
 }

@@ -6,15 +6,7 @@
 import { router } from '@kit.ArkUI';
 import { userApiService, LoginResponse } from '../../../services/api_network/UserApiService';
 import { JhLoginTextInput, JhProgressHUD } from 'JhCommon';
-import { JhAESPreferencesUtils, JhColorUtils, kUserDefault_UserInfo } from 'JhCommon';
 import { JhButton } from 'JhCommon/src/main/ets/JhCommon/components/JhButton';
-
-interface UserInfo {
-  userId?: string;
-  userName?: string;
-  phone?: string;
-  loginTime?: string;
-}
 
 interface UserData {
   userId: string;
@@ -52,17 +44,6 @@ export struct LoginPage {
     this.loginSuccessText = getContext(this).resourceManager.getStringSync($r('app.string.login_success_text'))
     this.loginErrorText = getContext(this).resourceManager.getStringSync($r('app.string.login_error_text'))
     this.loginFailedText = getContext(this).resourceManager.getStringSync($r('app.string.login_failed_text'))
-    this.获取上次登录用户名()
-  }
-
-  async 获取上次登录用户名(): Promise<void> {
-    try {
-      const userInfo: UserInfo = await JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as UserInfo
-      if (userInfo && userInfo.userName) {
-        this.name = userInfo.userName
-      }
-    } catch (异常) {
-    }
   }
 
   onChange() {
@@ -149,9 +130,14 @@ export struct LoginPage {
 
   async 点击登录(): Promise<void> {
     try {
+      console.info('[LoginPage] 开始登录, 用户名:', this.name)
+      JhProgressHUD.showLoadingText(this.loggingInText)
+
       const loginResult: LoginResponse = await userApiService.login(this.name, this.pwd)
 
       if (loginResult.success) {
+        console.info('[LoginPage] 登录成功, 用户ID:', loginResult.user_id)
+
         const userData: UserData = {
           userId: loginResult.user_id?.toString() || Date.now().toString(),
           userName: loginResult.username || this.name,
@@ -159,7 +145,11 @@ export struct LoginPage {
           loginTime: new Date().toISOString()
         }
 
-        await JhAESPreferencesUtils.saveModel(kUserDefault_UserInfo, userData)
+        AppStorage.setOrCreate<string>('userInfo', JSON.stringify(userData))
+        console.info('[LoginPage] 用户信息已存储到AppStorage:', JSON.stringify(userData))
+
+        // 先隐藏loading，再显示成功
+        JhProgressHUD.hide()
         JhProgressHUD.showSuccess(this.loginSuccessText)
 
         setTimeout((): void => {
@@ -167,9 +157,13 @@ export struct LoginPage {
           router.replaceUrl({ url: 'pages/Index' })
         }, 1500)
       } else {
-        JhProgressHUD.showError(loginResult.message)
+        console.error('[LoginPage] 登录失败:', loginResult.message)
+        JhProgressHUD.hide()
+        JhProgressHUD.showError(loginResult.message || this.loginFailedText)
       }
     } catch (异常) {
+      console.error('[LoginPage] 登录异常:', 异常)
+      JhProgressHUD.hide()
       JhProgressHUD.showError(this.loginFailedText)
     }
   }

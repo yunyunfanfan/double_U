@@ -158,8 +158,8 @@ export struct HealthMemoryPage {
   private async getUserId(): Promise<void> {
     try {
       console.info('[用户ID] === 开始获取用户ID ===');
-      let userInfo: UserInfo = await JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as UserInfo;
-      if (userInfo && userInfo.userId) {
+      const userInfoStr = AppStorage.get<string>('userInfo');
+      const userInfo: UserInfo = userInfoStr ? JSON.parse(userInfoStr) as UserInfo : {};      if (userInfo && userInfo.userId) {
         this.userId = parseInt(userInfo.userId);
         console.info(`[用户ID] === 获取到用户ID: ${this.userId} ===`);
       } else {

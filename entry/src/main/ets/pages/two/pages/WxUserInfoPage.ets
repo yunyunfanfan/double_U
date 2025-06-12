@@ -3,32 +3,61 @@
 import { router } from '@kit.ArkUI'
 import { BaseNavigation, JhProgressHUD, JhSetCell, KColors } from 'JhCommon'
 import { WxContactsModel } from '../models/WxContactsModel';
+import { UserApiService } from '../../../services/api_network/UserApiService';
 
 const _cellH = 55.0;
 const _rowSpace = 6.0;
+
+interface RouterParams {
+  data: WxContactsModel;
+}
 
 @Entry
 @Preview
 @Component
 struct WxUserInfoPage {
-  jumpParams = (router.getParams() as Record<string, string>)['data']
+  jumpParams: WxContactsModel = new WxContactsModel()
   @State model: WxContactsModel = new WxContactsModel()
+  @State avatarUrl: string = ''
 
   aboutToAppear() {
-    console.error('jumpParams', JSON.stringify(this.jumpParams))
-    console.error('用户名称：', JSON.stringify(this.jumpParams['name']))
+    console.info('[用户详情] 页面初始化');
+    this.loadRouterParams();
+    this.loadUserAvatar();
+  }
 
-    this.model = this.jumpParams as WxContactsModel
+  private loadRouterParams(): void {
+    try {
+      const params = router.getParams() as RouterParams;
+      if (params && params.data) {
+        this.jumpParams = params.data;
+        this.model = params.data;
+        console.info('[用户详情] 跳转参数加载成功');
+        console.info('[用户详情] 用户名称：', this.model.name);
+      }
+    } catch (error) {
+      console.error('[用户详情] 获取路由参数失败:', error);
+    }
+  }
+
+  private loadUserAvatar(): void {
+    if (this.model.avatarUrl) {
+      this.avatarUrl = UserApiService.getUserDisplayAvatar(this.model.avatarUrl as string);
+    } else {
+      this.avatarUrl = UserApiService.getDefaultAvatarUrl();
+    }
+    console.info('[用户详情] 加载头像:', this.avatarUrl);
   }
 
   build() {
     Column() {
       BaseNavigation({
-        title: getContext(this).resourceManager.getStringSync($r('app.string.user_info_title_847392615738294629384751952847392')),
+        title: '详细资料',
         bgColor: Color.Transparent,
         rightImgPath: $rawfile("images/ic_more_black.png"),
         rightItemCallBack: () => {
-          router.pushUrl({ url: 'pages/two/pages/WxInfoSetPage', params: { data: this.jumpParams } })
+          const params: RouterParams = { data: this.jumpParams };
+          router.pushUrl({ url: 'pages/two/pages/WxInfoSetPage', params: params })
         },
       })
       List() {
@@ -48,45 +77,54 @@ struct WxUserInfoPage {
     Blank().height(0.5).width('100%').backgroundColor(KColors.kLineColor)
     JhSetCell({
       cellHeight: _cellH,
-      title: getContext(this).resourceManager.getStringSync($r('app.string.health_condition_label_573829461847392847392615738294751')),
-      text: this.model.label,
+      title: '健康状况',
+      text: '良好',
       textAlign: TextAlign.Start,
       clickCallBack: (): void => {
-        router.pushUrl({ url: 'pages/two/pages/mama', params: {} })
+        const emptyParams: RouterParams = { data: new WxContactsModel() };
+        router.pushUrl({ url: 'pages/two/pages/mama', params: emptyParams })
       },
     })
     Blank().height(_rowSpace)
     Row() {
       Image($rawfile('wechat/contacts/ic_xinxi.png')).width(20)
       Blank().width(5)
-      Text(getContext(this).resourceManager.getStringSync($r('app.string.send_message_text_392847516293847184759362847392615'))).fontSize(18).fontWeight(FontWeight.Bold).fontColor(KColors.wxTextBlueColor)
+      Text('发消息').fontSize(18).fontWeight(FontWeight.Bold).fontColor(KColors.wxTextBlueColor)
     }
     .width('100%')
     .height(_cellH)
     .justifyContent(FlexAlign.Center)
     .backgroundColor(KColors.kCellBgColor)
-    .onClick(() => this.clickCell(getContext(this).resourceManager.getStringSync($r('app.string.send_message_text_392847516293847184759362847392615'))))
+    .onClick(() => this.clickCell('发消息'))
 
     Blank().height(0.5).width('100%').backgroundColor(KColors.kLineColor)
   }
 
-
   @Builder
   header() {
     Row() {
-      Text(this.model.name!.substring(0, 1))
-        .fontColor(Color.White)
-        .fontSize(20)
-        .textAlign(TextAlign.Center)
-        .width(66)
-        .height(66)
-        .margin({ left: 20, top: 3, right: 15 })
-        .borderRadius(5)
-        .backgroundColor(this.model.color!)
+      if (this.avatarUrl) {
+        Image(this.avatarUrl)
+          .width(66)
+          .height(66)
+          .margin({ left: 20, top: 3, right: 15 })
+          .borderRadius(5)
+          .objectFit(ImageFit.Cover)
+      } else {
+        Text((this.model.name as string).substring(0, 1))
+          .fontColor(Color.White)
+          .fontSize(20)
+          .textAlign(TextAlign.Center)
+          .width(66)
+          .height(66)
+          .margin({ left: 20, top: 3, right: 15 })
+          .borderRadius(5)
+          .backgroundColor(this.model.color as string)
+      }
 
       Column() {
         Row() {
-          Text(this.model.name)
+          Text(this.model.name as string)
             .fontWeight(FontWeight.Bold)
             .fontSize(20)
           Blank().width(5)
@@ -99,11 +137,11 @@ struct WxUserInfoPage {
         }
 
         Blank().height(3)
-        Text(getContext(this).resourceManager.getStringSync($r('app.string.nickname_prefix_758394627184759629384751952847392')) + this.model.namePinyin).fontSize(16).fontColor(Color.Gray)
+        Text('昵称: ' + (this.model.namePinyin as string)).fontSize(16).fontColor(Color.Gray)
         Blank().height(3)
-        Text(getContext(this).resourceManager.getStringSync($r('app.string.phone_prefix_184759362847392573829461847392847')) + this.model.phone).fontSize(16).fontColor(Color.Gray)
+        Text('手机号: ' + (this.model.phone as string)).fontSize(16).fontColor(Color.Gray)
         Blank().height(3)
-        Text(getContext(this).resourceManager.getStringSync($r('app.string.region_prefix_629384751952847847392615738294751')) + this.model.region).fontSize(16).fontColor(Color.Gray)
+        Text('地区: ' + (this.model.region as string || '未知')).fontSize(16).fontColor(Color.Gray)
       }
       .justifyContent(FlexAlign.Start)
       .alignItems(HorizontalAlign.Start)
@@ -124,8 +162,8 @@ struct WxUserInfoPage {
     .padding({ top: 10, bottom: 20 })
     .backgroundColor(KColors.kCellBgColor)
   }
+
   clickCell(text: string) {
-    const clickPrefix: string = getContext(this).resourceManager.getStringSync($r('app.string.click_prefix_toast_847392615738294184759362847392'))
-    JhProgressHUD.showText(`${clickPrefix} ${text}`)
+    JhProgressHUD.showText(`点击了 ${text}`)
   }
 }

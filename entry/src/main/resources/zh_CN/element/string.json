@@ -2090,7 +2090,7 @@
     },
     {
       "name": "disease_medication",
-      "value": "疾病与服药情况"
+      "value": "服药提醒"
     },
     {
       "name": "click_action",

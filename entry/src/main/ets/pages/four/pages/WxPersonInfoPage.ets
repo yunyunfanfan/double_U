@@ -8,7 +8,7 @@ import { router } from '@kit.ArkUI';
 import { UserCredentials, kUserDefault_UserCredentials } from '../../login/pages/CodeLoginPage'
 import { picker } from '@kit.CoreFileKit';
 import { BusinessError } from '@kit.BasicServicesKit';
-import { userApiService, AvatarUploadResponse, UserProfileResponse } from '../../../services/api_network/UserApiService';
+import { userApiService, AvatarUploadResponse, UserProfileResponse, UpdateUsernameResponse } from '../../../services/api_network/UserApiService';
 import { fileIo } from '@kit.CoreFileKit';
 import { util } from '@kit.ArkTS';
 import { UserApiService } from '../../../services/api_network/UserApiService';
@@ -18,15 +18,11 @@ import { UserApiService } from '../../../services/api_network/UserApiService';
 const _cellH = 55.0;
 const _rowSpace = 6.0;
 
-interface ServerUserInfo {
-  userID: string;
+interface UserInfo {
+  userId: string;
   userName: string;
   phone: string;
-  pwd: string;
-  token: string;
-  avatarUrl: string;
-  patContent?: string;
-  healthCode?: string;
+  loginTime: string;
 }
 
 interface AvatarInfo {
@@ -38,7 +34,7 @@ interface AvatarInfo {
 @Preview
 @Component
 struct WxPersonInfoPage {
-  @State name: string = 'jin'
+  @State name: string = '加载中...'
   @State isEditing: boolean = false
   @State showDialog: boolean = false
   @State newName: string = ''
@@ -51,6 +47,32 @@ struct WxPersonInfoPage {
     uploadStatus: 'none'
   }
   @State currentUserId: number = 1
+  @State isUpdatingName: boolean = false
+
+  // 获取用户ID
+  private async getUserId(): Promise<void> {
+    try {
+      console.info('[用户ID] === 开始获取用户ID ===');
+      const userInfoStr = AppStorage.get<string>('userInfo');
+      const userInfo: UserInfo = userInfoStr ? JSON.parse(userInfoStr) as UserInfo : {
+        userId: '1',
+        userName: '',
+        phone: '',
+        loginTime: ''
+      };
+
+      if (userInfo && userInfo.userId) {
+        this.currentUserId = parseInt(userInfo.userId);
+        console.info(`[用户ID] === 获取到用户ID: ${this.currentUserId} ===`);
+      } else {
+        console.warn('[用户ID] === 未找到用户信息，使用默认ID ===');
+        this.currentUserId = 1;
+      }
+    } catch (error) {
+      console.error(`[用户ID] === 获取用户ID异常: ${error} ===`);
+      this.currentUserId = 1;
+    }
+  }
 
   // 从相册选择图片
   private async selectImageFromGallery(): Promise<void> {
@@ -84,33 +106,22 @@ struct WxPersonInfoPage {
       console.info('[头像上传] 开始上传头像到服务器');
       this.avatarInfo.uploadStatus = 'uploading';
 
-      // 读取图片文件并转换为base64
       const file = fileIo.openSync(imagePath);
       const stat = fileIo.statSync(file.fd);
       const buffer = new ArrayBuffer(stat.size);
       fileIo.readSync(file.fd, buffer);
       fileIo.closeSync(file);
 
-      // 转换为base64
       const uint8Array = new Uint8Array(buffer);
       const base64Helper = new util.Base64Helper();
       const base64String = base64Helper.encodeToStringSync(uint8Array);
       const base64Data = `data:image/jpeg;base64,${base64String}`;
 
-      // 调用API上传
       const uploadResult: AvatarUploadResponse = await userApiService.uploadAvatar(this.currentUserId, base64Data);
 
       if (uploadResult.success && uploadResult.avatar_url) {
         this.avatarInfo.serverUrl = uploadResult.avatar_url;
         this.avatarInfo.uploadStatus = 'success';
-
-        // 更新本地存储的用户信息
-        let userInfo = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as ServerUserInfo;
-        if (userInfo) {
-          userInfo.avatarUrl = uploadResult.avatar_url;
-          JhAESPreferencesUtils.saveModel(kUserDefault_UserInfo, userInfo);
-        }
-
         console.info('[头像上传] 头像上传成功');
         JhProgressHUD.showToast('头像上传成功');
       } else {
@@ -141,9 +152,54 @@ struct WxPersonInfoPage {
         console.info(`[用户资料] 资料加载成功: ${this.name}`);
       } else {
         console.error(`[用户资料] 加载失败: ${profileResult.message}`);
+        this.name = '未知用户';
       }
     } catch (error) {
       console.error(`[用户资料] 加载异常: ${error}`);
+      this.name = '加载失败';
+    }
+  }
+
+  // 更新用户名到服务器
+  private async updateUsernameToServer(): Promise<void> {
+    if (this.newName.trim() === '' || this.newName === this.name) {
+      this.showDialog = false;
+      return;
+    }
+
+    try {
+      this.isUpdatingName = true;
+      console.info(`[用户名更新] 开始更新用户名: ${this.newName}`);
+
+      const updateResult: UpdateUsernameResponse = await userApiService.updateUsername(this.currentUserId, this.newName);
+
+      if (updateResult.success) {
+        this.name = this.newName;
+        console.info('[用户名更新] 用户名更新成功');
+        JhProgressHUD.showToast('用户名更新成功');
+        this.showDialog = false;
+
+        // 添加页面跳转
+        router.clear();
+        setTimeout(() => {
+          router.replaceUrl({
+            url: 'pages/Index',
+            params: {
+              tabIndex: 3,
+              refresh: true,
+              timestamp: Date.now()
+            }
+          });
+        }, 200);
+      } else {
+        console.error(`[用户名更新] 更新失败: ${updateResult.message}`);
+        JhProgressHUD.showToast(updateResult.message || '更新失败');
+      }
+    } catch (error) {
+      console.error(`[用户名更新] 更新异常: ${error}`);
+      JhProgressHUD.showToast('网络连接失败');
+    } finally {
+      this.isUpdatingName = false;
     }
   }
 
@@ -152,9 +208,8 @@ struct WxPersonInfoPage {
     if (this.avatarInfo.serverUrl) {
       return UserApiService.getAvatarUrl(this.avatarInfo.serverUrl);
     }
-    return $rawfile("wechat/mine/default_avatar.jpg");
+    return 'https://gitee.com/zhaozehe/zako/raw/master/ic_535a5f26fa59f35f023467562ae1388e.png';
   }
-
   build() {
     Column() {
       BaseNavigation({ title: '个人信息', bgColor: Color.Transparent })
@@ -181,8 +236,10 @@ struct WxPersonInfoPage {
         .height('100%')
         .backgroundColor('#80000000')
         .onClick(() => {
-          this.showDialog = false
-          this.newName = this.name
+          if (!this.isUpdatingName) {
+            this.showDialog = false
+            this.newName = this.name
+          }
         })
 
       Column() {
@@ -201,6 +258,7 @@ struct WxPersonInfoPage {
             .borderRadius(8)
             .margin({ bottom: 25 })
             .fontColor('#333333')
+            .enabled(!this.isUpdatingName)
             .onChange((value: string) => {
               this.newName = value
             })
@@ -213,56 +271,22 @@ struct WxPersonInfoPage {
               .fontColor('#666666')
               .fontSize(16)
               .borderRadius(21)
+              .enabled(!this.isUpdatingName)
               .onClick(() => {
                 this.showDialog = false
                 this.newName = this.name
               })
 
-            Button('确定')
+            Button(this.isUpdatingName ? '更新中...' : '确定')
               .width('45%')
               .height(42)
               .backgroundColor('#1698CE')
               .fontColor(Color.White)
               .fontSize(16)
               .borderRadius(21)
+              .enabled(!this.isUpdatingName)
               .onClick(() => {
-                if (this.newName.trim() !== '') {
-                  this.name = this.newName
-
-                  let userInfo = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as ServerUserInfo;
-                  if (!userInfo) {
-                    userInfo = {
-                      userID: Date.now().toString(),
-                      userName: this.name,
-                      phone: "",
-                      pwd: "",
-                      token: "",
-                      avatarUrl: ""
-                    } as ServerUserInfo;
-                  } else {
-                    userInfo.userName = this.name;
-                  }
-
-                  JhAESPreferencesUtils.saveModel(kUserDefault_UserInfo, userInfo);
-                }
-                let userCredentials = JhAESPreferencesUtils.getModel(kUserDefault_UserCredentials) as UserCredentials;
-                if (userCredentials) {
-                  userCredentials.userName = this.name;
-                  JhAESPreferencesUtils.saveModel(kUserDefault_UserCredentials, userCredentials);
-                }
-
-                this.showDialog = false
-                router.clear()
-                setTimeout(() => {
-                  router.replaceUrl({
-                    url: 'pages/Index',
-                    params: {
-                      tabIndex: 3,
-                      refresh: true,
-                      timestamp: Date.now()
-                    }
-                  });
-                }, 200);
+                this.updateUsernameToServer()
               })
           }
           .width('100%')
@@ -333,21 +357,6 @@ struct WxPersonInfoPage {
               .fontSize(16)
               .borderRadius(21)
               .onClick(() => {
-                if (this.paiYiPai.trim() !== '') {
-                  let userInfo = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as ServerUserInfo;
-                  if (!userInfo) {
-                    userInfo = {
-                      userID: Date.now().toString(),
-                      userName: this.name,
-                      phone: "",
-                      pwd: "",
-                      token: "",
-                      avatarUrl: ""
-                    } as ServerUserInfo;
-                  }
-                  userInfo.patContent = this.paiYiPai;
-                  JhAESPreferencesUtils.saveModel(kUserDefault_UserInfo, userInfo);
-                }
                 this.showPaiYiPaiDialog = false
               })
           }
@@ -419,22 +428,6 @@ struct WxPersonInfoPage {
               .fontSize(16)
               .borderRadius(21)
               .onClick(() => {
-                if (this.healthCode.trim() !== '') {
-                  let userInfo = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as ServerUserInfo;
-                  if (!userInfo) {
-                    userInfo = {
-                      userID: Date.now().toString(),
-                      userName: this.name,
-                      phone: "",
-                      pwd: "",
-                      token: "",
-                      avatarUrl: "",
-                      healthCode: this.healthCode
-                    } as ServerUserInfo;
-                  }
-                  userInfo.healthCode = this.healthCode;
-                  JhAESPreferencesUtils.saveModel(kUserDefault_UserInfo, userInfo);
-                }
                 this.showHealthCodeDialog = false
                 router.clear()
                 setTimeout(() => {
@@ -551,31 +544,10 @@ struct WxPersonInfoPage {
   aboutToAppear() {
     console.info('[个人信息页面] 页面初始化开始')
 
-    // 获取当前用户ID
-    let userInfo = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as ServerUserInfo;
-    if (userInfo && userInfo.userID) {
-      this.currentUserId = parseInt(userInfo.userID);
-    }
+    this.getUserId().then(() => {
+      this.loadUserProfile();
+    });
 
-    // 加载本地用户信息
-    if (userInfo && userInfo.userName) {
-      this.name = userInfo.userName;
-      if (userInfo.patContent) {
-        this.paiYiPai = userInfo.patContent;
-      } else {
-        this.paiYiPai = this.name;
-      }
-      if (userInfo.healthCode) {
-        this.healthCode = userInfo.healthCode;
-      }
-      if (userInfo.avatarUrl) {
-        this.avatarInfo.serverUrl = userInfo.avatarUrl;
-      }
-    }
-
-    // 从服务器加载最新的用户资料
-    this.loadUserProfile();
-
-    console.info(`[个人信息页面] 用户信息加载完成: ${this.name}`)
+    console.info(`[个人信息页面] 页面初始化完成`)
   }
 }

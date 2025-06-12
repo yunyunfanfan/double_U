@@ -34,8 +34,10 @@ export interface AvatarUploadRequest {
 
 export interface HealthOverviewData {
   steps: number;
-  avg_heart_rate: number;
+  current_heart_rate: number;
+  avg_heart_rate: number;  // 添加这个字段
   sleep_score: number;
+
   active_calories: number;
   basic_metabolism_calories: number;
   blood_oxygen: number;
@@ -130,6 +132,43 @@ export interface RealtimeDataResponse {
   data?: RealtimeDataRequest[];
 }
 
+// 添加响应实现类
+class FriendsListResponseImpl implements FriendsListResponse {
+  success: boolean;
+  friends?: FriendItem[];
+  message?: string;
+
+  constructor(success: boolean, friends?: FriendItem[], message?: string) {
+    this.success = success;
+    this.friends = friends;
+    this.message = message;
+  }
+}
+
+export class FriendItem {
+  id: number;
+  username: string;
+  phone: string;
+  avatar_url: string;
+  relationship_name: string;
+  added_at: string;
+
+  constructor(id: number, username: string, phone: string, avatar_url: string, relationship_name: string, added_at: string) {
+    this.id = id;
+    this.username = username;
+    this.phone = phone;
+    this.avatar_url = avatar_url;
+    this.relationship_name = relationship_name;
+    this.added_at = added_at;
+  }
+}
+
+export interface FriendsListResponse {
+  success: boolean;
+  friends?: FriendItem[];
+  message?: string;
+}
+
 export interface StepsRankingItem {
   rank: number;
   username: string;
@@ -138,8 +177,10 @@ export interface StepsRankingItem {
 
 export interface OverviewData {
   steps: number;
-  avg_heart_rate: number;
+  current_heart_rate: number;
   sleep_score: number;
+  basic_metabolism_calories: number;
+  current_mood: number;
   active_calories: number;
   blood_oxygen: number;
 }
@@ -152,6 +193,7 @@ export interface StepsRankingResponse {
 export interface OverviewResponse {
   success: boolean;
   data?: OverviewData;
+  message?: string;
 }
 
 export interface ResetPasswordRequest {
@@ -187,10 +229,44 @@ export interface LoginResponse {
   avatar_path?: string;
 }
 
+// 删除好友接口
+export interface RemoveFamilyMemberRequest {
+  user_id: number;
+  member_id: number;
+}
+
+// 所有用户列表接口
+export interface AllUsersResponse {
+  success: boolean;
+  users?: UserWithFriendStatus[];
+  message?: string;
+}
+
+export interface UserWithFriendStatus {
+  id: number;
+  username: string;
+  phone: string;
+  avatar_url: string;
+  is_friend: boolean;
+}
+
+
 export interface HealthCheckResponse {
   success: boolean;
   message: string;
   timestamp?: string;
+}
+
+
+export interface UpdateUsernameRequest {
+  user_id: number;
+  new_username: string;
+}
+
+export interface UpdateUsernameResponse {
+  success: boolean;
+  message: string;
+  new_username?: string;
 }
 
 export interface CheckExistsResponse {
@@ -221,7 +297,22 @@ export class UserApiService {
   private baseUrl: string = `${UserApiService.BASE_URL}/api`;
 
   static getAvatarUrl(avatarPath: string): string {
+    if (!avatarPath || avatarPath.trim() === '') {
+      return '';
+    }
     return avatarPath.startsWith('/static/') ? `${UserApiService.BASE_URL}${avatarPath}` : avatarPath;
+  }
+
+  static getDefaultAvatarUrl(): string {
+    console.info(`调用了defult`);
+    return 'https://gitee.com/zhaozehe/zako/raw/master/ic_535a5f26fa59f35f023467562ae1388e.png';
+  }
+
+  static getUserDisplayAvatar(avatarUrl: string): string {
+    const processedUrl = UserApiService.getAvatarUrl(avatarUrl);
+    const result = processedUrl || UserApiService.getDefaultAvatarUrl();
+    console.info(`[UserApiService] 获取用户头像URL - 输入: ${avatarUrl}, 输出: ${result}`);
+    return result;
   }
 
   // 在UserApiService类中添加以下方法
@@ -230,6 +321,80 @@ export class UserApiService {
   setCurrentUserId(userId: number): void {
     this.currentUserId = userId;
     console.info(`[健康数据服务] 设置当前用户ID: ${userId}`);
+  }
+
+
+  async removeFamilyMember(userId: number, memberId: number): Promise<RegisterResponse> {
+    const httpRequest = http.createHttp();
+    try {
+      const response = await httpRequest.request(`${this.baseUrl}/remove-family-member`, {
+        method: http.RequestMethod.POST,
+        header: { 'Content-Type': 'application/json' },
+        extraData: JSON.stringify({ user_id: userId, member_id: memberId }),
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+      const responseText: string = response.result as string;
+      return JSON.parse(responseText) as RegisterResponse;
+    } catch (error) {
+      return { success: false, message: '网络连接失败' };
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
+  async getAllUsers(currentUserId: number): Promise<AllUsersResponse> {
+    const httpRequest = http.createHttp();
+    try {
+      const response = await httpRequest.request(`${this.baseUrl}/all-users/${currentUserId}`, {
+        method: http.RequestMethod.GET,
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+      const responseText: string = response.result as string;
+      return JSON.parse(responseText) as AllUsersResponse;
+    } catch (error) {
+      return { success: false, message: '网络连接失败' };
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
+  async updateUsername(userId: number, newUsername: string): Promise<UpdateUsernameResponse> {
+    const httpRequest = http.createHttp();
+
+    try {
+      console.info(`[用户名更新] 开始更新用户${userId}的用户名为: ${newUsername}`);
+
+      const requestData: UpdateUsernameRequest = {
+        user_id: userId,
+        new_username: newUsername
+      };
+
+      const response = await httpRequest.request(`${this.baseUrl}/update-username`, {
+        method: http.RequestMethod.POST,
+        header: {
+          'Content-Type': 'application/json'
+        },
+        extraData: JSON.stringify(requestData),
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      const responseText: string = response.result as string;
+      const result: UpdateUsernameResponse = JSON.parse(responseText) as UpdateUsernameResponse;
+
+      console.info(`[用户名更新] 更新结果: ${result.success}`);
+      return result;
+    } catch (error) {
+      console.error('[用户名更新] 更新异常:', error);
+      return {
+        success: false,
+        message: '网络连接失败'
+      };
+    } finally {
+      httpRequest.destroy();
+    }
   }
 
   async uploadAvatar(userId: number, avatarBase64: string): Promise<AvatarUploadResponse> {
@@ -304,10 +469,12 @@ export class UserApiService {
         let data: HealthOverviewData = overviewResponse.data;
 
         console.info(`[健康数据服务] 健康数据获取成功:`, JSON.stringify(data));
-
+        const activeCalories = data.active_calories || 0;
+        const basicCalories = data.basic_metabolism_calories || 0;
+        console.info(`[健康数据调试] 活动热量: ${activeCalories}Kcal, 基础代谢热量: ${basicCalories}Kcal, 总热量: ${activeCalories + basicCalories}Kcal`);
         return new HealthDataSummary(
           `${data.steps}步`,
-          `${data.avg_heart_rate}bpm`,
+          `${data.current_heart_rate || 0}bpm`,
           `${data.blood_oxygen}%`,
           `${data.sleep_score}分`,
           `${(data.active_calories || 0) + (data.basic_metabolism_calories || 0)}Kcal`,
@@ -779,6 +946,58 @@ export class UserApiService {
     }
   }
 
+  async getFriendsList(userId: number): Promise<FriendsListResponse> {
+    const httpRequest = http.createHttp();
+    try {
+      console.info(`[好友列表] 获取用户${userId}的好友列表`);
+
+      const response = await httpRequest.request(`${this.baseUrl}/friends-list/${userId}`, {
+        method: http.RequestMethod.GET,
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      const responseText: string = response.result as string;
+      const result: FriendsListResponse = JSON.parse(responseText) as FriendsListResponse;
+
+      console.info(`[好友列表] 获取到${result.friends?.length || 0}个好友`);
+      return result;
+    } catch (error) {
+      console.error('[好友列表] 获取失败:', error);
+      return { success: false, message: '网络连接失败' };
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
+  async createFaceToFaceSession(userId: number, fourDigitCode: string): Promise<RegisterResponse> {
+    const httpRequest = http.createHttp();
+    try {
+      console.info(`[面对面加好友] 用户${userId}创建会话，代码: ${fourDigitCode}`);
+
+      const response = await httpRequest.request(`${this.baseUrl}/radar-friends`, {
+        method: http.RequestMethod.POST,
+        header: { 'Content-Type': 'application/json' },
+        extraData: JSON.stringify({
+          user_id: userId,
+          radar_code: fourDigitCode
+        }),
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      const responseText: string = response.result as string;
+      const result: RegisterResponse = JSON.parse(responseText) as RegisterResponse;
+      console.info(`[面对面加好友] 会话创建结果: ${result.success}`);
+      return result;
+    } catch (error) {
+      console.error(`[面对面加好友] 网络异常:`, error);
+      return { success: false, message: '网络连接失败' };
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
   async getFamilyMembers(userId: number): Promise<FamilyMembersResponse> {
     let httpRequest = http.createHttp();
 
@@ -823,27 +1042,41 @@ export class UserApiService {
   }
   async getCurrentHealthData(userId: number): Promise<HealthOverviewResponse> {
     let httpRequest = http.createHttp();
-
     try {
       console.info(`[健康数据服务] 开始获取用户${userId}的当前健康数据`);
-
       let response = await httpRequest.request(`${this.baseUrl}/overview/${userId}`, {
         method: http.RequestMethod.GET,
         connectTimeout: 10000,
         readTimeout: 10000
       });
-
       let responseText: string = response.result as string;
-      let result: HealthOverviewResponse = JSON.parse(responseText) as HealthOverviewResponse;
+      let overviewResult: OverviewResponse = JSON.parse(responseText) as OverviewResponse;
 
-      console.info(`[健康数据服务] 健康数据获取完成:`, JSON.stringify(result));
-      return result;
+      if (overviewResult.success && overviewResult.data) {
+        const convertedData: HealthOverviewData = {
+          steps: overviewResult.data.steps || 0,
+          current_heart_rate: overviewResult.data.current_heart_rate || 0,
+          avg_heart_rate: overviewResult.data.current_heart_rate || 0,
+          sleep_score: overviewResult.data.sleep_score || 0,
+          active_calories: overviewResult.data.active_calories || 0,
+          basic_metabolism_calories: overviewResult.data.basic_metabolism_calories || 0,
+          blood_oxygen: overviewResult.data.blood_oxygen || 0,
+          current_mood: overviewResult.data.current_mood || -1
+        };
+
+        console.info(`[健康数据服务] 转换后的健康数据:`, JSON.stringify(convertedData));
+
+        return {
+          success: true,
+          data: convertedData,
+          message: overviewResult.message
+        };
+      }
+
+      return { success: false, message: overviewResult.message || '数据为空' };
     } catch (error) {
       console.error(`[健康数据服务] 获取健康数据失败:`, error);
-      return {
-        success: false,
-        message: '网络连接失败'
-      };
+      return { success: false, message: '网络连接失败' };
     } finally {
       httpRequest.destroy();
     }

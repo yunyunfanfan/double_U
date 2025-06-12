@@ -1,16 +1,38 @@
-
-///第二页主页
-
 import { router } from '@kit.ArkUI'
 import { pinyin } from 'pinyin-pro';
 import { BaseNavigation, JhProgressHUD, KColors } from 'JhCommon'
 import { WxContactsModel } from '../models/WxContactsModel'
 import { WxContactsCell } from '../widgets/WxContactsCell'
-import data from '../../../pages/res/wx_contacts.json'
+import { userApiService, FriendsListResponse, FriendItem } from '../../../services/api_network/UserApiService'
+
+///第二页主页
+
+interface UserData {
+  userId: string;
+  userName: string;
+  phone: string;
+  loginTime: string;
+}
+
+interface ContactData {
+  id: number;
+  name: string;
+  phone: string;
+  avatarUrl: string;
+  color: string;
+  img: string;
+  namePinyin: string;
+  tagIndex: string;
+}
+
+interface TopCellItem {
+  title: string;
+  imgUrl: Resource;
+}
 
 interface GroupItem {
   groupName: string;
-  data: ESObject[];
+  data: ContactData[];
 }
 
 @Entry
@@ -18,12 +40,9 @@ interface GroupItem {
 @Component
 export struct WxContactsPage {
   @State dataArr: GroupItem[] = []
-  // @State tagIndexList: string[] = ['🔍', '★', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
-  //   'H', 'I', 'J', 'K', 'L', 'M', 'N',
-  //   'O', 'P', 'Q', 'R', 'S', 'T', 'U',
-  //   'V', 'W', 'X', 'Y', 'Z', '#']
   @State tagIndexList: string[] = []
-  // scroller: Scroller = new Scroller()
+  @State isLoading: boolean = true
+  @State currentUserId: number = 0
   scroller: ListScroller = new ListScroller()
   searchController: SearchController = new SearchController()
   @State selectedIndex: number = 0
@@ -31,12 +50,78 @@ export struct WxContactsPage {
   @State contactsCount: string = ''
 
   aboutToAppear() {
-    this.dataArr = this.loadData()
-    // console.error('data', JSON.stringify(this.dataArr))
+    console.info('[家庭成员页面] 页面初始化');
+    this.loadCurrentUser();
+    this.loadFriendsData();
+  }
 
+  private loadCurrentUser(): void {
+    try {
+      const userInfoStr = AppStorage.get<string>('userInfo');
+      if (userInfoStr) {
+        const userInfo: UserData = JSON.parse(userInfoStr) as UserData;
+        this.currentUserId = parseInt(userInfo.userId);
+        console.info(`[家庭成员页面] 当前用户ID: ${this.currentUserId}`);
+      }
+    } catch (error) {
+      console.error(`[家庭成员页面] 获取用户信息失败:`, error);
+    }
+  }
+
+  private async loadFriendsData(): Promise<void> {
+    if (this.currentUserId === 0) {
+      console.error('[家庭成员页面] 用户ID为0，使用默认数据');
+      this.dataArr = this.loadData([]);
+      this.isLoading = false;
+      this.updateTagIndexList();
+      return;
+    }
+
+    try {
+      console.info('[家庭成员页面] 开始加载好友数据');
+      const response: FriendsListResponse = await userApiService.getFriendsList(this.currentUserId);
+
+      if (response.success && response.friends) {
+        console.info(`[家庭成员页面] 好友数据加载成功，共${response.friends.length}个好友`);
+        const contactsData: ContactData[] = this.processDataForDisplay(response.friends);
+        this.dataArr = this.loadData(contactsData);
+      } else {
+        console.error('[家庭成员页面] 好友数据加载失败:', response.message);
+        this.dataArr = this.loadData([]);
+      }
+    } catch (error) {
+      console.error('[家庭成员页面] 加载好友数据异常:', error);
+      this.dataArr = this.loadData([]);
+    } finally {
+      this.isLoading = false;
+      this.updateTagIndexList();
+    }
+  }
+
+  private processDataForDisplay(friends: FriendItem[]): ContactData[] {
+    const contactsData: ContactData[] = [];
+
+    for (const friend of friends) {
+      const contactData: ContactData = {
+        id: friend.id,
+        name: friend.username,
+        phone: friend.phone,
+        avatarUrl: friend.avatar_url || '',
+        color: '#f2e979',
+        img: friend.avatar_url || '',
+        namePinyin: '',
+        tagIndex: ''
+      };
+      contactsData.push(contactData);
+    }
+
+    return contactsData;
+  }
+
+  private updateTagIndexList(): void {
     const tempList: string[] = [];
     for (const item of this.dataArr) {
-      tempList.push(item.groupName)
+      tempList.push(item.groupName);
     }
     this.tagIndexList = tempList;
   }
@@ -44,9 +129,7 @@ export struct WxContactsPage {
   build() {
     Column() {
       BaseNavigation({
-        //isGradient: true,
-        //这渐变也不好看啊
-        title: getContext(this).resourceManager.getStringSync($r('app.string.family_members_title_847592836')),
+        title: '家庭成员',
         leftItem: {},
         bgColor: Color.Transparent,
         rightImgPath: $rawfile("images/第二页加号.png"),
@@ -55,8 +138,31 @@ export struct WxContactsPage {
           router.pushUrl({ url: 'pages/two/pages/WxAddFriendPage' })
         },
       })
-      this.body()
+
+      if (this.isLoading) {
+        this.loadingView()
+      } else {
+        this.body()
+      }
     }
+  }
+
+  @Builder
+  loadingView() {
+    Column() {
+      LoadingProgress()
+        .width(40)
+        .height(40)
+        .color('#07C160')
+      Text('加载好友列表...')
+        .fontSize(16)
+        .fontColor('#666666')
+        .margin({ top: 10 })
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+    .alignItems(HorizontalAlign.Center)
   }
 
   @Builder
@@ -65,37 +171,24 @@ export struct WxContactsPage {
       List({ space: 0, initialIndex: 0, scroller: this.scroller }) {
         ForEach(this.dataArr, (groupItem: GroupItem, index: number) => {
           ListItemGroup({ header: this.itemHeader(groupItem.groupName) }) {
-            ForEach(groupItem.data, (cellItem: ESObject, index2: number) => {
+            ForEach(groupItem.data, (cellItem: ContactData, index2: number) => {
               ListItem() {
                 WxContactsCell({
-                  index: index,
+                  index: groupItem.groupName === "🔍" ? 0 : 1,
                   model: cellItem as WxContactsModel,
                   searchController: this.searchController,
                   onClickCell: (model: WxContactsModel) => {
                     this.searchController.stopEditing()
                     router.pushUrl({ url: 'pages/two/pages/WxUserInfoPage', params: { data: cellItem } })
                   },
-                  onClickTopCell: (model: ESObject) => {
+                  onClickTopCell: (model: TopCellItem) => {
                     this.searchController.stopEditing()
-                    this.clickCell(model['title'] as string)
+                    console.info(`[家庭成员页面] 点击头部项目: ${model.title}`)
+                    this.clickCell(model.title)
                   },
                 })
               }
-              // .swipeAction({
-              //   end: {
-              //     builder: () => {
-              //       if (index != 0) {
-              //         this.itemSwipeEnd()
-              //       }
-              //     },
-              //     actionAreaDistance: 0, // 设置组件长距离滑动删除距离阈值。 默认56
-              //     onAction: () => {
-              //       animateTo({ duration: 1000 }, () => {
-              //       })
-              //     },
-              //   }
-              // })
-            }, (item: ESObject) => JSON.stringify(item))
+            }, (item: ContactData) => `${item.id}_${item.name}`)
           }
           // 每行之间的分界线
           .divider({
@@ -118,28 +211,26 @@ export struct WxContactsPage {
       .sticky(StickyStyle.Header | StickyStyle.Footer)
       .scrollBar(BarState.Off)
       .onScrollIndex((firstIndex: number, lastIndex: number) => {
-        // console.log('firstIndex', JSON.stringify(firstIndex))
         this.selectedIndex = firstIndex
       })
 
       AlphabetIndexer({ arrayValue: this.tagIndexList, selected: 0 })
-        .color(Color.Black)// 文字颜色
-        .selectedColor(Color.White)// 选中项文字颜色
-        .popupColor(Color.White)// 提示弹窗文字颜色
-        .selectedBackgroundColor(KColors.kThemeColor)// 选中项背景颜色
-        .popupBackground('#C9C9C9')// 提示弹窗背景色
-        .usingPopup(this.isShowTagPopup)// 是否使用提示弹窗
-        .selectedFont({ size: 16, weight: FontWeight.Bolder })// 选中项字体样式
-        .popupFont({ size: 30, weight: FontWeight.Bolder })// 弹出框内容的字体样式
-        .font({ size: 14 })// 字母索引条默认字体样式
-        .itemSize(22)// 字母索引条字母区域大小
-        .alignStyle(IndexerAlign.END)// 字母索引条弹框的对齐样式，支持弹窗显示在索引条右侧和左侧.默认值: IndexerAlign.END
+        .color(Color.Black)
+        .selectedColor(Color.White)
+        .popupColor(Color.White)
+        .selectedBackgroundColor(KColors.kThemeColor)
+        .popupBackground('#C9C9C9')
+        .usingPopup(this.isShowTagPopup)
+        .selectedFont({ size: 16, weight: FontWeight.Bolder })
+        .popupFont({ size: 30, weight: FontWeight.Bolder })
+        .font({ size: 14 })
+        .itemSize(22)
+        .alignStyle(IndexerAlign.END)
         .popupPosition({ x: 60, y: 48 })
-        .itemBorderRadius(11)//索引项背板圆角半径
-        .popupBackgroundBlurStyle(BlurStyle.NONE)// 设置提示弹窗的背景模糊材质
+        .itemBorderRadius(11)
+        .popupBackgroundBlurStyle(BlurStyle.NONE)
         .selected(this.selectedIndex)
         .onSelect((index: number) => {
-          // console.log('index', index)
           this.scroller.scrollToIndex(index)
           this.isShowTagPopup = true;
           setTimeout(() => {
@@ -158,7 +249,7 @@ export struct WxContactsPage {
       Row()
     } else {
       Row() {
-        Text(text == '★' ? getContext(this).resourceManager.getStringSync($r('app.string.special_care_members_629385741')) : text)
+        Text(text)
           .padding({ left: 15 })
           .fontSize(18)
           .fontWeight(FontWeight.Bold)
@@ -177,7 +268,7 @@ export struct WxContactsPage {
   @Builder
   itemSwipeEnd() {
     Row() {
-      Text(getContext(this).resourceManager.getStringSync($r('app.string.remark_action_384759261')))
+      Text('备注')
         .fontSize(14)
         .fontColor(Color.White)
     }
@@ -186,7 +277,7 @@ export struct WxContactsPage {
     .justifyContent(FlexAlign.Center)
     .backgroundColor('#74736D')
     .onClick(() => {
-      JhProgressHUD.showToast(getContext(this).resourceManager.getStringSync($r('app.string.remark_toast_927384615')))
+      JhProgressHUD.showToast('备注功能')
       this.scroller.closeAllSwipeActions()
     })
   }
@@ -194,7 +285,7 @@ export struct WxContactsPage {
   @Builder
   footer() {
     Row() {
-      Text(`${this.getData().length}${getContext(this).resourceManager.getStringSync($r('app.string.family_members_count_639481752'))}`)
+      Text(`${this.getActualMemberCount()}个家庭成员`)
         .fontSize(16)
         .fontColor(Color.Gray)
     }
@@ -204,36 +295,36 @@ export struct WxContactsPage {
     .backgroundColor(KColors.wxBgColor)
   }
 
-  clickCell(text: string) {
-    const newMemberText: string = getContext(this).resourceManager.getStringSync($r('app.string.new_member_758294637'))
-    const groupChatText: string = getContext(this).resourceManager.getStringSync($r('app.string.group_chat_472961853'))
-    const healthGoalsText: string = getContext(this).resourceManager.getStringSync($r('app.string.common_health_goals_851374269'))
+  private getActualMemberCount(): number {
+    let count = 0;
+    for (const group of this.dataArr) {
+      if (group.groupName !== '🔍') {
+        count += group.data.length;
+      }
+    }
+    return count;
+  }
 
-    if (text == newMemberText) {
-      router.pushUrl({ url: 'pages/two/pages/WxNewFriendPage' })
+  clickCell(text: string) {
+    console.info(`[家庭成员页面] 执行点击操作: ${text}`)
+    if (text == '新的成员') {
+      router.pushUrl({ url: 'pages/two/pages/WxAddFriendPage' })
     }
-    if (text == groupChatText) {
-      router.pushUrl({ url: 'pages/two/pages/WxGroupChatPage' })
-    }
-    if (text == healthGoalsText) {
+    if (text == '共同健康目标') {
       router.pushUrl({ url: 'pages/two/pages/CommonHealthGoalsPage' })
     }
   }
 
-  loadData(): GroupItem[] {
-    // 原始数据
-    const dataArr: ESObject[] = this.getData()
-
+  loadData(contactsData: ContactData[]): GroupItem[] {
     // 处理数据
-    const tempList: ESObject[] = [];
-    for (let i = 0; i < dataArr.length; i++) {
-      const item: ESObject = dataArr[i]
-      const pinyinStr: string = pinyin(item.name as string, { toneType: 'none' })
+    const tempList: ContactData[] = [];
+    for (let i = 0; i < contactsData.length; i++) {
+      const item: ContactData = contactsData[i];
+      const pinyinStr: string = pinyin(item.name, { toneType: 'none' });
       const tag: string = pinyinStr.substring(0, 1).toUpperCase();
       item.namePinyin = pinyinStr;
-      if (item.isStar == true) {
-        item.tagIndex = '★';
-      } else if (new RegExp('[A-Z]').test(tag)) {
+
+      if (new RegExp('[A-Z]').test(tag)) {
         item.tagIndex = tag;
       } else {
         item.tagIndex = '#';
@@ -242,59 +333,57 @@ export struct WxContactsPage {
     }
 
     // 根据A-Z排序
-    tempList.sort((a: ESObject, b: ESObject) => {
-      if (a['tagIndex'] === b['tagIndex']) {
-        return (a['name'] as string).localeCompare(b['name'] as string) as number
+    tempList.sort((a: ContactData, b: ContactData) => {
+      if (a.tagIndex === b.tagIndex) {
+        return a.name.localeCompare(b.name);
       }
-      if (a['tagIndex'] === "#") {
-        return 1
+      if (a.tagIndex === "#") {
+        return 1;
       }
-      if (b['tagIndex'] === "#") {
-        return -1
+      if (b.tagIndex === "#") {
+        return -1;
       }
-      return (a['tagIndex'] as string).localeCompare(b['tagIndex'] as string) as number
-    });
-
-    // 把星标移到最前
-    tempList.forEach((item: ESObject, index) => {
-      if (item.isStar == true) {
-        tempList.unshift(...tempList.splice(index, 1));
-      }
+      return a.tagIndex.localeCompare(b.tagIndex);
     });
 
     // 添加 header
-    tempList.unshift({
+    const headerItem: ContactData = {
+      id: -1,
       name: "header",
+      phone: "",
+      avatarUrl: "",
+      color: "",
+      img: "",
+      namePinyin: "",
       tagIndex: "🔍"
-    });
+    };
+    tempList.unshift(headerItem);
 
     // 改成分组数据
-    const newArr: GroupItem[] = groupListByKey(tempList, 'tagIndex');
-    return newArr
+    const newArr: GroupItem[] = this.groupListByKey(tempList, 'tagIndex');
+    return newArr;
   }
 
-  getData(): ESObject[] {
-    const dataArr: ESObject[] = data['data'] as ESObject[]
-    return dataArr;
+  private groupListByKey(array: ContactData[], key: string): GroupItem[] {
+    const result: GroupItem[] = [];
+    const groupMap: Map<string, ContactData[]> = new Map();
+
+    // 遍历数组，将每个元素按照key分组
+    array.forEach((item: ContactData) => {
+      const groupValue: string = item.tagIndex;
+      if (!groupMap.has(groupValue)) {
+        groupMap.set(groupValue, []);
+      }
+      const group = groupMap.get(groupValue);
+      if (group) {
+        group.push(item);
+      }
+    });
+
+    groupMap.forEach((value, key) => {
+      const groupItem: GroupItem = { groupName: key, data: value };
+      result.push(groupItem);
+    });
+    return result;
   }
-}
-
-// 数组按指定key分组
-function groupListByKey<T>(array: T[], key: string): GroupItem[] {
-  const result: GroupItem[] = [];
-  const groupMap: Map<string, T[]> = new Map();
-
-  // 遍历数组，将每个元素按照key分组
-  array.forEach((item: ESObject) => {
-    const groupValue: string = String(item[key]);
-    if (!groupMap[groupValue]) {
-      groupMap[groupValue] = [];
-    }
-    groupMap[groupValue].push(item);
-  });
-
-  Object.keys(groupMap).forEach((key) => {
-    result.push({ groupName: key, data: groupMap[key] as ESObject[] });
-  });
-  return result;
 }

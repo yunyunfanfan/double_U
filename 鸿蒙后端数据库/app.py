@@ -365,19 +365,86 @@ def login():
             'success': False,
             'message': f'登录失败: {str(e)}'
         }), 500
+    
+
+# 删除好友关系
+@app.route('/api/remove-family-member', methods=['POST'])
+def remove_family_member():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        member_id = data.get('member_id')
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # 双向删除好友关系
+        cursor.execute('''
+            UPDATE family_members SET status = 0 
+            WHERE (user_id = ? AND member_id = ?) OR (user_id = ? AND member_id = ?)
+        ''', (user_id, member_id, member_id, user_id))
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'success': True, 'message': '删除好友成功'})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'删除失败: {str(e)}'}), 500
+
+# 获取所有用户（用于雷达加好友）
+@app.route('/api/all-users/<int:current_user_id>', methods=['GET'])
+def get_all_users(current_user_id):
+    try:
+        conn = get_db_connection()
+        
+        users = conn.execute('''
+            SELECT u.id, u.username, u.phone, u.avatar_url,
+                   CASE WHEN fm.id IS NOT NULL THEN 1 ELSE 0 END as is_friend
+            FROM users u
+            LEFT JOIN family_members fm ON u.id = fm.member_id AND fm.user_id = ? AND fm.status = 1
+            WHERE u.id != ?
+            ORDER BY u.username
+        ''', (current_user_id, current_user_id)).fetchall()
+        
+        conn.close()
+        
+        result = []
+        for user in users:
+            result.append({
+                'id': user['id'],
+                'username': user['username'],
+                'phone': user['phone'],
+                'avatar_url': user['avatar_url'] or '',
+                'is_friend': user['is_friend'] == 1
+            })
+        
+        return jsonify({'success': True, 'users': result})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'获取失败: {str(e)}'}), 500
 
 @app.route('/api/check-username', methods=['GET'])
 def check_username():
     try:
         username = request.args.get('username', '').strip()
+        exclude_user_id = request.args.get('exclude_user_id')
         
         if not username:
             return jsonify({'exists': False})
         
         conn = get_db_connection()
-        existing_user = conn.execute(
-            'SELECT id FROM users WHERE username = ?', (username,)
-        ).fetchone()
+        
+        if exclude_user_id:
+            existing_user = conn.execute(
+                'SELECT id FROM users WHERE username = ? AND id != ?', 
+                (username, int(exclude_user_id))
+            ).fetchone()
+        else:
+            existing_user = conn.execute(
+                'SELECT id FROM users WHERE username = ?', (username,)
+            ).fetchone()
+            
         conn.close()
         
         return jsonify({
@@ -603,7 +670,7 @@ def get_overview(user_id):
         
         # 修复：添加current_mood字段和TRIM处理
         overview = conn.execute('''
-            SELECT steps, avg_heart_rate, sleep_score, active_calories, basic_metabolism_calories, current_blood_oxygen, current_mood
+            SELECT steps, current_heart_rate, sleep_score, active_calories, basic_metabolism_calories, current_blood_oxygen, current_mood
             FROM health_data 
             WHERE user_id = ? AND record_date = ?
         ''', (user_id, today)).fetchone()
@@ -613,7 +680,7 @@ def get_overview(user_id):
         if overview:
             result = {
                 'steps': overview['steps'] or 0,
-                'avg_heart_rate': overview['avg_heart_rate'] or 0,
+                'current_heart_rate': overview['current_heart_rate'] or 0,
                 'sleep_score': overview['sleep_score'] or 0,
                 'active_calories': overview['active_calories'] or 0,
                 'basic_metabolism_calories': overview['basic_metabolism_calories'] or 0,
@@ -868,6 +935,75 @@ def get_steps_history(user_id):
         
     except Exception as e:
         return jsonify({'success': False, 'message': f'获取失败: {str(e)}'}), 500
+    
+
+@app.route('/api/update-username', methods=['POST'])
+def update_username():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        new_username = data.get('new_username', '').strip()
+        
+        print(f"[{datetime.now()}] 更新用户名请求: 用户{user_id}, 新用户名={new_username}")
+        
+        if not user_id or not new_username:
+            return jsonify({
+                'success': False,
+                'message': '用户ID和新用户名不能为空'
+            }), 400
+        
+        if len(new_username) < 2 or len(new_username) > 20:
+            return jsonify({
+                'success': False,
+                'message': '用户名长度应在2-20个字符之间'
+            }), 400
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # 检查新用户名是否已存在
+        existing = cursor.execute(
+            'SELECT id FROM users WHERE username = ? AND id != ?', 
+            (new_username, user_id)
+        ).fetchone()
+        
+        if existing:
+            conn.close()
+            return jsonify({
+                'success': False,
+                'message': '该用户名已被使用'
+            }), 400
+        
+        # 更新用户名
+        cursor.execute(
+            'UPDATE users SET username = ? WHERE id = ?',
+            (new_username, user_id)
+        )
+        
+        if cursor.rowcount == 0:
+            conn.close()
+            return jsonify({
+                'success': False,
+                'message': '用户不存在'
+            }), 404
+        
+        conn.commit()
+        conn.close()
+        
+        print(f"[{datetime.now()}] 用户名更新成功: 用户{user_id} -> {new_username}")
+        
+        return jsonify({
+            'success': True,
+            'message': '用户名更新成功',
+            'new_username': new_username
+        })
+        
+    except Exception as e:
+        print(f"[{datetime.now()}] 更新用户名异常: {e}")
+        return jsonify({
+            'success': False,
+            'message': f'更新失败: {str(e)}'
+        }), 500
 
 @app.route('/api/user-points/<int:user_id>', methods=['GET'])
 def get_user_points(user_id):
@@ -935,7 +1071,7 @@ def create_radar_session():
             conn.commit()
             conn.close()
             
-            return jsonify({'success': True, 'message': '添加家庭成员成功', 'matched': True})
+            return jsonify({'success': True, 'message': '匹配成功，已添加为家庭成员', 'matched': True})
         else:
             # 没有匹配，创建新记录
             cursor.execute('''
@@ -946,7 +1082,7 @@ def create_radar_session():
             conn.commit()
             conn.close()
             
-            return jsonify({'success': True, 'message': '等待匹配中...', 'matched': False})
+            return jsonify({'success': True, 'message': '等待其他用户匹配', 'matched': False})
             
     except Exception as e:
         return jsonify({'success': False, 'message': f'操作失败: {str(e)}'}), 500
@@ -980,6 +1116,51 @@ def get_family_members(user_id):
         
     except Exception as e:
         return jsonify({'success': False, 'message': f'获取失败: {str(e)}'}), 500
+
+
+@app.route('/api/friends-list/<int:user_id>', methods=['GET'])
+def get_friends_list(user_id):
+    """获取指定用户的好友列表"""
+    try:
+        print(f"[{datetime.now()}] 获取用户{user_id}的好友列表")
+        
+        conn = get_db_connection()
+        
+        friends = conn.execute('''
+            SELECT u.id, u.username, u.phone, u.avatar_url
+            FROM family_members fm
+            JOIN users u ON fm.member_id = u.id
+            WHERE fm.user_id = ? AND fm.status = 1
+            ORDER BY u.username
+        ''', (user_id,)).fetchall()
+        
+        conn.close()
+        
+        result = []
+        for friend in friends:
+            result.append({
+                'id': friend['id'],
+                'username': friend['username'],  # 对应前端的 user_name
+                'phone': friend['phone'],
+                'avatar_url': friend['avatar_url'] 
+            })
+        
+        print(f"[{datetime.now()}] 查询成功，共{len(result)}个好友")
+        
+        return jsonify({
+            'success': True,
+            'friends': result,
+            'message': '获取好友列表成功'
+        })
+        
+    except Exception as e:
+        print(f"[{datetime.now()}] 获取好友列表异常: {e}")
+        return jsonify({
+            'success': False,
+            'message': f'获取失败: {str(e)}',
+            'friends': []
+        }), 500
+
 
 @app.route('/api/ai-health-data', methods=['POST'])
 def save_ai_health_data():

@@ -3,4 +3,5 @@ export class WxNewFriendModel {
   subtitle?: string
   img?: string
   isAdd?: boolean
+  userId?: number; // 新增用户ID字段
 }

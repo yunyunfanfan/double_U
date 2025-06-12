@@ -1,5 +1,4 @@
 import { BaseTabBar } from './BaseTabBar'
-import { JhAESPreferencesUtils, kUserDefault_UserInfo } from 'JhCommon';
 import { JhAlert, JhDialog, JhProgressHUD } from 'JhCommon';
 import { LoginPage } from './login/pages/LoginPage';
 import { router } from '@kit.ArkUI';
@@ -10,12 +9,22 @@ interface RouterParams {
   timestamp?: number;
 }
 
+interface UserData {
+  userId: string;
+  userName: string;
+  phone: string;
+  loginTime: string;
+}
+
 @Entry
 @Component
 struct Index {
   @State initialTabIndex: number = 0;
 
   aboutToAppear() {
+    console.info('[Index] 页面初始化开始')
+    // 初始化持久化存储
+    PersistentStorage.persistProp('userInfo', '');
     // 初始化Loading和Dialog
     let uiContext: UIContext = this.getUIContext()
     JhDialog.initConfig(uiContext)
@@ -26,9 +35,10 @@ struct Index {
       const params = router.getParams() as RouterParams;
       if (params && params.tabIndex !== undefined) {
         this.initialTabIndex = params.tabIndex;
+        console.info('[Index] 获取到路由参数tabIndex:', params.tabIndex)
       }
     } catch (error) {
-      console.error('获取路由参数失败:', error);
+      console.error('[Index] 获取路由参数失败:', error);
     }
   }
 
@@ -46,11 +56,18 @@ struct Index {
   }
 
   switchRootPage(): 'BaseTabBar' | 'LoginPage' {
-    const userInfo = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo)
-    if (userInfo) {
-      console.log('本地取出的 userInfo', JSON.stringify(userInfo))
-      return 'BaseTabBar'
-    } else {
+    try {
+      const userInfoStr = AppStorage.get<string>('userInfo');
+      if (userInfoStr && userInfoStr.trim() !== '') {
+        const userInfo: UserData = JSON.parse(userInfoStr) as UserData;
+        console.info('[Index] 用户已登录:', userInfo.userName)
+        return 'BaseTabBar'
+      } else {
+        console.info('[Index] 用户未登录，显示登录页面')
+        return 'LoginPage'
+      }
+    } catch (error) {
+      console.error('[Index] 检查登录状态失败:', error)
       return 'LoginPage'
     }
   }

@@ -12,9 +12,17 @@ export struct WxNewFriendCell {
   build() {
     Column() {
       Row() {
-        Image($rawfile(this.model.img))
+        Image(this.model.img)
           .width(40)
+          .height(40)
           .borderRadius(20)
+          .objectFit(ImageFit.Cover)
+          .onError(() => {
+            console.error(`[WxNewFriendCell] 头像加载失败: ${this.model.img}`);
+          })
+          .onComplete(() => {
+            console.info(`[WxNewFriendCell] 头像加载成功: ${this.model.img}`);
+          })
 
         Blank().width(10)
         Column() {
@@ -34,11 +42,11 @@ export struct WxNewFriendCell {
             Text('已添加').width(55).fontSize(15)
           } else {
             JhButton({
-              text: '接受',
+              text: '加好友',
               btnWidth: 60,
               btnHeight: 30,
               btnFontSize: 14,
-              onPressed: (): void => this.onClickCell?.(this.model)
+              onPressed: (): void => this.onClickBtn?.(this.model)
             })
           }
         }

@@ -9,25 +9,51 @@ interface PopMenuItem {
   icon: Resource;
 }
 
+interface UserInfo {
+  userId: string;
+  userName: string;
+  phone: string;
+  loginTime: string;
+}
+
 @Entry
 @Preview
 @Component
 export struct WxHomePage {
   @State dataArr: WxHomeModel[] = []
   @State healthDataSummary: HealthDataSummary = new HealthDataSummary('加载中...', '加载中...', '加载中...', '加载中...', '加载中...', '加载中...')
+  @State isRefreshing: boolean = false
   scroller: ListScroller = new ListScroller()
   private healthDataService = userApiService
 
   aboutToAppear() {
     console.log('[WxHomePage] 页面即将显示，设置用户ID');
-    // 设置当前用户ID（您可以从登录状态获取真实的用户ID）
-    this.healthDataService.setCurrentUserId(1);
+    this.setCurrentUserFromStorage();
     this.loadHealthData()
     // console.error('data', JSON.stringify(this.dataArr))
   }
 
+  private setCurrentUserFromStorage(): void {
+    try {
+      const userInfoStr = AppStorage.get<string>('userInfo');
+      if (userInfoStr) {
+        const userInfo: UserInfo = JSON.parse(userInfoStr) as UserInfo;
+        const userId: number = parseInt(userInfo.userId);
+        console.log(`[WxHomePage] 从存储获取用户ID: ${userId}`);
+        this.healthDataService.setCurrentUserId(userId);
+      } else {
+        console.error('[WxHomePage] 未找到用户信息，使用默认用户ID: 1');
+        this.healthDataService.setCurrentUserId(1);
+      }
+    } catch (error) {
+      console.error('[WxHomePage] 解析用户信息失败:', error);
+      this.healthDataService.setCurrentUserId(1);
+    }
+  }
+
   onPageShow() {
-    // 页面显示时刷新数据
+    // 页面显示时重新设置用户ID并刷新数据
+    this.setCurrentUserFromStorage();
     this.refreshHealthData()
   }
 
@@ -60,6 +86,23 @@ export struct WxHomePage {
     }
   }
 
+  // 下拉刷新处理函数
+  async onRefresh() {
+    console.log('[WxHomePage] 用户触发下拉刷新');
+    this.isRefreshing = true;
+
+    try {
+      // 重新从数据库加载健康数据
+      await this.refreshHealthData();
+      console.log('[WxHomePage] 下拉刷新完成');
+    } catch (error) {
+      console.error('[WxHomePage] 下拉刷新失败:', error);
+      JhProgressHUD.showToast('刷新失败，请重试');
+    } finally {
+      this.isRefreshing = false;
+    }
+  }
+
   build() {
     Column() {
       BaseNavigation({
@@ -80,40 +123,45 @@ export struct WxHomePage {
 
   @Builder
   body() {
-    List({ scroller: this.scroller }) {
-      ForEach(this.dataArr, (item: WxHomeModel, index: number) => {
-        ListItem() {
-          WxHomeCell({
-            model: item,
-            onClickCell: () => {
-              this.clickCell(item)
-            },
-          })
-        }
-        //禁用第一页的滑动效果
-        // .swipeAction({
-        //   end: {
-        //     builder: () => {
-        //       this.itemSwipeEnd(item.type)
-        //     },
-        //     actionAreaDistance: 0, // 设置组件长距离滑动删除距离阈值。 默认56
-        //     onAction: () => {
-        //       animateTo({ duration: 1000 }, () => {
-        //       })
-        //     },
-        //   }
-        // })
+    Refresh({ refreshing: $$this.isRefreshing }) {
+      List({ scroller: this.scroller }) {
+        ForEach(this.dataArr, (item: WxHomeModel, index: number) => {
+          ListItem() {
+            WxHomeCell({
+              model: item,
+              onClickCell: () => {
+                this.clickCell(item)
+              },
+            })
+          }
+          //禁用第一页的滑动效果
+          // .swipeAction({
+          //   end: {
+          //     builder: () => {
+          //       this.itemSwipeEnd(item.type)
+          //     },
+          //     actionAreaDistance: 0, // 设置组件长距离滑动删除距离阈值。 默认56
+          //     onAction: () => {
+          //       animateTo({ duration: 1000 }, () => {
+          //       })
+          //     },
+          //   }
+          // })
+        })
+      }
+      .layoutWeight(1)
+      .edgeEffect(EdgeEffect.Spring, {
+        alwaysEnabled: true
+      })
+      .divider({
+        strokeWidth: 0.5,
+        startMargin: 70,
+        endMargin: 0,
+        color: KColors.kLineColor
       })
     }
-    .layoutWeight(1)
-    .edgeEffect(EdgeEffect.Spring, {
-      alwaysEnabled: true
-    })
-    .divider({
-      strokeWidth: 0.5,
-      startMargin: 70,
-      endMargin: 0,
-      color: KColors.kLineColor
+    .onRefreshing(() => {
+      this.onRefresh()
     })
   }
 
@@ -348,7 +396,7 @@ export struct WxHomePage {
     console.log('点击', JSON.stringify(text))
     let addMemberText: string = '添加朋友'
     let deepseekText: string = 'DeepSeek'
-    let startGroupChatText: string = '发起群聊'
+    let startGroupChatText: string = '健康圈'
     let openMembershipText: string = '开通会员'
 
     if (text == addMemberText) {
@@ -358,7 +406,7 @@ export struct WxHomePage {
       router.pushUrl({ url: 'pages/new_deepseek/ChatPage' })
     }
     else if (text == startGroupChatText){
-      router.pushUrl( {url: 'pages/two/pages/WxFaceToFaceGroupPage'})
+      router.pushUrl( {url: 'pages/three/pages/WxFriendsCirclePage'})
     }
     else if (text == openMembershipText){
       router.pushUrl({url : 'pages/four/pages/Membership/MemberShip' })
@@ -438,7 +486,7 @@ export struct WxHomePage {
   getPopData(): PopMenuItem[] {
     return [
       {
-        'text': '发起群聊',
+        'text': '健康圈',
         'icon': $rawfile('images/popMenus/ic_chat.png'),
       },
       {

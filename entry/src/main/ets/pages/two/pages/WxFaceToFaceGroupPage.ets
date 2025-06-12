@@ -1,47 +1,119 @@
 import { BaseNavigation, JhProgressHUD, KColors } from 'JhCommon'
 import { router } from '@kit.ArkUI'
+import { userApiService, RegisterResponse } from '../../../services/api_network/UserApiService'
 
-///面对面建群
+interface UserData {
+  userId: string;
+  userName: string;
+  phone: string;
+  loginTime: string;
+}
+
+///面对面加成员
 
 @Entry
 @Preview
 @Component
 struct WxFaceToFaceGroupPage {
-  @State groupNumber: string = ''
-  @State isCreating: boolean = false
-  @State isJoining: boolean = false
-  @State showKeyboard: boolean = false
   @State groupNumberArr: string[] = ['', '', '', '']
   @State currentIndex: number = 0
   @State showCopyTip: boolean = false
+  @State isLoading: boolean = false
+  @State currentUserId: number = 0
+
+  aboutToAppear(): void {
+    console.info('[面对面加好友] 页面初始化');
+    this.loadCurrentUser();
+  }
+
+  private loadCurrentUser(): void {
+    try {
+      const userInfoStr = AppStorage.get<string>('userInfo');
+      if (userInfoStr) {
+        const userInfo: UserData = JSON.parse(userInfoStr) as UserData;
+        this.currentUserId = parseInt(userInfo.userId);
+        console.info(`[面对面加好友] 当前用户ID: ${this.currentUserId}`);
+      }
+    } catch (error) {
+      console.error(`[面对面加好友] 获取用户信息失败:`, error);
+    }
+  }
+
+  private async handleFaceToFaceAdd(): Promise<void> {
+    const fourDigitCode: string = this.groupNumberArr.join('');
+
+    if (fourDigitCode.length !== 4) {
+      JhProgressHUD.showText('请输入4位数字');
+      return;
+    }
+
+    if (this.currentUserId === 0) {
+      JhProgressHUD.showText('请先登录');
+      return;
+    }
+
+    this.isLoading = true;
+    console.info(`[面对面加好友] 开始匹配，代码: ${fourDigitCode}`);
+
+    try {
+      const response: RegisterResponse = await userApiService.createFaceToFaceSession(
+        this.currentUserId,
+        fourDigitCode
+      );
+
+      if (response.success) {
+        // 根据后端返回的message判断是否匹配成功
+        const isMatched = response.message?.includes('添加家庭成员成功') ||
+        response.message?.includes('匹配成功') ||
+        response.message?.includes('成功');
+
+        if (isMatched) {
+          JhProgressHUD.showSuccess('匹配成功，已添加为家庭成员');
+          setTimeout(() => {
+            router.back();
+          }, 1500);
+        } else {
+          JhProgressHUD.showText('等待其他人输入相同数字...');
+          this.showCopyTip = true;
+          setTimeout(() => {
+            this.showCopyTip = false;
+          }, 5000);
+        }
+      } else {
+        JhProgressHUD.showError(response.message || '添加失败');
+      }
+    } catch (error) {
+      console.error(`[面对面加好友] 添加异常:`, error);
+      JhProgressHUD.showError('网络连接失败');
+    } finally {
+      this.isLoading = false;
+    }
+  }
 
   getKeys(): string[][] {
-    const clearText: string = getContext(this).resourceManager.getStringSync($r('app.string.clear_key_text_573829461847392'))
-    const deleteText: string = getContext(this).resourceManager.getStringSync($r('app.string.delete_key_text_392847516293847'))
     return [
       ['1','2','3'],
       ['4','5','6'],
       ['7','8','9'],
-      [clearText,'0',deleteText]
+      ['清空','0','删除']
     ]
   }
 
   build() {
     Column() {
       BaseNavigation({
-        title: getContext(this).resourceManager.getStringSync($r('app.string.face_to_face_group_title_847392651847392')),
+        title: '面对面添加成员',
         bgColor: Color.Transparent
       })
+
       Column() {
-        // 输入提示
-        Text(getContext(this).resourceManager.getStringSync($r('app.string.input_four_digits_hint_629384751639284')))
+        Text('输入4个数字, 添加身边的家庭成员')
           .fontSize(16)
           .fontColor('#999999')
           .margin({ top: 40, bottom: 20 })
           .width('100%')
           .textAlign(TextAlign.Center)
 
-        // 输入框
         Row() {
           ForEach([0,1,2,3], (i: number) => {
             Column() {
@@ -60,7 +132,6 @@ struct WxFaceToFaceGroupPage {
         }
         .margin({ bottom: 32 })
 
-        // 数字键盘
         Column() {
           ForEach([0,1,2], (rowIdx: number) => {
             Row() {
@@ -74,10 +145,11 @@ struct WxFaceToFaceGroupPage {
                   .borderRadius(8)
                   .margin({ left: colIdx === 0 ? 0 : 16, top: rowIdx === 0 ? 0 : 16 })
                   .onClick(() => this.handleKeyPress(key))
+                  .enabled(!this.isLoading)
               })
             }
           })
-          // 最后一行特殊布局
+
           Row() {
             Blank().width(72)
             Button('0')
@@ -89,6 +161,7 @@ struct WxFaceToFaceGroupPage {
               .borderRadius(8)
               .onClick(() => this.handleKeyPress('0'))
               .margin({ left: 16, right: 16 })
+              .enabled(!this.isLoading)
             Button('⌫')
               .width(72)
               .height(56)
@@ -96,35 +169,40 @@ struct WxFaceToFaceGroupPage {
               .backgroundColor('#FFF')
               .fontColor('#222')
               .borderRadius(8)
-              .onClick(() => this.handleKeyPress(getContext(this).resourceManager.getStringSync($r('app.string.delete_key_text_392847516293847'))))
+              .onClick(() => this.handleKeyPress('删除'))
+              .enabled(!this.isLoading)
           }
           .margin({ top: 16 })
         }
 
-        // 复制群号按钮
         if (this.groupNumberArr.every(num => num !== '')) {
-          Button(getContext(this).resourceManager.getStringSync($r('app.string.copy_group_number_btn_758394627184759')))
-            .width('80%')
-            .height(44)
-            .backgroundColor('#07C160')
-            .fontColor(Color.White)
-            .fontSize(16)
-            .borderRadius(4)
+          if (this.isLoading) {
+            Row() {
+              LoadingProgress()
+                .width(20)
+                .height(20)
+                .color('#07C160')
+                .margin({ right: 8 })
+              Text('匹配中...')
+                .fontSize(16)
+                .fontColor('#07C160')
+            }
             .margin({ top: 32 })
-            .onClick(() => {
-              // 复制群号
-              const groupNumber: string = this.groupNumberArr.join('')
-              // TODO: 实现复制功能
-              this.showCopyTip = true
-              setTimeout(() => {
-                this.showCopyTip = false
-              }, 2000)
-            })
+          } else {
+            Button('开始匹配')
+              .width('80%')
+              .height(44)
+              .backgroundColor('#07C160')
+              .fontColor(Color.White)
+              .fontSize(16)
+              .borderRadius(4)
+              .margin({ top: 32 })
+              .onClick(() => this.handleFaceToFaceAdd())
+          }
         }
 
-        // 复制成功提示
         if (this.showCopyTip) {
-          Text(getContext(this).resourceManager.getStringSync($r('app.string.group_number_copied_tip_184759362847392')))
+          Text('等待其他人输入相同的4位数字')
             .fontSize(14)
             .fontColor('#07C160')
             .margin({ top: 8 })
@@ -139,9 +217,9 @@ struct WxFaceToFaceGroupPage {
   }
 
   handleKeyPress(key: string) {
-    const deleteText: string = getContext(this).resourceManager.getStringSync($r('app.string.delete_key_text_392847516293847'))
-    const clearText: string = getContext(this).resourceManager.getStringSync($r('app.string.clear_key_text_573829461847392'))
-    if (key === deleteText) {
+    if (this.isLoading) return;
+
+    if (key === '删除') {
       for (let i = 3; i >= 0; i--) {
         if (this.groupNumberArr[i] !== '') {
           this.groupNumberArr[i] = ''
@@ -149,7 +227,7 @@ struct WxFaceToFaceGroupPage {
           break
         }
       }
-    } else if (key === clearText) {
+    } else if (key === '清空') {
       this.groupNumberArr = ['', '', '', '']
       this.currentIndex = 0
     } else if (/^\d$/.test(key)) {
@@ -161,161 +239,5 @@ struct WxFaceToFaceGroupPage {
         }
       }
     }
-  }
-
-  @Builder
-  showGroupNumber() {
-    Column() {
-      Text(getContext(this).resourceManager.getStringSync($r('app.string.group_number_label_629384751952847')))
-        .fontSize(16)
-        .fontColor('#999999')
-        .margin({ top: 40, bottom: 10 })
-
-      Text(this.groupNumber)
-        .fontSize(48)
-        .fontWeight(FontWeight.Bold)
-        .fontColor(Color.White)
-        .margin({ bottom: 40 })
-
-      Text(getContext(this).resourceManager.getStringSync($r('app.string.tell_group_number_hint_847392615738294')))
-        .fontSize(14)
-        .fontColor('#999999')
-        .margin({ bottom: 40 })
-
-      Button(getContext(this).resourceManager.getStringSync($r('app.string.copy_group_number_btn_758394627184759')))
-        .width('80%')
-        .height(44)
-        .backgroundColor('#07C160')
-        .fontColor(Color.White)
-        .fontSize(16)
-        .borderRadius(4)
-        .onClick(() => {
-          // TODO: 实现复制功能
-          JhProgressHUD.showText(getContext(this).resourceManager.getStringSync($r('app.string.group_number_copied_toast_573829461847392')))
-        })
-    }
-    .width('100%')
-    .alignItems(HorizontalAlign.Center)
-  }
-
-  @Builder
-  createGroup() {
-    Column() {
-      Text(getContext(this).resourceManager.getStringSync($r('app.string.input_four_digits_text_392847516293847')))
-        .fontSize(16)
-        .fontColor('#999999')
-        .margin({ top: 40, bottom: 20 })
-
-      TextInput({ placeholder: getContext(this).resourceManager.getStringSync($r('app.string.group_number_placeholder_758394627184759')) })
-        .width('80%')
-        .height(44)
-        .backgroundColor(Color.White)
-        .borderRadius(4)
-        .margin({ bottom: 40 })
-        .onChange((value: string) => {
-          this.groupNumber = value
-        })
-        .onFocus(() => {
-          this.showKeyboard = true
-        })
-        .onBlur(() => {
-          this.showKeyboard = false
-        })
-
-      Button(getContext(this).resourceManager.getStringSync($r('app.string.create_group_chat_btn_184759362847392')))
-        .width('80%')
-        .height(44)
-        .backgroundColor('#07C160')
-        .fontColor(Color.White)
-        .fontSize(16)
-        .borderRadius(4)
-        .onClick(() => {
-          if (this.groupNumber.length !== 4) {
-            JhProgressHUD.showText(getContext(this).resourceManager.getStringSync($r('app.string.input_four_digits_text_392847516293847')))
-            return
-          }
-          this.isCreating = true
-        })
-
-      Text(getContext(this).resourceManager.getStringSync($r('app.string.or_text_separator_629384751952847')))
-        .fontSize(14)
-        .fontColor('#999999')
-        .margin({ top: 20, bottom: 20 })
-
-      Button(getContext(this).resourceManager.getStringSync($r('app.string.join_group_chat_btn_847392615738294')))
-        .width('80%')
-        .height(44)
-        .backgroundColor(Color.Transparent)
-        .fontColor('#07C160')
-        .fontSize(16)
-        .border({ width: 1, color: '#07C160' })
-        .borderRadius(4)
-        .onClick(() => {
-          this.isJoining = true
-        })
-    }
-    .width('100%')
-    .alignItems(HorizontalAlign.Center)
-  }
-
-  @Builder
-  joinGroup() {
-    Column() {
-      Text(getContext(this).resourceManager.getStringSync($r('app.string.input_four_digits_text_392847516293847')))
-        .fontSize(16)
-        .fontColor('#999999')
-        .margin({ top: 40, bottom: 20 })
-
-      TextInput({ placeholder: getContext(this).resourceManager.getStringSync($r('app.string.group_number_placeholder_758394627184759')) })
-        .width('80%')
-        .height(44)
-        .backgroundColor(Color.White)
-        .borderRadius(4)
-        .margin({ bottom: 40 })
-        .onChange((value: string) => {
-          this.groupNumber = value
-        })
-        .onFocus(() => {
-          this.showKeyboard = true
-        })
-        .onBlur(() => {
-          this.showKeyboard = false
-        })
-
-      Button(getContext(this).resourceManager.getStringSync($r('app.string.join_group_chat_btn_847392615738294')))
-        .width('80%')
-        .height(44)
-        .backgroundColor('#07C160')
-        .fontColor(Color.White)
-        .fontSize(16)
-        .borderRadius(4)
-        .onClick(() => {
-          if (this.groupNumber.length !== 4) {
-            JhProgressHUD.showText(getContext(this).resourceManager.getStringSync($r('app.string.input_four_digits_text_392847516293847')))
-            return
-          }
-          // TODO: 实现加入群聊功能
-          JhProgressHUD.showText(getContext(this).resourceManager.getStringSync($r('app.string.joining_group_chat_toast_573829461847392')))
-        })
-
-      Text(getContext(this).resourceManager.getStringSync($r('app.string.or_text_separator_629384751952847')))
-        .fontSize(14)
-        .fontColor('#999999')
-        .margin({ top: 20, bottom: 20 })
-
-      Button(getContext(this).resourceManager.getStringSync($r('app.string.create_group_chat_btn_184759362847392')))
-        .width('80%')
-        .height(44)
-        .backgroundColor(Color.Transparent)
-        .fontColor('#07C160')
-        .fontSize(16)
-        .border({ width: 1, color: '#07C160' })
-        .borderRadius(4)
-        .onClick(() => {
-          this.isJoining = false
-        })
-    }
-    .width('100%')
-    .alignItems(HorizontalAlign.Center)
   }
 }
