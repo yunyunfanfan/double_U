@@ -42,6 +42,7 @@ export struct WxContactsPage {
   @State dataArr: GroupItem[] = []
   @State tagIndexList: string[] = []
   @State isLoading: boolean = true
+  @State isRefreshing: boolean = false // 添加下拉刷新状态
   @State currentUserId: number = 0
   scroller: ListScroller = new ListScroller()
   searchController: SearchController = new SearchController()
@@ -95,6 +96,23 @@ export struct WxContactsPage {
     } finally {
       this.isLoading = false;
       this.updateTagIndexList();
+    }
+  }
+
+  // 下拉刷新处理函数
+  async onRefresh() {
+    console.info('[家庭成员页面] 用户触发下拉刷新');
+    this.isRefreshing = true;
+
+    try {
+      this.loadCurrentUser();
+      await this.loadFriendsData();
+      console.info('[家庭成员页面] 下拉刷新完成');
+    } catch (error) {
+      console.error('[家庭成员页面] 下拉刷新失败:', error);
+      JhProgressHUD.showToast('刷新失败，请重试');
+    } finally {
+      this.isRefreshing = false;
     }
   }
 
@@ -168,50 +186,55 @@ export struct WxContactsPage {
   @Builder
   body() {
     Stack({ alignContent: Alignment.End }) {
-      List({ space: 0, initialIndex: 0, scroller: this.scroller }) {
-        ForEach(this.dataArr, (groupItem: GroupItem, index: number) => {
-          ListItemGroup({ header: this.itemHeader(groupItem.groupName) }) {
-            ForEach(groupItem.data, (cellItem: ContactData, index2: number) => {
-              ListItem() {
-                WxContactsCell({
-                  index: groupItem.groupName === "🔍" ? 0 : 1,
-                  model: cellItem as WxContactsModel,
-                  searchController: this.searchController,
-                  onClickCell: (model: WxContactsModel) => {
-                    this.searchController.stopEditing()
-                    router.pushUrl({ url: 'pages/two/pages/WxUserInfoPage', params: { data: cellItem } })
-                  },
-                  onClickTopCell: (model: TopCellItem) => {
-                    this.searchController.stopEditing()
-                    console.info(`[家庭成员页面] 点击头部项目: ${model.title}`)
-                    this.clickCell(model.title)
-                  },
-                })
-              }
-            }, (item: ContactData) => `${item.id}_${item.name}`)
-          }
-          // 每行之间的分界线
-          .divider({
-            strokeWidth: 0.6,
-            startMargin: 65,
-            endMargin: 0,
-            color: KColors.kFormLineColor,
+      Refresh({ refreshing: $$this.isRefreshing }) {
+        List({ space: 0, initialIndex: 0, scroller: this.scroller }) {
+          ForEach(this.dataArr, (groupItem: GroupItem, index: number) => {
+            ListItemGroup({ header: this.itemHeader(groupItem.groupName) }) {
+              ForEach(groupItem.data, (cellItem: ContactData, index2: number) => {
+                ListItem() {
+                  WxContactsCell({
+                    index: groupItem.groupName === "🔍" ? 0 : 1,
+                    model: cellItem as WxContactsModel,
+                    searchController: this.searchController,
+                    onClickCell: (model: WxContactsModel) => {
+                      this.searchController.stopEditing()
+                      router.pushUrl({ url: 'pages/two/pages/WxUserInfoPage', params: { data: cellItem } })
+                    },
+                    onClickTopCell: (model: TopCellItem) => {
+                      this.searchController.stopEditing()
+                      console.info(`[家庭成员页面] 点击头部项目: ${model.title}`)
+                      this.clickCell(model.title)
+                    },
+                  })
+                }
+              }, (item: ContactData) => `${item.id}_${item.name}`)
+            }
+            // 每行之间的分界线
+            .divider({
+              strokeWidth: 0.6,
+              startMargin: 65,
+              endMargin: 0,
+              color: KColors.kFormLineColor,
+            })
           })
-        })
-        ListItem() {
-          this.footer()
+          ListItem() {
+            this.footer()
+          }
         }
+        .height('100%')
+        .layoutWeight(1)
+        .edgeEffect(EdgeEffect.Spring, {
+          alwaysEnabled: true
+        })
+        .backgroundColor(Color.White)
+        .sticky(StickyStyle.Header | StickyStyle.Footer)
+        .scrollBar(BarState.Off)
+        .onScrollIndex((firstIndex: number, lastIndex: number) => {
+          this.selectedIndex = firstIndex
+        })
       }
-      .height('100%')
-      .layoutWeight(1)
-      .edgeEffect(EdgeEffect.Spring, {
-        alwaysEnabled: true
-      })
-      .backgroundColor(Color.White)
-      .sticky(StickyStyle.Header | StickyStyle.Footer)
-      .scrollBar(BarState.Off)
-      .onScrollIndex((firstIndex: number, lastIndex: number) => {
-        this.selectedIndex = firstIndex
+      .onRefreshing(() => {
+        this.onRefresh()
       })
 
       AlphabetIndexer({ arrayValue: this.tagIndexList, selected: 0 })

@@ -175,6 +175,12 @@ export interface StepsRankingItem {
   steps: number;
 }
 
+export interface UserIdByNameResponse {
+  success: boolean;
+  user_id?: number;
+  message?: string;
+}
+
 export interface OverviewData {
   steps: number;
   current_heart_rate: number;
@@ -293,7 +299,7 @@ export class HealthDataSummary {
 }
 
 export class UserApiService {
-  private static readonly BASE_URL: string = 'http://172.23.100.9:5000';
+  private static readonly BASE_URL: string = 'http://172.23.66.205:5000';
   private baseUrl: string = `${UserApiService.BASE_URL}/api`;
 
   static getAvatarUrl(avatarPath: string): string {
@@ -452,6 +458,45 @@ export class UserApiService {
         success: false,
         message: '网络连接失败'
       };
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
+  async getUserName(userId: number): Promise<string> {
+    try {
+      console.info(`[UserApiService] 获取用户名，用户ID: ${userId}`);
+      const response = await this.getUserProfile(userId);
+
+      if (response.success && response.data) {
+        console.info(`[UserApiService] 获取用户名成功: ${response.data.username}`);
+        return response.data.username;
+      } else {
+        console.error('[UserApiService] 获取用户信息失败:', response.message);
+        return '未知用户';
+      }
+    } catch (error) {
+      console.error('[UserApiService] 获取用户名异常:', error);
+      return '未知用户';
+    }
+  }
+
+
+  async getUserIdByName(username: string): Promise<UserIdByNameResponse> {
+    const httpRequest = http.createHttp();
+    try {
+      console.info(`[获取用户ID] 查询用户名: ${username}`);
+      const response = await httpRequest.request(`${this.baseUrl}/user-id-by-name?username=${encodeURIComponent(username)}`, {        method: http.RequestMethod.GET,
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+      const responseText: string = response.result as string;
+      const result: UserIdByNameResponse = JSON.parse(responseText) as UserIdByNameResponse;
+      console.info(`[获取用户ID] 查询结果: ${result.success}`);
+      return result;
+    } catch (error) {
+      console.error('[获取用户ID] 异常:', error);
+      return { success: false, message: '网络连接失败' };
     } finally {
       httpRequest.destroy();
     }

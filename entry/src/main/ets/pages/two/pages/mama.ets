@@ -4,6 +4,7 @@
 ///  Created by iotjin on 2024/11/07.
 //从妈妈的健康情况点进去的页面
 //比主页少了运动排行榜
+
 import { promptAction, router } from '@kit.ArkUI'
 import { BaseNavigation, JhProgressHUD, KColors } from 'JhCommon'
 import { WxHomeModel } from '../../one/models/WxHomeModel'

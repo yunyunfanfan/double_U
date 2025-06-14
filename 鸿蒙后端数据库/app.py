@@ -366,31 +366,23 @@ def login():
             'message': f'登录失败: {str(e)}'
         }), 500
     
-
-# 删除好友关系
-@app.route('/api/remove-family-member', methods=['POST'])
-def remove_family_member():
+@app.route('/api/user-id-by-name', methods=['GET'])
+def get_user_id_by_name():
     try:
-        data = request.get_json()
-        user_id = data.get('user_id')
-        member_id = data.get('member_id')
+        username = request.args.get('username', '').strip()
+        if not username:
+            return jsonify({'success': False, 'message': '用户名不能为空'}), 400
         
         conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        # 双向删除好友关系
-        cursor.execute('''
-            UPDATE family_members SET status = 0 
-            WHERE (user_id = ? AND member_id = ?) OR (user_id = ? AND member_id = ?)
-        ''', (user_id, member_id, member_id, user_id))
-        
-        conn.commit()
+        user = conn.execute('SELECT id FROM users WHERE username = ?', (username,)).fetchone()
         conn.close()
         
-        return jsonify({'success': True, 'message': '删除好友成功'})
-        
+        if user:
+            return jsonify({'success': True, 'user_id': user['id']})
+        else:
+            return jsonify({'success': False, 'message': '用户不存在'})
     except Exception as e:
-        return jsonify({'success': False, 'message': f'删除失败: {str(e)}'}), 500
+        return jsonify({'success': False, 'message': f'查询失败: {str(e)}'}), 500
 
 # 获取所有用户（用于雷达加好友）
 @app.route('/api/all-users/<int:current_user_id>', methods=['GET'])
@@ -1314,6 +1306,52 @@ def get_user_profile(user_id):
             
     except Exception as e:
         return jsonify({'success': False, 'message': f'获取失败: {str(e)}'}), 500
+
+@app.route('/api/remove-family-member', methods=['POST'])
+def remove_family_member():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        member_id = data.get('member_id')
+        
+        print(f"[{datetime.now()}] 删除好友关系: 用户{user_id} -> 成员{member_id}")
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # 查询删除前的状态
+        before_count = cursor.execute('''
+            SELECT COUNT(*) as count FROM family_members 
+            WHERE (user_id = ? AND member_id = ?) OR (user_id = ? AND member_id = ?)
+        ''', (user_id, member_id, member_id, user_id)).fetchone()
+        print(f"[{datetime.now()}] 删除前关系数量: {before_count['count']}")
+        
+        # 执行硬删除
+        cursor.execute('''
+            DELETE FROM family_members 
+            WHERE (user_id = ? AND member_id = ?) OR (user_id = ? AND member_id = ?)
+        ''', (user_id, member_id, member_id, user_id))
+        
+        affected_rows = cursor.rowcount
+        print(f"[{datetime.now()}] 删除影响的行数: {affected_rows}")
+        
+        # 查询删除后的状态
+        after_count = cursor.execute('''
+            SELECT COUNT(*) as count FROM family_members 
+            WHERE (user_id = ? AND member_id = ?) OR (user_id = ? AND member_id = ?)
+        ''', (user_id, member_id, member_id, user_id)).fetchone()
+        print(f"[{datetime.now()}] 删除后关系数量: {after_count['count']}")
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'success': True, 'message': f'删除好友成功，删除{affected_rows}条记录'})
+        
+    except Exception as e:
+        print(f"[{datetime.now()}] 删除好友异常: {e}")
+        return jsonify({'success': False, 'message': f'删除失败: {str(e)}'}), 500
+
+
 
 @app.route('/api/weekly-calories/<int:user_id>', methods=['GET'])
 def get_weekly_calories(user_id):

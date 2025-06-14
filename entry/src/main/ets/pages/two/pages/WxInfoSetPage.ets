@@ -40,34 +40,7 @@ struct WxInfoSetPage {
             title: getContext(this).resourceManager.getStringSync($r('app.string.health_condition_7293684152')),
             text: this.model.label,
             clickCallBack: (): void => {
-              router.pushUrl({ url: 'pages/two/pages/mama', params: {} })
-            },
-          })
-          Blank().height(_rowSpace)
-          JhSetCell({
-            cellHeight: _cellH,
-            title: getContext(this).resourceManager.getStringSync($r('app.string.set_special_care_member_5948372610')),
-            hiddenLine: true,
-            hiddenArrow: true,
-            rightWidget: () => {
-              this.rightBuilder(this.switchSelected, false)
-            },
-            clickCallBack: (): void => {
-              const specialCareText: string = getContext(this).resourceManager.getStringSync($r('app.string.set_special_care_member_5948372610'))
-              this.clickCell(specialCareText)
-            },
-          })
-          Blank().height(_rowSpace)
-          JhSetCell({
-            cellHeight: _cellH,
-            title: getContext(this).resourceManager.getStringSync($r('app.string.add_to_blacklist_3761829450')),
-            hiddenArrow: true,
-            rightWidget: () => {
-              this.rightBuilder(this.switchSelected2, true)
-            },
-            clickCallBack: (): void => {
-              const blacklistText: string = getContext(this).resourceManager.getStringSync($r('app.string.add_to_blacklist_3761829450'))
-              this.clickCell(blacklistText)
+              router.pushUrl({ url: 'pages/one/pages/WxHomePage', params: { user_id: 2 } })
             },
           })
           Blank().height(_rowSpace)

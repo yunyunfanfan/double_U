@@ -9,11 +9,19 @@ interface PopMenuItem {
   icon: Resource;
 }
 
+interface HealthPageParams {
+  user_id?: number;
+}
+
 interface UserInfo {
   userId: string;
   userName: string;
   phone: string;
   loginTime: string;
+}
+
+interface RouterParams {
+  user_id?: number;
 }
 
 @Entry
@@ -23,37 +31,84 @@ export struct WxHomePage {
   @State dataArr: WxHomeModel[] = []
   @State healthDataSummary: HealthDataSummary = new HealthDataSummary('加载中...', '加载中...', '加载中...', '加载中...', '加载中...', '加载中...')
   @State isRefreshing: boolean = false
+  @State currentViewUserId: number = 0 // 当前查看的用户ID
+  @State isViewingOtherUser: boolean = false // 是否查看其他用户
+  @State currentUserName: string = '' // 当前查看用户的姓名
   scroller: ListScroller = new ListScroller()
   private healthDataService = userApiService
 
   aboutToAppear() {
     console.log('[WxHomePage] 页面即将显示，设置用户ID');
-    this.setCurrentUserFromStorage();
+    this.setCurrentUserFromParams();
     this.loadHealthData()
-    // console.error('data', JSON.stringify(this.dataArr))
   }
 
-  private setCurrentUserFromStorage(): void {
+  private setCurrentUserFromParams(): void {
     try {
+      // 先检查路由参数是否有传入user_id
+      const params = router.getParams() as RouterParams;
+      if (params && params.user_id) {
+        console.log(`[WxHomePage] 从路由参数获取用户ID: ${params.user_id}`);
+        this.currentViewUserId = params.user_id;
+        this.isViewingOtherUser = true;
+        this.healthDataService.setCurrentUserId(params.user_id);
+        this.loadUserName(params.user_id);
+        return;
+      }
+
+      // 如果没有路由参数，则从AppStorage获取当前登录用户
       const userInfoStr = AppStorage.get<string>('userInfo');
       if (userInfoStr) {
         const userInfo: UserInfo = JSON.parse(userInfoStr) as UserInfo;
         const userId: number = parseInt(userInfo.userId);
-        console.log(`[WxHomePage] 从存储获取用户ID: ${userId}`);
+        console.log(`[WxHomePage] 从存储获取当前用户ID: ${userId}`);
+        this.currentViewUserId = userId;
+        this.currentUserName = userInfo.userName;
+        this.isViewingOtherUser = false;
         this.healthDataService.setCurrentUserId(userId);
       } else {
         console.error('[WxHomePage] 未找到用户信息，使用默认用户ID: 1');
+        this.currentViewUserId = 1;
+        this.currentUserName = '默认用户';
+        this.isViewingOtherUser = false;
         this.healthDataService.setCurrentUserId(1);
       }
     } catch (error) {
       console.error('[WxHomePage] 解析用户信息失败:', error);
+      this.currentViewUserId = 1;
+      this.currentUserName = '默认用户';
+      this.isViewingOtherUser = false;
       this.healthDataService.setCurrentUserId(1);
     }
   }
 
+  private async loadUserName(userId: number): Promise<void> {
+    try {
+      console.log(`[WxHomePage] 开始获取用户名，用户ID: ${userId}`);
+      const userName = await this.healthDataService.getUserName(userId);
+      this.currentUserName = userName || '未知用户';
+      console.log(`[WxHomePage] 获取用户名成功: ${this.currentUserName}`);
+    } catch (error) {
+      console.error('[WxHomePage] 获取用户名失败:', error);
+      this.currentUserName = '未知用户';
+    }
+  }
+
   onPageShow() {
-    // 页面显示时重新设置用户ID并刷新数据
-    this.setCurrentUserFromStorage();
+    // 检查是否需要显示他人数据
+    const shouldShowOtherUser = AppStorage.get<boolean>('shouldShowOtherUser');
+    const viewingUserId = AppStorage.get<number>('viewingUserId');
+
+    if (shouldShowOtherUser && viewingUserId) {
+      console.log(`[WxHomePage] 从返回状态获取用户ID: ${viewingUserId}`);
+      this.currentViewUserId = viewingUserId;
+      this.isViewingOtherUser = true;
+      this.healthDataService.setCurrentUserId(viewingUserId);
+      this.loadUserName(viewingUserId);
+    } else {
+      // 页面显示时重新设置用户ID并刷新数据
+      this.setCurrentUserFromParams();
+    }
     this.refreshHealthData()
   }
 
@@ -105,16 +160,25 @@ export struct WxHomePage {
 
   build() {
     Column() {
-      BaseNavigation({
-        title: '健康助手',
-        leftItem: {},
-        bgColor: Color.Transparent,
-        rightImgPath: $rawfile("images/第一页加号.png"),
-        rightItemCallBack: () => {
-          console.log('点击了右侧图标')
-          this.onClickRightItem()
-        },
-      })
+      if (this.isViewingOtherUser) {
+        BaseNavigation({
+          title: `${this.currentUserName}的健康情况`,
+          bgColor: Color.Transparent,
+        })
+      }
+      else
+      {
+        BaseNavigation({
+          title: '健康助手',
+          leftItem: {},
+          bgColor: Color.Transparent,
+          rightImgPath: $rawfile("images/第一页加号.png"),
+          rightItemCallBack: () => {
+            console.log('点击了右侧图标')
+            this.onClickRightItem()
+          },
+        })
+      }
       this.body()
     }
     //.backgroundColor(KColors.wxBgColor)
@@ -362,6 +426,12 @@ export struct WxHomePage {
     let moodTitle: string = '心情'
     let deepseekTitle: string = 'DeepSeek助手'
 
+    // 如果查看其他用户，需要传递user_id参数
+    let routerParams: HealthPageParams = {};
+    if (this.isViewingOtherUser) {
+      routerParams.user_id = this.currentViewUserId;
+    }
+
     if (item.title == sportsRankingTitle) {
       console.log('正在跳转到运动排行榜页面...')
       router.pushUrl({
@@ -371,19 +441,19 @@ export struct WxHomePage {
         }
       })
     } else if (item.title == healthMemoryTitle) {
-      router.pushUrl({ url: 'pages/one/pages/HealthMemoryPage' })
+      router.pushUrl({ url: 'pages/one/pages/HealthMemoryPage', params: routerParams })
     } else if (item.title == heartRateTitle) {
-      router.pushUrl({ url: 'pages/one/pages/HeartRatePage' })
+      router.pushUrl({ url: 'pages/one/pages/HeartRatePage', params: routerParams })
     } else if (item.title == bloodOxygenTitle) {
-      router.pushUrl({ url: 'pages/one/pages/BloodOxygenPage' })
+      router.pushUrl({ url: 'pages/one/pages/BloodOxygenPage', params: routerParams })
     } else if (item.title == stepAnalysisTitle) {
-      router.pushUrl({ url: 'pages/one/pages/StepCountPage' })
+      router.pushUrl({ url: 'pages/one/pages/StepCountPage', params: routerParams })
     } else if (item.title == sleepTitle) {
-      router.pushUrl({ url: 'pages/one/pages/SleepPage' })
+      router.pushUrl({ url: 'pages/one/pages/SleepPage', params: routerParams })
     } else if (item.title == caloriesTitle) {
-      router.pushUrl({ url: 'pages/one/pages/CaloriesPage' })
+      router.pushUrl({ url: 'pages/one/pages/CaloriesPage', params: routerParams })
     } else if (item.title == moodTitle) {
-      router.pushUrl({ url: 'pages/one/pages/MoodPage' })
+      router.pushUrl({ url: 'pages/one/pages/MoodPage', params: routerParams })
     } else if (item.title == deepseekTitle) {
       router.pushUrl({url: 'pages/one/pages/HealthDataEntryPage'})
     }
@@ -415,21 +485,28 @@ export struct WxHomePage {
 
   // 这是控制文本
   getData(): WxHomeModel[] {
-    let dataArr: WxHomeModel[] = [
-      {
+    let dataArr: WxHomeModel[] = [];
+
+    // 如果查看其他用户，排除运动排行榜和DeepSeek助手
+    if (!this.isViewingOtherUser) {
+      dataArr.push({
         'title': '运动排行榜',
         'subtitle': '查看今日步数排行榜',
         'img': 'images/picture/bushu.png',
         'isNew': false,
         'type': '2',
-      },
-      {
+      });
+      dataArr.push({
         'title': 'DeepSeek助手',
         'subtitle': '智能健康咨询助手',
         'img': 'images/picture/ic_health_assistant.png',
         'isNew': true,
         'type': '2',
-      },
+      });
+    }
+
+    // 通用的健康数据项
+    dataArr.push(
       {
         'title': '健康记忆',
         'subtitle': '记录您的健康时光',
@@ -478,8 +555,9 @@ export struct WxHomePage {
         'img': 'images/picture/xinqing.png',
         'isNew': false,
         'type': '1',
-      },
-    ];
+      }
+    );
+
     return dataArr;
   }
 

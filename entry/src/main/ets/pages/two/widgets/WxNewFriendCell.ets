@@ -43,7 +43,7 @@ export struct WxNewFriendCell {
           } else {
             JhButton({
               text: '加好友',
-              btnWidth: 60,
+              btnWidth: 80,
               btnHeight: 30,
               btnFontSize: 14,
               onPressed: (): void => this.onClickBtn?.(this.model)

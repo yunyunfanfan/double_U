@@ -1,15 +1,22 @@
-///  description:  用户信息
+/// description: 用户信息
 
 import { router } from '@kit.ArkUI'
 import { BaseNavigation, JhProgressHUD, JhSetCell, KColors } from 'JhCommon'
 import { WxContactsModel } from '../models/WxContactsModel';
-import { UserApiService } from '../../../services/api_network/UserApiService';
+import { UserApiService, userApiService } from '../../../services/api_network/UserApiService';
 
 const _cellH = 55.0;
 const _rowSpace = 6.0;
 
 interface RouterParams {
   data: WxContactsModel;
+}
+
+interface UserInfo {
+  userId: string;
+  userName: string;
+  phone: string;
+  loginTime: string;
 }
 
 @Entry
@@ -19,11 +26,33 @@ struct WxUserInfoPage {
   jumpParams: WxContactsModel = new WxContactsModel()
   @State model: WxContactsModel = new WxContactsModel()
   @State avatarUrl: string = ''
+  @State currentUserId: number = 0
+  @State targetUserId: number = 0
+  @State isDeleting: boolean = false
 
   aboutToAppear() {
     console.info('[用户详情] 页面初始化');
+    this.loadCurrentUserId();
     this.loadRouterParams();
     this.loadUserAvatar();
+    this.loadTargetUserId();
+  }
+
+  private loadCurrentUserId(): void {
+    try {
+      const userInfoStr = AppStorage.get<string>('userInfo');
+      if (userInfoStr) {
+        const userInfo: UserInfo = JSON.parse(userInfoStr) as UserInfo;
+        this.currentUserId = parseInt(userInfo.userId);
+        console.info('[用户详情] 当前登录用户ID:', this.currentUserId);
+      } else {
+        console.error('[用户详情] 未找到登录用户信息');
+        this.currentUserId = 1;
+      }
+    } catch (error) {
+      console.error('[用户详情] 获取当前用户ID失败:', error);
+      this.currentUserId = 1;
+    }
   }
 
   private loadRouterParams(): void {
@@ -40,6 +69,29 @@ struct WxUserInfoPage {
     }
   }
 
+  private async loadTargetUserId(): Promise<void> {
+    if (this.model.user_id) {
+      this.targetUserId = this.model.user_id;
+      console.info('[用户详情] 直接获取目标用户ID:', this.targetUserId);
+      return;
+    }
+
+    if (this.model.name) {
+      console.info('[用户详情] 通过用户名查询用户ID:', this.model.name);
+      try {
+        const result = await userApiService.getUserIdByName(this.model.name as string);
+        if (result.success && result.user_id) {
+          this.targetUserId = result.user_id;
+          console.info('[用户详情] 查询到目标用户ID:', this.targetUserId);
+        } else {
+          console.error('[用户详情] 查询用户ID失败:', result.message);
+        }
+      } catch (error) {
+        console.error('[用户详情] 查询用户ID异常:', error);
+      }
+    }
+  }
+
   private loadUserAvatar(): void {
     if (this.model.avatarUrl) {
       this.avatarUrl = UserApiService.getUserDisplayAvatar(this.model.avatarUrl as string);
@@ -49,16 +101,49 @@ struct WxUserInfoPage {
     console.info('[用户详情] 加载头像:', this.avatarUrl);
   }
 
+  private async deleteFamilyMember(): Promise<void> {
+    console.info('[用户详情] 尝试删除家庭成员，当前用户:', this.currentUserId, '目标用户:', this.targetUserId);
+    if (!this.targetUserId) {
+      JhProgressHUD.showText('用户信息错误，无法删除');
+      return;
+    }
+
+    this.isDeleting = true;
+    console.info('[用户详情] 开始删除家庭成员，当前用户:', this.currentUserId, '目标用户:', this.targetUserId);
+
+    try {
+      const result = await userApiService.removeFamilyMember(this.currentUserId, this.targetUserId);
+      console.info(`[用户详情] 删除请求参数: ${this.currentUserId}, ${this.targetUserId}`);
+      if (result.success) {
+        console.info('[用户详情] 删除成功:', result.message);
+        JhProgressHUD.showText('删除成功');
+        setTimeout(() => {
+          router.replaceUrl({
+            url: 'pages/Index',
+            params: {
+              tabIndex: 1,
+              refresh: true,
+              timestamp: Date.now()
+            }
+          });
+        }, 1500);
+      } else {
+        console.error('[用户详情] 删除失败:', result.message);
+        JhProgressHUD.showText(`删除失败: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('[用户详情] 删除异常:', error);
+      JhProgressHUD.showText('删除失败，请重试');
+    } finally {
+      this.isDeleting = false;
+    }
+  }
+
   build() {
     Column() {
       BaseNavigation({
         title: '详细资料',
-        bgColor: Color.Transparent,
-        rightImgPath: $rawfile("images/ic_more_black.png"),
-        rightItemCallBack: () => {
-          const params: RouterParams = { data: this.jumpParams };
-          router.pushUrl({ url: 'pages/two/pages/WxInfoSetPage', params: params })
-        },
+        bgColor: Color.Transparent
       })
       List() {
         this.header()
@@ -81,23 +166,28 @@ struct WxUserInfoPage {
       text: '良好',
       textAlign: TextAlign.Start,
       clickCallBack: (): void => {
-        const emptyParams: RouterParams = { data: new WxContactsModel() };
-        router.pushUrl({ url: 'pages/two/pages/mama', params: emptyParams })
+        if (this.targetUserId) {
+          router.pushUrl({
+            url: 'pages/one/pages/WxHomePage',
+            params: { user_id: this.targetUserId }
+          });
+        }
       },
     })
     Blank().height(_rowSpace)
-    Row() {
-      Image($rawfile('wechat/contacts/ic_xinxi.png')).width(20)
-      Blank().width(5)
-      Text('发消息').fontSize(18).fontWeight(FontWeight.Bold).fontColor(KColors.wxTextBlueColor)
-    }
-    .width('100%')
-    .height(_cellH)
-    .justifyContent(FlexAlign.Center)
-    .backgroundColor(KColors.kCellBgColor)
-    .onClick(() => this.clickCell('发消息'))
-
-    Blank().height(0.5).width('100%').backgroundColor(KColors.kLineColor)
+    Text(this.isDeleting ? '删除中...' : getContext(this).resourceManager.getStringSync($r('app.string.delete_member_9285047361')))
+      .fontSize(18)
+      .fontColor(this.isDeleting ? Color.Gray : Color.Red)
+      .fontWeight(FontWeight.Bold)
+      .textAlign(TextAlign.Center)
+      .width('100%')
+      .height(_cellH)
+      .backgroundColor(KColors.kCellBgColor)
+      .onClick(() => {
+        if (!this.isDeleting) {
+          this.deleteFamilyMember();
+        }
+      })
   }
 
   @Builder

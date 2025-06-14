@@ -11,6 +11,10 @@ interface UserInfo {
   phone?: string;
 }
 
+interface RouterParams {
+  user_id?: number;
+}
+
 class WeeklyStepData {
   date: string = '';
   steps: number = 0;
@@ -50,6 +54,8 @@ export struct StepCountPage {
   @State errorMessage: string = '';
   @State hasDataLoaded: boolean = false;
   @State userId: number = 0;
+  @State isViewingOtherUser: boolean = false; // 添加到组件状态变量中
+
 
   private weekDays: string[] = [];
 
@@ -92,20 +98,37 @@ export struct StepCountPage {
     this.hasDataLoaded = false;
   }
 
+
   private async getUserId(): Promise<void> {
     try {
       console.info('=== 开始获取用户ID ===');
+
+      // 先检查路由参数是否有传入user_id
+      const params = router.getParams() as RouterParams;
+      if (params && params.user_id) {
+        console.info(`=== 从路由参数获取用户ID: ${params.user_id} ===`);
+        this.userId = params.user_id;
+        this.isViewingOtherUser = true;
+        return;
+      }
+
+      // 如果没有路由参数，则从AppStorage获取当前登录用户
       const userInfoStr = AppStorage.get<string>('userInfo');
-      const userInfo: UserInfo = userInfoStr ? JSON.parse(userInfoStr) as UserInfo : {};      if (userInfo && userInfo.userId) {
+      const userInfo: UserInfo = userInfoStr ? JSON.parse(userInfoStr) as UserInfo : {};
+
+      if (userInfo && userInfo.userId) {
         this.userId = parseInt(userInfo.userId);
-        console.info(`=== 获取到用户ID: ${this.userId} ===`);
+        this.isViewingOtherUser = false;
+        console.info(`=== 从存储获取当前用户ID: ${this.userId} ===`);
       } else {
         console.warn('=== 未找到用户信息，使用默认ID ===');
         this.userId = 1;
+        this.isViewingOtherUser = false;
       }
     } catch (error) {
       console.error(`=== 获取用户ID异常: ${error} ===`);
       this.userId = 1;
+      this.isViewingOtherUser = false;
     }
   }
 
@@ -257,7 +280,15 @@ export struct StepCountPage {
         }
         .onClick(() => {
           try {
-            router.back();
+            // 如果是查看其他用户，返回时需要传递user_id参数给主页
+            if (this.isViewingOtherUser) {
+              router.back({
+                url: 'pages/one/pages/WxHomePage',
+                params: { user_id: this.userId }
+              });
+            } else {
+              router.back();
+            }
           } catch (err) {
             router.pushUrl({ url: 'pages/one/OnePage' });
           }

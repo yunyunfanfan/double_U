@@ -15,4 +15,5 @@ export class WxContactsModel {
   // 新增
   namePinyin?: string
   tagIndex?: string
+  user_id?: number;
 }
