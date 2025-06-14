@@ -156,7 +156,7 @@ struct WxRadarAddMemberPage {
   build() {
     Column() {
       BaseNavigation({
-        title: '雷达加好友',
+        title: '雷达加成员',
         bgColor: Color.Transparent
       })
       this.content()

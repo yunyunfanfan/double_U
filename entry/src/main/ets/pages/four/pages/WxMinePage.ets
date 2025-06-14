@@ -4,7 +4,7 @@
 //"我的"页面
 //是第四页主页
 
-import { BaseNavigation, JhSetCell, KColors } from 'JhCommon'
+import { BaseNavigation, JhSetCell, KColors, JhProgressHUD } from 'JhCommon'
 import { router } from '@kit.ArkUI';
 import { UserApiService, userApiService, UserProfileResponse } from '../../../services/api_network/UserApiService';
 
@@ -15,6 +15,13 @@ const _rowSpace = 6.0;
 interface AvatarInfo {
   serverUrl: string;
   uploadStatus: 'uploading' | 'success' | 'failed' | 'none';
+}
+
+interface UserInfoFromStorage {
+  userId: string;
+  userName: string;
+  phone: string;
+  loginTime: string;
 }
 
 @Entry
@@ -29,6 +36,7 @@ export struct WxMinePage {
     uploadStatus: 'none'
   }
   @State currentUserId: number = 1
+  @State isRefreshing: boolean = false
 
   // 从服务器加载用户资料
   private async loadUserProfile(): Promise<void> {
@@ -54,6 +62,23 @@ export struct WxMinePage {
     }
   }
 
+  // 下拉刷新处理函数
+  async onRefresh(): Promise<void> {
+    console.info('[我的页面] 用户触发下拉刷新');
+    this.isRefreshing = true;
+
+    try {
+      await this.getUserId();
+      await this.loadUserProfile();
+      console.info('[我的页面] 下拉刷新完成');
+    } catch (error) {
+      console.error('[我的页面] 下拉刷新失败:', error);
+      JhProgressHUD.showToast('刷新失败，请重试');
+    } finally {
+      this.isRefreshing = false;
+    }
+  }
+
   // 获取显示的头像源
   private getAvatarSource(): string | Resource {
     if (this.avatarInfo.serverUrl) {
@@ -69,14 +94,8 @@ export struct WxMinePage {
       const userInfoStr = AppStorage.get<string>('userInfo');
 
       if (userInfoStr) {
-        interface UserInfoFromStorage {
-          userId: string;
-          userName: string;
-          phone: string;
-          loginTime: string;
-        }
-
-        const userInfo: UserInfoFromStorage = JSON.parse(userInfoStr) as UserInfoFromStorage;        if (userInfo && userInfo.userId) {
+        const userInfo: UserInfoFromStorage = JSON.parse(userInfoStr) as UserInfoFromStorage;
+        if (userInfo && userInfo.userId) {
           this.currentUserId = parseInt(userInfo.userId);
           console.info(`[我的页面] === 获取到用户ID: ${this.currentUserId} ===`);
         } else {
@@ -123,83 +142,88 @@ export struct WxMinePage {
 
   @Builder
   body() {
-    List({ scroller: this.scroller }) {
-      this.header()
-      ListItem() {
-        Column() {
-          Blank().height(_rowSpace)
-          JhSetCell({
-            cellHeight: _cellH,
-            leftIcon: $rawfile("wechat/mine/ic_wallet.png"),
-            title: '会员中心',
-            hiddenLine: true,
-            clickCallBack: (): void => this.clickCell('会员中心'),
-          })
-          Blank().height(_rowSpace)
-          JhSetCell({
-            cellHeight: _cellH,
-            lineLeftEdge: _leftSpace,
-            leftIcon: $rawfile("wechat/mine/ic_collections.png"),
-            title: '健康档案',
-            clickCallBack: (): void => {
-              this.clickCell('健康档案')
-            },
-          })
-          JhSetCell({
-            cellHeight: _cellH,
-            lineLeftEdge: _leftSpace,
-            leftIcon: $rawfile("wechat/mine/ic_album.png"),
-            title: '能量助手',
-            clickCallBack: (): void => {
-              this.clickCell('能量助手')
-            },
-          })
-          JhSetCell({
-            cellHeight: _cellH,
-            lineLeftEdge: _leftSpace,
-            leftIcon: $rawfile("wechat/mine/ic_cards_wallet.png"),
-            title: '知识专题',
-            hiddenLine: true,
-            clickCallBack: (): void => this.clickCell('知识专题'),
-          })
-          Blank().height(_rowSpace)
-          JhSetCell({
-            cellHeight: _cellH,
-            lineLeftEdge: _leftSpace,
-            leftIcon: $rawfile("wechat/mine/ic_emotions.png"),
-            title: '健康积分',
-            hiddenLine: true,
-            clickCallBack: (): void => this.clickCell('健康积分'),
-          })
-          Blank().height(_rowSpace)
-          JhSetCell({
-            cellHeight: _cellH,
-            leftIcon: $rawfile("wechat/mine/ic_settings.png"),
-            title: '设置',
-            hiddenLine: true,
-            clickCallBack: (): void => this.clickCell('设置'),
-          })
-          Blank().height(_rowSpace)
-          JhSetCell({
-            cellHeight: _cellH,
-            leftIcon: $rawfile("images/ic_about.png"),
-            title: '检查更新',
-            text: '有新版本',
-            textStyle: { fontSize: 14, fontColor: Color.Red },
-            hiddenLine: true,
-            clickCallBack: (): void => this.clickCell('检查更新'),
-          })
-          Blank().height(50)
+    Refresh({ refreshing: $$this.isRefreshing }) {
+      List({ scroller: this.scroller }) {
+        this.header()
+        ListItem() {
+          Column() {
+            Blank().height(_rowSpace)
+            JhSetCell({
+              cellHeight: _cellH,
+              leftIcon: $rawfile("wechat/mine/ic_wallet.png"),
+              title: '会员中心',
+              hiddenLine: true,
+              clickCallBack: (): void => this.clickCell('会员中心'),
+            })
+            Blank().height(_rowSpace)
+            JhSetCell({
+              cellHeight: _cellH,
+              lineLeftEdge: _leftSpace,
+              leftIcon: $rawfile("wechat/mine/ic_collections.png"),
+              title: '健康档案',
+              clickCallBack: (): void => {
+                this.clickCell('健康档案')
+              },
+            })
+            JhSetCell({
+              cellHeight: _cellH,
+              lineLeftEdge: _leftSpace,
+              leftIcon: $rawfile("wechat/mine/ic_album.png"),
+              title: '能量助手',
+              clickCallBack: (): void => {
+                this.clickCell('能量助手')
+              },
+            })
+            JhSetCell({
+              cellHeight: _cellH,
+              lineLeftEdge: _leftSpace,
+              leftIcon: $rawfile("wechat/mine/ic_cards_wallet.png"),
+              title: '知识专题',
+              hiddenLine: true,
+              clickCallBack: (): void => this.clickCell('知识专题'),
+            })
+            Blank().height(_rowSpace)
+            JhSetCell({
+              cellHeight: _cellH,
+              lineLeftEdge: _leftSpace,
+              leftIcon: $rawfile("wechat/mine/ic_emotions.png"),
+              title: '健康积分',
+              hiddenLine: true,
+              clickCallBack: (): void => this.clickCell('健康积分'),
+            })
+            Blank().height(_rowSpace)
+            JhSetCell({
+              cellHeight: _cellH,
+              leftIcon: $rawfile("wechat/mine/ic_settings.png"),
+              title: '设置',
+              hiddenLine: true,
+              clickCallBack: (): void => this.clickCell('设置'),
+            })
+            Blank().height(_rowSpace)
+            JhSetCell({
+              cellHeight: _cellH,
+              leftIcon: $rawfile("images/ic_about.png"),
+              title: '检查更新',
+              text: '有新版本',
+              textStyle: { fontSize: 14, fontColor: Color.Red },
+              hiddenLine: true,
+              clickCallBack: (): void => this.clickCell('检查更新'),
+            })
+            Blank().height(50)
+          }
         }
       }
+      .height('100%')
+      .edgeEffect(EdgeEffect.Spring, {
+        alwaysEnabled: true
+      })
+      .backgroundColor(Color.Transparent)
+      .onDidScroll(() => {
+        this.handleScroll()
+      })
     }
-    .height('100%')
-    .edgeEffect(EdgeEffect.Spring, {
-      alwaysEnabled: true
-    })
-    .backgroundColor(Color.Transparent)
-    .onDidScroll(() => {
-      this.handleScroll()
+    .onRefreshing(() => {
+      this.onRefresh()
     })
   }
 

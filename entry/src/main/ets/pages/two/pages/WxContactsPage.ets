@@ -4,6 +4,7 @@ import { BaseNavigation, JhProgressHUD, KColors } from 'JhCommon'
 import { WxContactsModel } from '../models/WxContactsModel'
 import { WxContactsCell } from '../widgets/WxContactsCell'
 import { userApiService, FriendsListResponse, FriendItem } from '../../../services/api_network/UserApiService'
+import { UserApiService } from '../../../services/api_network/UserApiService'
 
 ///第二页主页
 
@@ -116,17 +117,31 @@ export struct WxContactsPage {
     }
   }
 
+  // 获取用户头像源
+  private getUserAvatarSource(avatarUrl: string): string {
+    console.info(`[家庭成员页面] 原始头像URL: "${avatarUrl}"`);
+    if (avatarUrl && avatarUrl.trim() !== '') {
+      const processedUrl = UserApiService.getUserDisplayAvatar(avatarUrl);
+      console.info(`[家庭成员页面] 处理后的头像URL: "${processedUrl}"`);
+      return processedUrl;
+    }
+    const defaultUrl = UserApiService.getDefaultAvatarUrl();
+    console.info(`[家庭成员页面] 使用默认头像URL: "${defaultUrl}"`);
+    return defaultUrl;
+  }
+
   private processDataForDisplay(friends: FriendItem[]): ContactData[] {
     const contactsData: ContactData[] = [];
 
     for (const friend of friends) {
+      const processedAvatarUrl = this.getUserAvatarSource(friend.avatar_url || '');
       const contactData: ContactData = {
         id: friend.id,
         name: friend.username,
         phone: friend.phone,
         avatarUrl: friend.avatar_url || '',
         color: '#f2e979',
-        img: friend.avatar_url || '',
+        img: processedAvatarUrl,
         namePinyin: '',
         tagIndex: ''
       };

@@ -2,11 +2,18 @@ import { BaseNavigation, JhProgressHUD, JhSetCell, KColors, JhAESPreferencesUtil
 import { router } from '@kit.ArkUI';
 import { UserApiService, userApiService, UserProfileResponse } from '../../../services/api_network/UserApiService';
 
-///这是第二页主页
+///这是第三页主页
 
 const _cellH = 55.0;
 const _leftSpace = 50.0;
 const _rowSpace = 6.0;
+
+interface UserInfoFromStorage {
+  userId: string;
+  userName: string;
+  phone: string;
+  loginTime: string;
+}
 
 interface ServerUserInfo {
   userID: string;
@@ -38,6 +45,7 @@ export struct WxDiscoverPage {
   @State fatigueReliefText: string = '';
   @State diseaseMedicationText: string = '';
   @State clickActionText: string = '';
+  @State isRefreshing: boolean = false;
   @State avatarInfo: AvatarInfo = {
     serverUrl: '',
     uploadStatus: 'none'
@@ -64,6 +72,22 @@ export struct WxDiscoverPage {
     }
   }
 
+  async onRefresh(): Promise<void> {
+    console.info('[发现页面] 用户触发下拉刷新');
+    this.isRefreshing = true;
+
+    try {
+      await this.getUserId();
+      await this.loadUserProfile();
+      console.info('[发现页面] 下拉刷新完成');
+    } catch (error) {
+      console.error('[发现页面] 下拉刷新失败:', error);
+      JhProgressHUD.showToast('刷新失败，请重试');
+    } finally {
+      this.isRefreshing = false;
+    }
+  }
+
   // 获取显示的头像源
   private getAvatarSource(): string | Resource {
     if (this.avatarInfo.serverUrl) {
@@ -87,30 +111,53 @@ export struct WxDiscoverPage {
     this.loadUserInfo();
   }
 
+  private async getUserId(): Promise<void> {
+    try {
+      console.info('[发现页面] === 开始获取用户ID ===');
+      const userInfoStr = AppStorage.get<string>('userInfo');
+
+      if (userInfoStr) {
+        const userInfo: UserInfoFromStorage = JSON.parse(userInfoStr) as UserInfoFromStorage;
+        if (userInfo && userInfo.userId) {
+          this.currentUserId = parseInt(userInfo.userId);
+          console.info(`[发现页面] === 获取到用户ID: ${this.currentUserId} ===`);
+        } else {
+          console.warn('[发现页面] === 未找到用户信息，使用默认ID ===');
+          this.currentUserId = 1;
+        }
+      } else {
+        console.warn('[发现页面] === AppStorage中无用户信息，使用默认ID ===');
+        this.currentUserId = 1;
+      }
+    } catch (error) {
+      console.error(`[发现页面] === 获取用户ID异常: ${error} ===`);
+      this.currentUserId = 1;
+    }
+  }
+
   loadUserInfo(): void {
     console.info('[发现页面] 开始加载用户信息');
-
-    // 获取当前用户ID
-    let userInfo = JhAESPreferencesUtils.getModel(kUserDefault_UserInfo) as ServerUserInfo;
-    if (userInfo && userInfo.userID) {
-      this.currentUserId = parseInt(userInfo.userID);
-    }
-
-    // 从服务器加载最新的用户资料
-    this.loadUserProfile();
+    this.getUserId().then(() => {
+      this.loadUserProfile();
+    });
   }
 
   build() {
     Column() {
       BaseNavigation({ title: this.titleText, bgColor: Color.Transparent, leftItem: {} })
-      Scroll() {
-        Column() {
-          this.body()
+      Refresh({ refreshing: $$this.isRefreshing }) {
+        Scroll() {
+          Column() {
+            this.body()
+          }
+          .height('100%')
         }
-        .height('100%')
+        .edgeEffect(EdgeEffect.Spring, {
+          alwaysEnabled: true
+        })
       }
-      .edgeEffect(EdgeEffect.Spring, {
-        alwaysEnabled: true
+      .onRefreshing(() => {
+        this.onRefresh()
       })
     }
     .backgroundColor(KColors.wxBgColor)

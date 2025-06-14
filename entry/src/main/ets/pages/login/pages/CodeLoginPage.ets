@@ -19,7 +19,10 @@ interface UserData {
   userId: string;
   userName: string;
   phone: string;
+  loginTime: string;
 }
+
+
 
 @Entry
 @Preview
@@ -173,10 +176,13 @@ struct CodeLoginPage {
         const userData: UserData = {
           userId: registerResult.user_id?.toString() || Date.now().toString(),
           userName: registerResult.username || this.userName,
-          phone: registerResult.phone || this.phone
+          phone: registerResult.phone || this.phone,
+          loginTime: new Date().toISOString()
         }
 
-        await JhAESPreferencesUtils.saveModel(kUserDefault_UserInfo, userData)
+        // 统一使用 AppStorage 存储用户信息，与登录页面保持一致
+        AppStorage.setOrCreate<string>('userInfo', JSON.stringify(userData))
+        console.info('[CodeLoginPage] 用户信息已存储到AppStorage:', JSON.stringify(userData))
 
         JhProgressHUD.showSuccess(getContext(this).resourceManager.getStringSync($r('app.string.register_success_msg')))
 

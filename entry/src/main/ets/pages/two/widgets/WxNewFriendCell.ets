@@ -42,7 +42,7 @@ export struct WxNewFriendCell {
             Text('已添加').width(55).fontSize(15)
           } else {
             JhButton({
-              text: '加好友',
+              text: '加成员',
               btnWidth: 80,
               btnHeight: 30,
               btnFontSize: 14,

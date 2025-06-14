@@ -30,21 +30,28 @@ export struct WxContactsCell {
     } else {
       Row() {
         Row() {
-          // Image(this.model.avatarUrl)
-          //   .width(_imgWH).height(_imgWH)
-          //   .borderRadius(5)
-          //   .clip(true)
-          Row() {
-            Text(this.model.name?.substring(0, 1))
-              .fontColor(Color.White)
-              .fontSize(20)
+          if (this.model.img && this.model.img.trim() !== '') {
+            Image(this.model.img)
+              .width(_imgWH).height(_imgWH)
+              .borderRadius(5)
+              .clip(true)
+              .objectFit(ImageFit.Cover)
+              .onError(() => {
+                console.error(`[WxContactsCell] 头像加载失败: ${this.model.name}`);
+              })
+          } else {
+            Row() {
+              Text(this.model.name?.substring(0, 1))
+                .fontColor(Color.White)
+                .fontSize(20)
+            }
+            .justifyContent(FlexAlign.Center)
+            .alignItems(VerticalAlign.Center)
+            .width(_imgWH)
+            .height(_imgWH)
+            .borderRadius(5)
+            .backgroundColor(this.model.color)
           }
-          .justifyContent(FlexAlign.Center)
-          .alignItems(VerticalAlign.Center)
-          .width(_imgWH)
-          .height(_imgWH)
-          .borderRadius(5)
-          .backgroundColor(this.model.color)
         }
         .justifyContent(FlexAlign.Center)
         .alignItems(VerticalAlign.Center)
