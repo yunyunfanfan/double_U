@@ -24,6 +24,11 @@ export struct PointsHomePage {
     },
     {
       label: '',
+      pagePath: 'pages/four/pages/jifen/ranking',
+      textKey: 'ranking'
+    },
+    {
+      label: '',
       pagePath: 'pages/four/pages/jifen/BadgesPage',
       textKey: 'my_badges'
     },
@@ -57,6 +62,11 @@ export struct PointsHomePage {
       {
         iconPrefix = ' 🎖️ '
         textResource = $r('app.string.my_badges')
+      }
+      else if (item.textKey === 'ranking')
+      {
+        iconPrefix = ' 📊 '
+        textResource = $r('app.string.ranking')
       }
       else if (item.textKey === 'about')
       {

@@ -5322,6 +5322,10 @@
     {
       "name": "permission_write_media",
       "value": "需要保存头像图片到本地"
+    },
+    {
+      "name": "ranking",
+      "value": "ranking"
     }
   ]
 }

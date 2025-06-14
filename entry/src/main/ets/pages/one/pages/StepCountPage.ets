@@ -146,7 +146,8 @@ export struct StepCountPage {
 
       if (healthResponse.success && healthResponse.data && healthResponse.data.length > 0) {
         // 过滤今日数据用于当前步数显示
-        const today: string = new Date().toISOString().split('T')[0];
+        const todayDate = new Date();
+        const today: string = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
         const todayData: HealthDataRequest | undefined = healthResponse.data.find((item: HealthDataRequest) => {
           const itemDate: string = (item.record_date || '').replace(/'/g, '');
           return itemDate === today;

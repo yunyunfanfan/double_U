@@ -1,184 +1,254 @@
 import { router } from '@kit.ArkUI';
-import { BaseNavigation, KColors } from 'JhCommon';
+import { userApiService, PointsRankingResponse, PointsRankingItem } from '../../../../services/api_network/UserApiService';
 
-
-// 定义排行榜项的类型接口
-interface RankItem {
-  rank: number;
-  userKey: string;
-  steps: number;
-  likes: number;
-  iconColor: string;
+interface UserInfo {
+  userId?: string;
+  userName?: string;
+  phone?: string;
 }
 
+class RankingDisplayItem {
+  rank: number;
+  userId: number;
+  username: string;
+  totalPoints: number;
+  isCurrentUser: boolean;
+
+  constructor(rank: number, userId: number, username: string, totalPoints: number, isCurrentUser: boolean) {
+    this.rank = rank;
+    this.userId = userId;
+    this.username = username;
+    this.totalPoints = totalPoints;
+    this.isCurrentUser = isCurrentUser;
+  }
+}
 
 @Entry
 @Component
-export struct PointsPage {
-  // 使用明确的类型定义排行榜数据
-  rankList: RankItem[] = [
-    { rank: 1, userKey: 'user_li_yifei', steps: 285, likes: 27, iconColor: '#1E90FF' },
-    { rank: 2, userKey: 'user_dad', steps: 163, likes: 23, iconColor: '#ff41e7e3' },
-    { rank: 3, userKey: 'user_mom', steps: 102, likes: 31, iconColor: '#fffc7fbb' },
-    { rank: 4, userKey: 'user_lu_jinghao', steps: 91, likes: 19, iconColor: '#ffe56b6b' },
-    { rank: 5, userKey: 'user_me', steps: 83, likes: 15, iconColor: '#ff7ff37f' },
-    { rank: 6, userKey: 'user_grandma', steps: 28, likes: 18, iconColor: '#fff3c568' }
-  ];
+export struct PointsRankingPage {
+  @State rankingList: RankingDisplayItem[] = [];
+  @State isLoading: boolean = true;
+  @State errorMessage: string = '';
+  @State currentUserId: number = 0;
+  @State currentUserRank: number = 0;
+  @State refreshing: boolean = false;
 
+  aboutToAppear(): void {
+    console.info('=== 积分排行榜页面初始化 ===');
+    this.loadCurrentUser();
+    this.loadRankingData();
+  }
+
+  private loadCurrentUser(): void {
+    try {
+      const userInfoStr = AppStorage.get<string>('userInfo');
+      if (userInfoStr) {
+        const userInfo: UserInfo = JSON.parse(userInfoStr) as UserInfo;
+        this.currentUserId = parseInt(userInfo.userId || '0');
+        console.info(`=== 当前用户ID: ${this.currentUserId} ===`);
+      }
+    } catch (error) {
+      console.error(`=== 获取用户信息失败: ${error} ===`);
+      this.currentUserId = 0;
+    }
+  }
+
+  private async loadRankingData(): Promise<void> {
+    try {
+      console.info('=== 开始加载积分排行榜 ===');
+      this.isLoading = true;
+      this.errorMessage = '';
+
+      const response: PointsRankingResponse = await userApiService.getPointsRanking(100);
+      console.info(`=== 排行榜响应: ${JSON.stringify(response)} ===`);
+
+      if (response.success && response.rankings) {
+        const displayItems: RankingDisplayItem[] = response.rankings.map((item: PointsRankingItem) => {
+          const isCurrentUser = item.user_id === this.currentUserId;
+          if (isCurrentUser) {
+            this.currentUserRank = item.rank;
+          }
+          return new RankingDisplayItem(
+            item.rank,
+            item.user_id,
+            item.username,
+            item.total_points,
+            isCurrentUser
+          );
+        });
+
+        this.rankingList = displayItems;
+        console.info(`=== 排行榜加载完成，共${displayItems.length}条记录 ===`);
+      } else {
+        this.errorMessage = response.message || '获取排行榜失败';
+        this.rankingList = [];
+      }
+    } catch (error) {
+      console.error(`=== 加载排行榜异常: ${error} ===`);
+      this.errorMessage = `加载失败: ${error}`;
+      this.rankingList = [];
+    } finally {
+      this.isLoading = false;
+      this.refreshing = false;
+    }
+  }
+
+  private async refreshRanking(): Promise<void> {
+    console.info('=== 用户触发排行榜刷新 ===');
+    this.refreshing = true;
+    await this.loadRankingData();
+  }
+
+  private getRankIcon(rank: number): string {
+    if (rank === 1) return '🥇';
+    if (rank === 2) return '🥈';
+    if (rank === 3) return '🥉';
+    return `${rank}`;
+  }
+
+  private getRankColor(rank: number): string {
+    if (rank === 1) return '#FFD700';
+    if (rank === 2) return '#C0C0C0';
+    if (rank === 3) return '#CD7F32';
+    return '#666666';
+  }
 
   build() {
     Column() {
       // 顶部导航栏
-      BaseNavigation({
-        title: $r('app.string.my_points'),
-        bgColor: Color.Transparent
-      })
-
-      // 排行榜区域
-      Column() {
-        // 排行榜标题区 - 使用正确的渐变背景
-        Column() {
-          // 使用文本图标替代图片
-          Text('🏆')
-            .fontSize(40)
-            .margin({ top: 15 })
-          Text($r('app.string.points_ranking'))
-            .fontSize(24)
-            .fontWeight(FontWeight.Bold)
-            .fontColor('#FFFFFF')
-            .margin({ top: 5, bottom: 10 })
+      Row() {
+        Button({ type: ButtonType.Circle }) {
+          Image($r('app.media.ic_back')).width(20).height(20)
         }
-        .width('100%')
-        // 正确使用背景色和渐变
-        .backgroundColor('#3CB371')
-
-        .padding({ top: 15, bottom: 15 })
-        .borderRadius({ topLeft: 20, topRight: 20 })
-
-        // 排行榜列表区
-        Column() {
-          // 排行榜头部
-          Row() {
-            Text($r('app.string.rank'))
-              .fontSize(16)
-              .fontColor('#666666')
-              .width('15%')
-              .textAlign(TextAlign.Start)
-            Text($r('app.string.user'))
-              .fontSize(16)
-              .fontColor('#666666')
-              .width('50%')
-              .textAlign(TextAlign.Start)
-            Text($r('app.string.likes'))
-              .fontSize(16)
-              .fontColor('#666666')
-              .width('35%')
-              .textAlign(TextAlign.End)
+        .onClick(() => {
+          try {
+            router.back();
+          } catch (err) {
+            console.error('=== 返回失败 ===', err);
+            router.pushUrl({ url: 'pages/one/OnePage' });
           }
-          .width('100%')
-          .padding({ left: 20, right: 20, bottom: 10 })
-          .backgroundColor('#F8F8F8')
+        })
+        .width(40).height(40).backgroundColor(Color.Transparent).margin({ left: 12 })
 
-          // 排行榜具体数据展示
-          ForEach(this.rankList, (item: RankItem) => {
-            Row() {
-              // 排名列
-              Column() {
-                Text(item.rank.toString())
-                  .fontSize(item.rank <= 3 ? 20 : 18)
-                  .fontWeight(item.rank <= 3 ? FontWeight.Bold : FontWeight.Normal)
-                  .fontColor(item.rank === 1 ? '#FFD700' :
-                    item.rank === 2 ? '#C0C0C0' :
-                      item.rank === 3 ? '#CD7F32' : '#333333')
-              }
-              .width('15%')
-              .justifyContent(FlexAlign.Start)
+        Text('积分排行榜')
+          .fontSize(20).fontWeight(FontWeight.Bold).fontColor('#333333')
+          .layoutWeight(1).textAlign(TextAlign.Center)
 
-              // 用户信息列
-              Row() {
-                // 用户头像
-                Text(item.userKey.charAt(5).toUpperCase())
-                  .fontSize(22)
-                  .fontWeight(FontWeight.Bold)
-                  .textAlign(TextAlign.Center)
-                  .width(36)
-                  .height(36)
-                  .backgroundColor(item.iconColor)
-                  .margin({ right: 12 })
-                  .borderRadius(18)
-                  .fontColor('#FFFFFF')
-
-                Column() {
-                  // 用户名
-                  Text($r(`app.string.${item.userKey}`))
-                    // Text(this.getResourceString($r(`app.string.${item.userKey}`)))
-                    // Text($r(`app.string.${item.userKey}`))
-                    .fontSize(16)
-                    .fontColor('#333333')
-                    .width('100%')
-                    .textAlign(TextAlign.Start)
-
-                  // 步数
-                  Text() {
-                    Span(`${item.steps.toLocaleString()} `)
-                    Span($r('app.string.points_unit'))
-                  }
-                  .fontSize(14)
-                  .fontColor('#666666')
-                  .width('100%')
-                  .textAlign(TextAlign.Start)
-                }
-                .width('85%')
-                .justifyContent(FlexAlign.Start)
-                .alignItems(HorizontalAlign.Start)
-              }
-              .width('50%')
-              .justifyContent(FlexAlign.Start)
-
-              // 点赞列
-              Row() {
-                Column() {
-                  Text(item.likes.toString())
-                    .fontSize(16)
-                    .fontColor(item.likes > 0 ? '#FF0000' : '#999999')
-                    .width('100%')
-                    .textAlign(TextAlign.End)
-                  Text(item.likes > 0 ? '❤' : '♡')
-                    .fontSize(18)
-                    .fontColor(item.likes > 0 ? '#FF0000' : '#999999')
-                    .width('100%')
-                    .textAlign(TextAlign.End)
-                }
-                .width('100%')
-              }
-              .width('35%')
-              .justifyContent(FlexAlign.End)
-            }
-            .width('100%')
-            .padding({ left: 20, right: 20, top: 15, bottom: 15 })
-            .backgroundColor('#FFFFFF')
-            .borderRadius(12)
-            .margin({ bottom: 10 })
-            .shadow({
-              radius: 3,
-              color: '#E0E0E0',
-              offsetX: 0,
-              offsetY: 2
-            })
-          })
+        Button({ type: ButtonType.Circle }) {
+          if (this.refreshing) {
+            LoadingProgress().width(20).height(20).color('#4285F4')
+          } else {
+            Text('🔄').fontSize(18)
+          }
         }
-        .width('100%')
-        .backgroundColor('#F5F5F5')
-        .padding({ left: 15, right: 15, top: 15, bottom: 20 })
-        .borderRadius({ bottomLeft: 20, bottomRight: 20 })
+        .onClick(() => {
+          if (!this.refreshing) {
+            this.refreshRanking();
+          }
+        })
+        .width(40).height(40).backgroundColor(Color.Transparent).margin({ right: 12 })
+        .enabled(!this.refreshing)
       }
-      .width('100%')
-      .height('100%')
-      .padding({ left: 15, right: 15, top: 10 })
+      .width('100%').height(60).justifyContent(FlexAlign.SpaceBetween)
+      .backgroundColor('#FFFFFF').shadow({ radius: 8, color: 'rgba(0,0,0,0.05)', offsetY: 2 })
+
+      if (this.isLoading) {
+        Column({ space: 20 }) {
+          LoadingProgress().width(60).height(60).color('#4285F4')
+          Text('正在加载排行榜...')
+            .fontSize(16).fontColor('#666666')
+        }
+        .width('100%').layoutWeight(1).justifyContent(FlexAlign.Center)
+      } else if (this.errorMessage) {
+        Column({ space: 20 }) {
+          Text('😕').fontSize(64)
+          Text('加载失败').fontSize(20).fontColor('#EA4335')
+          Text(this.errorMessage).fontSize(14).fontColor('#666666').textAlign(TextAlign.Center)
+          Button('重新加载')
+            .onClick(() => this.refreshRanking())
+            .backgroundColor('#4285F4').fontColor(Color.White).borderRadius(12).height(44).width(120)
+        }
+        .width('100%').layoutWeight(1).justifyContent(FlexAlign.Center).padding(40)
+      } else {
+        Column() {
+          // 当前用户排名卡片
+          if (this.currentUserRank > 0) {
+            Row() {
+              Text('我的排名').fontSize(16).fontColor('#666666')
+              Blank()
+              Text(`第${this.currentUserRank}名`).fontSize(18).fontWeight(FontWeight.Bold).fontColor('#4285F4')
+            }
+            .width('90%').padding(16).backgroundColor('#F0F8FF').borderRadius(12).margin({ top: 16, bottom: 8 })
+          }
+
+          // 排行榜列表
+          if (this.rankingList.length === 0) {
+            Column({ space: 16 }) {
+              Text('📊').fontSize(48)
+              Text('暂无排行榜数据').fontSize(16).fontColor('#666666')
+              Button('刷新数据')
+                .onClick(() => this.refreshRanking())
+                .backgroundColor('#4285F4').fontColor(Color.White).borderRadius(20).height(40)
+            }
+            .width('100%').layoutWeight(1).justifyContent(FlexAlign.Center)
+          } else {
+            Scroll() {
+              Column({ space: 8 }) {
+                ForEach(this.rankingList, (item: RankingDisplayItem, index: number) => {
+                  Row() {
+                    // 排名
+                    Row() {
+                      if (item.rank <= 3) {
+                        Text(this.getRankIcon(item.rank))
+                          .fontSize(24).textAlign(TextAlign.Center)
+                      } else {
+                        Text(`${item.rank}`)
+                          .fontSize(16).fontWeight(FontWeight.Bold)
+                          .fontColor(this.getRankColor(item.rank))
+                      }
+                    }
+                    .width(50).height(40).justifyContent(FlexAlign.Center)
+
+                    // 用户信息
+                    Column() {
+                      Text(item.username)
+                        .fontSize(16).fontWeight(FontWeight.Medium)
+                        .fontColor(item.isCurrentUser ? '#4285F4' : '#333333')
+                        .maxLines(1).textOverflow({ overflow: TextOverflow.Ellipsis })
+
+                      Text(`用户ID: ${item.userId}`)
+                        .fontSize(12).fontColor('#999999').margin({ top: 2 })
+                    }
+                    .layoutWeight(1).alignItems(HorizontalAlign.Start).margin({ left: 16 })
+
+                    // 积分
+                    Column() {
+                      Text(`${item.totalPoints}`)
+                        .fontSize(18).fontWeight(FontWeight.Bold)
+                        .fontColor(item.isCurrentUser ? '#4285F4' : '#333333')
+                      Text('积分')
+                        .fontSize(12).fontColor('#666666')
+                    }
+                    .alignItems(HorizontalAlign.End)
+                  }
+                  .width('90%').height(60).padding({ left: 12, right: 12 })
+                  .backgroundColor(item.isCurrentUser ? '#F0F8FF' : (index % 2 === 0 ? '#FAFAFA' : '#FFFFFF'))
+                  .borderRadius(12).margin({ bottom: 4 })
+                  .shadow({
+                    radius: item.isCurrentUser ? 8 : 4,
+                    color: item.isCurrentUser ? 'rgba(66, 133, 244, 0.2)' : 'rgba(0,0,0,0.05)',
+                    offsetY: 2
+                  })
+                })
+              }
+              .padding({ top: 8, bottom: 20 })
+            }
+            .layoutWeight(1).scrollBar(BarState.Auto)
+          }
+        }
+        .alignItems(HorizontalAlign.Center)
+      }
     }
-    .width('100%')
-    .height('100%')
-    .backgroundColor('#F5F5F5')
+    .width('100%').height('100%').backgroundColor('#F8F9FA')
   }
 }
-

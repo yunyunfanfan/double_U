@@ -211,7 +211,8 @@ export struct HealthMemoryPage {
         console.info(`[健康数据] === 健康数据处理完成，共${healthResponse.data.length}条记录 ===`);
 
         // 单独处理今日数据用于实时数据显示
-        const today: string = new Date().toISOString().split('T')[0];
+        const todayDate = new Date();
+        const today: string = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
         const todayData: HealthDataRequest | undefined = healthResponse.data.find((item: HealthDataRequest) => {
           const itemDate: string = (item.record_date || '').replace(/'/g, '');
           return itemDate === today;
@@ -356,7 +357,8 @@ export struct HealthMemoryPage {
     this.memories = memories;
 
     // 修改这里：优先查找今日数据，如果没有则使用默认值
-    const today: string = new Date().toISOString().split('T')[0];
+    const todayDate = new Date();
+    const today: string = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
     const todayData: DailyHealthData | undefined = this.dailyDataMap.get(today);
 
     if (todayData) {
@@ -937,7 +939,8 @@ export struct HealthMemoryPage {
     if (this.memories.length === 0) return '';
 
     const memoryDate = this.memories[index].date.replace(/'/g, '');
-    const today = new Date().toISOString().split('T')[0];
+    const todayDate = new Date();
+    const today: string = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
     const targetDate = new Date(memoryDate);
     const currentDate = new Date(today);
 

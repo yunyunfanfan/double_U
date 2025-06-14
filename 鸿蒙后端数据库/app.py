@@ -110,9 +110,7 @@ def init_database():
         )
     ''')
 
-    # 在 init_database() 函数中添加以下表创建语句：
-
-    # 用户积分表
+    # 用户积分表（主要表）
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS user_points (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -124,7 +122,7 @@ def init_database():
         )
     ''')
 
-    # 积分记录表
+    # 积分记录表（用于历史追踪）
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS points_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -135,20 +133,6 @@ def init_database():
             record_date TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users (id)
-        )
-    ''')
-
-    # 步数记录表（专门用于步数和积分）
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS steps_records (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            steps INTEGER NOT NULL,
-            points_earned INTEGER NOT NULL,
-            record_date TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users (id),
-            UNIQUE(user_id, record_date)
         )
     ''')
         
@@ -257,6 +241,84 @@ def register():
             'success': False,
             'message': f'注册失败: {str(e)}'
         }), 500
+    
+@app.route('/api/add-points', methods=['POST'])
+def add_points():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        points = data.get('points')
+        source_type = data.get('source_type', 'manual')
+        source_data = data.get('source_data', '')
+        
+        current_time = datetime.now().strftime('%Y-%m-%d %H:%M')
+        print(f"[{current_time}] 添加积分: 用户{user_id}, 积分{points}")
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # 更新总积分
+        cursor.execute('''
+            INSERT OR REPLACE INTO user_points (user_id, total_points, updated_at)
+            VALUES (?, COALESCE((SELECT total_points FROM user_points WHERE user_id = ?), 0) + ?, CURRENT_TIMESTAMP)
+        ''', (user_id, user_id, points))
+        
+        # 记录积分历史
+        cursor.execute('''
+            INSERT INTO points_history (user_id, points, source_type, source_data, record_date)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (user_id, points, source_type, source_data, datetime.now().strftime('%Y-%m-%d')))
+        
+        # 获取最新总积分
+        total_points_row = cursor.execute('''
+            SELECT total_points FROM user_points WHERE user_id = ?
+        ''', (user_id,)).fetchone()
+        total_points = total_points_row['total_points'] if total_points_row else 0
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': '积分添加成功',
+            'total_points': total_points
+        })
+        
+    except Exception as e:
+        current_time = datetime.now().strftime('%Y-%m-%d %H:%M')
+        print(f"[{current_time}] 添加积分异常: {e}")
+        return jsonify({'success': False, 'message': f'添加失败: {str(e)}'}), 500
+
+@app.route('/api/points-ranking', methods=['GET'])
+def get_points_ranking():
+    try:
+        limit = int(request.args.get('limit', 100))
+        
+        conn = get_db_connection()
+        
+        rankings = conn.execute('''
+            SELECT up.user_id, up.total_points, u.username 
+            FROM user_points up
+            JOIN users u ON up.user_id = u.id
+            ORDER BY up.total_points DESC
+            LIMIT ?
+        ''', (limit,)).fetchall()
+        
+        conn.close()
+        
+        result = []
+        for i, row in enumerate(rankings):
+            result.append({
+                'rank': i + 1,
+                'user_id': row['user_id'],
+                'username': row['username'],
+                'total_points': row['total_points']
+            })
+        
+        return jsonify({'success': True, 'rankings': result})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'获取失败: {str(e)}'}), 500
     
 @app.route('/api/reset-password', methods=['POST'])
 def reset_password():
@@ -476,6 +538,8 @@ def health_check():
         'message': '服务器运行正常',
         'timestamp': datetime.now().isoformat()
     })
+
+
 @app.route('/api/health-data', methods=['POST'])
 def save_health_data():
     try:
@@ -483,31 +547,52 @@ def save_health_data():
         user_id = data.get('user_id')
         record_date = data.get('record_date', datetime.now().strftime('%Y-%m-%d'))
         
+        print(f"[{datetime.now()}] 保存健康数据: 用户{user_id}, 日期{record_date}")
+        
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        update_fields = []
-        values = []
+        # 检查今日是否已有记录
+        existing = cursor.execute('''
+            SELECT id FROM health_data 
+            WHERE user_id = ? AND record_date = ?
+        ''', (user_id, record_date)).fetchone()
         
         health_fields = [
-        'steps', 'steps_goal', 'distance', 'calories_burned',
-        'current_heart_rate', 'resting_heart_rate', 'min_heart_rate', 'avg_heart_rate', 'max_heart_rate',
-        'current_blood_oxygen', 'min_blood_oxygen', 'avg_blood_oxygen', 'max_blood_oxygen',
-        'sleep_score', 'sleep_duration', 'sleep_start_time', 'sleep_end_time',
-        'deep_sleep_duration', 'light_sleep_duration', 'rem_sleep_duration', 'awake_duration',
-        'active_calories', 'calories_goal',  'basic_metabolism_calories',
-        'current_mood'
+            'steps', 'steps_goal', 'distance', 'calories_burned',
+            'current_heart_rate', 'resting_heart_rate', 'min_heart_rate', 'avg_heart_rate', 'max_heart_rate',
+            'current_blood_oxygen', 'min_blood_oxygen', 'avg_blood_oxygen', 'max_blood_oxygen',
+            'sleep_score', 'sleep_duration', 'sleep_start_time', 'sleep_end_time',
+            'deep_sleep_duration', 'light_sleep_duration', 'rem_sleep_duration', 'awake_duration',
+            'active_calories', 'calories_goal', 'basic_metabolism_calories',
+            'current_mood'
         ]
         
-        for field in health_fields:
-            if field in data:
-                update_fields.append(f"{field} = ?")
-                values.append(data[field])
-        
-        if update_fields:
-            update_fields.append("updated_at = CURRENT_TIMESTAMP")
-            sql = f"INSERT OR REPLACE INTO health_data (user_id, record_date, {', '.join([f for f in health_fields if f in data])}, updated_at) VALUES (?, ?, {', '.join(['?' for f in health_fields if f in data])}, CURRENT_TIMESTAMP)"
-            cursor.execute(sql, [user_id, record_date] + [data[f] for f in health_fields if f in data])
+        if existing:
+            # 已有记录，执行增量更新
+            update_fields = []
+            values = []
+            
+            for field in health_fields:
+                if field in data and data[field] is not None:
+                    update_fields.append(f"{field} = ?")
+                    values.append(data[field])
+            
+            if update_fields:
+                update_fields.append("updated_at = CURRENT_TIMESTAMP")
+                sql = f"UPDATE health_data SET {', '.join(update_fields)} WHERE user_id = ? AND record_date = ?"
+                values.extend([user_id, record_date])
+                cursor.execute(sql, values)
+                print(f"[{datetime.now()}] 增量更新: 更新{len(update_fields)-1}个字段")
+        else:
+            # 新记录，执行插入
+            provided_fields = [f for f in health_fields if f in data and data[f] is not None]
+            if provided_fields:
+                placeholders = ', '.join(['?' for _ in provided_fields])
+                sql = f"INSERT INTO health_data (user_id, record_date, {', '.join(provided_fields)}, updated_at) VALUES (?, ?, {placeholders}, CURRENT_TIMESTAMP)"
+                values = [user_id, record_date] + [data[f] for f in provided_fields]
+                cursor.execute(sql, values)
+                print(f"[{datetime.now()}] 新增记录: 包含{len(provided_fields)}个字段")
         
         conn.commit()
         conn.close()
@@ -515,10 +600,13 @@ def save_health_data():
         return jsonify({'success': True, 'message': '健康数据保存成功'})
         
     except Exception as e:
+        print(f"[{datetime.now()}] 保存健康数据异常: {e}")
         return jsonify({'success': False, 'message': f'保存失败: {str(e)}'}), 500
 
 @app.route('/api/realtime-data', methods=['POST'])
 def save_realtime_data():
+    current_time = datetime.now().strftime('%Y-%m-%d %H:%M')
+    
     try:
         data = request.get_json()
         user_id = data.get('user_id')
@@ -527,20 +615,79 @@ def save_realtime_data():
         data_type = data.get('data_type')
         value = data.get('value')
         
+        print(f"[{current_time}] 保存实时数据: 用户{user_id}, 日期{record_date}, 时间{time_stamp}, 类型{data_type}, 数值{value}")        
+        
+        # 参数验证
+        if not user_id or not time_stamp or not data_type or value is None:
+            return jsonify({'success': False, 'message': '必要参数缺失'}), 400
+                
+        # 时间格式验证和标准化 - 支持 YYYY-MM-DD HH:MM 和 HH:MM
+        if ':' not in time_stamp:
+            return jsonify({'success': False, 'message': '时间格式错误，应为YYYY-MM-DD HH:MM或HH:MM'}), 400
+
+        # 处理完整日期时间格式
+        if ' ' in time_stamp and '-' in time_stamp:
+            try:
+                datetime.strptime(time_stamp, '%Y-%m-%d %H:%M')
+                formatted_time = time_stamp
+                print(f"[{current_time}] 接收完整时间戳: {formatted_time}")
+            except ValueError:
+                return jsonify({'success': False, 'message': '日期时间格式无效，应为YYYY-MM-DD HH:MM'}), 400
+        else:
+            # 处理只有时间的格式，补充当前日期
+            time_parts = time_stamp.split(':')
+            if len(time_parts) != 2:
+                return jsonify({'success': False, 'message': '时间格式错误'}), 400
+            
+            try:
+                hour = int(time_parts[0])
+                minute = int(time_parts[1])
+                if hour < 0 or hour > 23 or minute < 0 or minute > 59:
+                    return jsonify({'success': False, 'message': '时间值超出范围'}), 400
+                current_date = datetime.now().strftime('%Y-%m-%d')
+                formatted_time = f"{current_date} {hour:02d}:{minute:02d}"
+                print(f"[{current_time}] 补充日期后的时间戳: {formatted_time}")
+            except ValueError:
+                return jsonify({'success': False, 'message': '时间格式无效'}), 400
+        
+        # 数据类型验证
+        valid_data_types = ['heart_rate', 'blood_oxygen', 'mood']
+        if data_type not in valid_data_types:
+            print(f"[{current_time}] 警告: 未知数据类型 {data_type}")
+        
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        cursor.execute('''
-            INSERT OR REPLACE INTO realtime_data (user_id, record_date, time_stamp, data_type, value)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (user_id, record_date, time_stamp, data_type, value))
+        # 检查是否已存在相同记录
+        existing = cursor.execute('''
+            SELECT id FROM realtime_data 
+            WHERE user_id = ? AND record_date = ? AND time_stamp = ? AND data_type = ?
+        ''', (user_id, record_date, formatted_time, data_type)).fetchone()
+        
+        if existing:
+            # 更新现有记录
+            cursor.execute('''
+                UPDATE realtime_data 
+                SET value = ?, created_at = CURRENT_TIMESTAMP 
+                WHERE user_id = ? AND record_date = ? AND time_stamp = ? AND data_type = ?
+            ''', (value, user_id, record_date, formatted_time, data_type))
+            print(f"[{current_time}] 更新实时数据记录")
+        else:
+            # 插入新记录
+            cursor.execute('''
+                INSERT INTO realtime_data (user_id, record_date, time_stamp, data_type, value)
+                VALUES (?, ?, ?, ?, ?)
+            ''', (user_id, record_date, formatted_time, data_type, value))
+            print(f"[{current_time}] 新增实时数据记录")
         
         conn.commit()
         conn.close()
         
+        print(f"[{current_time}] 实时数据保存成功")
         return jsonify({'success': True, 'message': '实时数据保存成功'})
         
     except Exception as e:
+        print(f"[{current_time}] 保存实时数据异常: {e}")
         return jsonify({'success': False, 'message': f'保存失败: {str(e)}'}), 500
 
 @app.route('/api/health-data/<int:user_id>', methods=['GET'])
@@ -571,9 +718,13 @@ def get_health_data(user_id):
 @app.route('/api/realtime-data/<int:user_id>', methods=['GET'])
 def get_realtime_data(user_id):
     try:
+        current_time = datetime.now().strftime('%Y-%m-%d %H:%M')
         record_date = request.args.get('date', datetime.now().strftime('%Y-%m-%d'))
         data_type = request.args.get('type')
-        days = int(request.args.get('days', 1))
+        days_param = request.args.get('days')
+        days = int(days_param) if days_param is not None else 1
+        
+        print(f"[{current_time}] 获取实时数据: 用户{user_id}, 类型{data_type}, 天数{days}")
         
         conn = get_db_connection()
         
@@ -673,11 +824,12 @@ def get_overview(user_id):
             result = {
                 'steps': overview['steps'] or 0,
                 'current_heart_rate': overview['current_heart_rate'] or 0,
+                'avg_heart_rate': overview['current_heart_rate'] or 0,  # 添加这个字段
                 'sleep_score': overview['sleep_score'] or 0,
                 'active_calories': overview['active_calories'] or 0,
                 'basic_metabolism_calories': overview['basic_metabolism_calories'] or 0,
                 'blood_oxygen': overview['current_blood_oxygen'] or 0,
-                'current_mood': overview['current_mood'] or 5
+                'current_mood': overview['current_mood'] if overview['current_mood'] is not None else -1
             }
         else:
             result = {

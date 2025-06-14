@@ -1,136 +1,147 @@
 // pages/StepsInputPage.ets
-import { stepsApiService } from '../../../../services/step_api/StepApiService';
+import { userApiService } from '../../../../services/api_network/UserApiService';
 import { router } from '@kit.ArkUI';
 import { BaseNavigation, KColors } from 'JhCommon';
 
 @Entry
 @Component
 struct StepsInputPage {
-  private userId: number = 1; // 实际应用中应从登录状态获取
+  private userId: number = 1;
   @State steps: string = '';
   @State message: string = '';
   @State isLoading: boolean = false;
-  @State points: number = 0; // 新增积分状态
+  @State points: number = 0;
 
-  // 计算积分的方法
   private calculatePoints(steps: number): number {
     return Math.floor(steps / 500);
   }
+  private currentUserId: number = 1;
 
-  build() {
-    Column({ space: 20 }) {
-      // 返回按钮
-      Row() {
-        Button('返回')
-          .width(80)
-          .height(40)
-          .backgroundColor('#f0f0f0')
-          .fontColor('#333333')
-          .onClick(() => {
-            router.back(); // 返回上一页
-          })
-
-        Text('健康步数记录')
-          .fontSize(26)
-          .fontWeight(FontWeight.Bold)
-          .margin({ left: 40 })
-      }
-      .width('100%')
-      .justifyContent(FlexAlign.Start)
-      .margin({ top: 30, bottom: 20 })
-
-      // 新增：积分显示区域
-      Row() {
-        Column() {
-          Text('预计获得积分')
-            .fontSize(16)
-            .fontColor('#666666')
-          Text(`${this.points}`)
-            .fontSize(28)
-            .fontWeight(FontWeight.Bold)
-            .fontColor('#FFA500') // 橙色
-            .margin({ top: 5 })
-        }
-        .width('50%')
-        .alignItems(HorizontalAlign.Center)
-
-        Column() {
-          Text('当前步数')
-            .fontSize(16)
-            .fontColor('#666666')
-          Text(this.steps || '0')
-            .fontSize(28)
-            .fontWeight(FontWeight.Bold)
-            .fontColor('#3CB371') // 绿色
-            .margin({ top: 5 })
-        }
-        .width('50%')
-        .alignItems(HorizontalAlign.Center)
-      }
-      .width('90%')
-      .padding(15)
-      .backgroundColor('#FFFFFF')
-      .borderRadius(12)
-      .shadow({ radius: 2, color: '#E0E0E0', offsetX: 0, offsetY: 2 })
-
-      Text('请输入您今天的步数:')
-        .fontSize(18)
-        .width('90%')
-        .textAlign(TextAlign.Start)
-
-      TextInput({ placeholder: '例如: 8000' })
-        .type(InputType.Number)
-        .width('90%')
-        .height(60)
-        .borderRadius(10)
-        .backgroundColor('#f5f5f5')
-        .onChange((value: string) => {
-          this.steps = value;
-          // 实时计算积分
-          const stepsNum = parseInt(value) || 0;
-          this.points = this.calculatePoints(stepsNum);
-        })
-
-      if (this.isLoading) {
-        LoadingProgress()
-          .width(50)
-          .height(50)
-          .margin({ top: 20 })
-      } else {
-        Button('保存步数', { type: ButtonType.Capsule })
-          .width('90%')
-          .height(50)
-          .margin({ top: 20 })
-          .backgroundColor('#007aff')
-          .fontColor(Color.White)
-          .onClick(() => {
-            this.saveSteps();
-          })
-      }
-
-      Text(this.message)
-        .fontSize(16)
-        .margin({ top: 20 })
-        .width('90%')
-        .textAlign(TextAlign.Center)
-        .fontColor(this.message.includes('成功') ? '#34C759' : '#FF3B30')
-
-      Button('查看历史记录', { type: ButtonType.Normal })
-        .width('90%')
-        .height(45)
-        .margin({ top: 30 })
-        .onClick(() => {
-          router.pushUrl({ url: 'pages/StepsHistoryPage' });
-        })
-    }
-    .width('100%')
-    .height('100%')
-    .padding(20)
-    .backgroundColor('#ffffff')
+  aboutToAppear(): void {
+    this.loadCurrentUser();
   }
 
-  private async saveSteps(): Promise<void> {
-    // 验证输入
+  private loadCurrentUser(): void {
+    try {
+      const userInfoStr = AppStorage.get<string>('userInfo');
+      if (userInfoStr) {
+        interface UserInfoFromStorage {
+          userId: string;
+          userName: string;
+          phone: string;
+          loginTime: string;
+        }
+        const userInfo: UserInfoFromStorage = JSON.parse(userInfoStr) as UserInfoFromStorage;
+        this.currentUserId = parseInt(userInfo.userId);
+        console.info(`[AI健康录入] 当前用户ID: ${this.currentUserId}`);
+      }
+    } catch (error) {
+      console.error(`[AI健康录入] 获取用户信息失败:`, error);
+    }
+  }
+
+  build() {
+    Column() {
+      // 顶部导航栏
+      Row() {
+        Button({ type: ButtonType.Circle }) {
+          Image($r('app.media.ic_back')).width(20).height(20)
+        }
+        .onClick(() => {
+          router.back();
+        })
+        .width(40).height(40).backgroundColor(Color.Transparent).margin({ left: 10 })
+
+        Text('积分录入')
+          .fontSize(20).fontWeight(FontWeight.Bold).fontColor('#333333')
+          .layoutWeight(1).textAlign(TextAlign.Center)
+
+        // 占位符保持对称
+        Row().width(40).height(40).margin({ right: 10 })
+      }
+      .width('100%').height(60).justifyContent(FlexAlign.SpaceBetween)
+      .backgroundColor('#FFFFFF').shadow({ radius: 8, color: 'rgba(0,0,0,0.05)', offsetY: 2 })
+
+      Scroll() {
+        Column({ space: 20 }) {
+          // 步数预览卡片
+          Column({ space: 10 }) {
+            Text('今日步数')
+              .fontSize(16).fontWeight(FontWeight.Medium).fontColor('#333333')
+            Text(this.steps || '0')
+              .fontSize(28).fontWeight(FontWeight.Bold).fontColor('#4CAF50')
+          }
+          .width('90%').padding(20).backgroundColor('#FFFFFF').borderRadius(12)
+          .shadow({ radius: 6, color: 'rgba(0,0,0,0.04)', offsetY: 2 })
+
+          // 积分预览卡片
+          Column({ space: 10 }) {
+            Text('预计获得积分')
+              .fontSize(16).fontWeight(FontWeight.Medium).fontColor('#333333')
+            Text(`${this.points}`)
+              .fontSize(28).fontWeight(FontWeight.Bold).fontColor('#FF9800')
+            Text('每500步 = 1积分')
+              .fontSize(12).fontColor('#999999')
+          }
+          .width('90%').padding(20).backgroundColor('#FFFFFF').borderRadius(12)
+          .shadow({ radius: 6, color: 'rgba(0,0,0,0.04)', offsetY: 2 })
+
+          // 输入区域
+          Column({ space: 15 }) {
+            Text('请输入今日步数')
+              .fontSize(16).fontColor('#333333').width('100%')
+
+            TextInput({ placeholder: '例如: 8000' })
+              .type(InputType.Number).width('100%').height(50)
+              .borderRadius(10).backgroundColor('#F8F9FA')
+              .border({ width: 1, color: '#E9ECEF' })
+              .onChange((value: string) => {
+                this.steps = value;
+                const stepsNum = parseInt(value) || 0;
+                this.points = this.calculatePoints(stepsNum);
+              })
+
+            Text('每500步可获得1积分')
+              .fontSize(12).fontColor('#999999').width('100%')
+          }
+          .width('90%').padding(20).backgroundColor('#FFFFFF').borderRadius(15)
+          .shadow({ radius: 6, color: 'rgba(0,0,0,0.04)', offsetY: 2 })
+
+          // 保存按钮
+          if (this.isLoading) {
+            Column() {
+              LoadingProgress().width(40).height(40).color('#4CAF50')
+              Text('正在保存...').fontSize(14).fontColor('#4CAF50').margin({ top: 10 })
+            }.height(80).justifyContent(FlexAlign.Center)
+          } else {
+            Button('保存积分', { type: ButtonType.Capsule })
+              .width('90%').height(50).backgroundColor('#4CAF50').fontColor(Color.White)
+              .onClick(() => { this.savePoints(); })
+          }
+
+          // 消息提示
+          if (this.message) {
+            Text(this.message)
+              .fontSize(14).width('90%').textAlign(TextAlign.Center).padding(15)
+              .backgroundColor(this.message.includes('成功') ? '#E8F5E8' : '#FFE8E8')
+              .fontColor(this.message.includes('成功') ? '#4CAF50' : '#F44336')
+              .borderRadius(8)
+          }
+
+          // 历史记录按钮
+          Button('查看排行榜', { type: ButtonType.Normal })
+            .width('90%').height(45).backgroundColor('#2196F3').fontColor(Color.White)
+            .borderRadius(10).margin({ bottom: 20 })
+            .onClick(() => { router.pushUrl({ url: 'pages/four/pages/jifen/PointsRankingPage' }); })
+        }
+        .padding({ top: 20 })
+      }
+      .layoutWeight(1)
+    }
+    .width('100%').height('100%').backgroundColor('#F8F9FA')
+  }
+
+  private async savePoints(): Promise<void> {
     if (!this.steps.trim()) {
       this.message = '请输入步数';
       return;
@@ -152,23 +163,25 @@ struct StepsInputPage {
       return;
     }
 
-    // 保存数据
     this.isLoading = true;
-    this.message = '正在保存...';
+    this.message = '';
 
     try {
-      const result = await stepsApiService.saveSteps(this.userId, stepsNum);
+      console.info(`=== 准备添加积分: 用户${this.currentUserId}, 积分${this.points} ===`);
+      const result = await userApiService.addPoints(this.currentUserId, this.points, 'steps', `步数录入: ${stepsNum}步`);
 
       if (result.success) {
-        this.message = `成功保存 ${stepsNum} 步! 获得 ${this.points} 积分`;
-        this.steps = ''; // 清空输入框
-        this.points = 0; // 重置积分
+        this.message = `成功添加 ${this.points} 积分! (基于 ${stepsNum} 步)`;
+        this.steps = '';
+        this.points = 0;
+        console.info(`=== 积分添加成功 ===`);
       } else {
         this.message = `保存失败: ${result.message || '服务器错误'}`;
+        console.error(`=== 积分添加失败: ${result.message} ===`);
       }
     } catch (error) {
       this.message = '网络错误，请稍后重试';
-      console.error('保存步数错误:', error);
+      console.error('=== 添加积分异常:', error, ' ===');
     } finally {
       this.isLoading = false;
     }

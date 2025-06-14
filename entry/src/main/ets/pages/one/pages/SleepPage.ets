@@ -47,7 +47,7 @@ class SleepRecord {
 @Component
 export struct SleepPage {
   @State sleepScore: number = 0;
-  @State totalSleepTime: string = '0小时0分钟';
+  @State totalSleepTime: string = '0h0min';
   @State bedTime: string = '00:00';
   @State wakeTime: string = '00:00';
   @State sleepPhases: SleepPhaseData[] = [];
@@ -91,7 +91,7 @@ export struct SleepPage {
   private resetSleepData(): void {
     console.info('=== 重置睡眠数据 ===');
     this.sleepScore = 0;
-    this.totalSleepTime = '0小时0分钟';
+    this.totalSleepTime = '0h0min';
     this.bedTime = '00:00';
     this.wakeTime = '00:00';
     this.sleepPhases = [];
@@ -145,7 +145,8 @@ export struct SleepPage {
 
       if (sleepResponse.success && sleepResponse.data && sleepResponse.data.length > 0) {
         // 过滤今日数据用于当前睡眠显示
-        const today: string = new Date().toISOString().split('T')[0];
+        const todayDate = new Date();
+        const today: string = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
         const todayData: HealthDataRequest | undefined = sleepResponse.data.find((item: HealthDataRequest) => {
           const itemDate: string = (item.record_date || '').replace(/'/g, '');
           return itemDate === today;
@@ -168,7 +169,7 @@ export struct SleepPage {
         } else {
           console.warn('=== 今日睡眠数据为空，使用默认值 ===');
           this.sleepScore = 0;
-          this.totalSleepTime = '0小时0分钟';
+          this.totalSleepTime = '0h0min';
           this.bedTime = '00:00';
           this.wakeTime = '00:00';
           this.sleepPhases = [
@@ -225,7 +226,7 @@ export struct SleepPage {
   private formatDuration(minutes: number): string {
     let hours = Math.floor(minutes / 60);
     let mins = minutes % 60;
-    return `${hours}小时${mins}分钟`;
+    return `${hours}h${mins}min`;
   }
 
   private getScoreLevel(score: number): string {
@@ -418,7 +419,7 @@ export struct SleepPage {
     Column() {
       Text(icon).fontSize(20).margin({ bottom: 6 })
       Text(label).fontSize(12).fontColor('#999999').margin({ bottom: 4 })
-      Text(value).fontSize(14).fontWeight(FontWeight.Bold).fontColor(color).textAlign(TextAlign.Center)
+      Text(value).fontSize(14).minFontSize(10).maxFontSize(16).fontWeight(FontWeight.Bold).fontColor(color).textAlign(TextAlign.Center)
     }
     .width(80).height(80).padding(8).backgroundColor('#F8F9FA').borderRadius(12)
     .justifyContent(FlexAlign.Center).alignItems(HorizontalAlign.Center)

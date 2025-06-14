@@ -6,6 +6,59 @@ export interface RegisterRequest {
   password: string;
 }
 
+// 步数保存请求
+export interface StepsSaveRequest {
+  user_id: number;
+  steps: number;
+  record_date?: string;
+}
+
+// 步数保存响应
+export interface StepsSaveResponse {
+  success: boolean;
+  message: string;
+  points_earned?: number;
+  total_points?: number;
+}
+
+export interface AddPointsRequest {
+  user_id: number;
+  points: number;
+  source_type: string;
+  source_data: string;
+}
+
+// 步数历史记录项
+export interface StepsHistoryItem {
+  id: number;
+  steps: number;
+  points_earned: number;
+  record_date: string;
+  created_at: string;
+}
+
+// 步数历史响应
+export interface StepsHistoryResponse {
+  success: boolean;
+  records?: StepsHistoryItem[];
+  message?: string;
+}
+
+// 用户积分信息
+export interface UserPointsInfo {
+  user_id: number;
+  total_points: number;
+  updated_at: string;
+}
+
+// 积分信息响应
+export interface UserPointsResponse {
+  success: boolean;
+  data?: UserPointsInfo;
+  message?: string;
+}
+
+
 
 export interface AvatarUploadResponse {
   success: boolean;
@@ -263,6 +316,28 @@ export interface HealthCheckResponse {
   timestamp?: string;
 }
 
+// 积分相关接口
+export interface UserPointsData {
+  user_id: number;
+  total_points: number;
+  updated_at: string;
+}
+
+
+
+export interface PointsRankingItem {
+  rank: number;
+  user_id: number;
+  username: string;
+  total_points: number;
+}
+
+export interface PointsRankingResponse {
+  success: boolean;
+  rankings?: PointsRankingItem[];
+  message?: string;
+}
+
 
 export interface UpdateUsernameRequest {
   user_id: number;
@@ -295,6 +370,98 @@ export class HealthDataSummary {
     this.sleep = sleep;
     this.calories = calories;
     this.mood = mood;
+  }
+}
+
+
+export class StepsApiService {
+  private baseUrl: string = 'http://172.23.41.252:5000/api';
+
+  async savePoints(userId: number, points: number, sourceType: string = 'manual'): Promise<StepsSaveResponse> {
+    const httpRequest = http.createHttp();
+
+    try {
+      console.info(`[积分服务] 为用户${userId}添加积分: ${points}`);
+
+      const requestData: AddPointsRequest = {
+        user_id: userId,
+        points: points,
+        source_type: sourceType,
+        source_data: `手动录入积分: ${points}`
+      };
+
+      const response = await httpRequest.request(`${this.baseUrl}/add-points`, {
+        method: http.RequestMethod.POST,
+        header: { 'Content-Type': 'application/json' },
+        extraData: JSON.stringify(requestData),
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      const responseText: string = response.result as string;
+      const result: StepsSaveResponse = JSON.parse(responseText) as StepsSaveResponse;
+
+      console.info(`[积分服务] 保存结果:`, JSON.stringify(result));
+      return result;
+    } catch (error) {
+      console.error('[积分服务] 保存积分异常:', error);
+      return { success: false, message: '网络连接失败' };
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
+  async getStepsHistory(userId: number, days: number = 30): Promise<StepsHistoryResponse> {
+    const httpRequest = http.createHttp();
+
+    try {
+      console.info(`[步数服务] 获取用户${userId}的步数历史，天数: ${days}`);
+
+      const response = await httpRequest.request(`${this.baseUrl}/steps-history/${userId}?days=${days}`, {
+        method: http.RequestMethod.GET,
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      const responseText: string = response.result as string;
+      const result: StepsHistoryResponse = JSON.parse(responseText) as StepsHistoryResponse;
+
+      console.info(`[步数服务] 历史记录获取完成，记录数: ${result.records?.length || 0}`);
+      return result;
+    } catch (error) {
+      console.error('[步数服务] 获取历史记录异常:', error);
+      const errorResponse: StepsHistoryResponse = {
+        success: false,
+        message: '网络连接失败'
+      };
+      return errorResponse;
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
+  async getUserPoints(userId: number): Promise<UserPointsResponse> {
+    const httpRequest = http.createHttp();
+
+    try {
+      const response = await httpRequest.request(`${this.baseUrl}/user-points/${userId}`, {
+        method: http.RequestMethod.GET,
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      const responseText: string = response.result as string;
+      const result: UserPointsResponse = JSON.parse(responseText) as UserPointsResponse;
+      return result;
+    } catch (error) {
+      const errorResponse: UserPointsResponse = {
+        success: false,
+        message: '网络连接失败'
+      };
+      return errorResponse;
+    } finally {
+      httpRequest.destroy();
+    }
   }
 }
 
@@ -670,6 +837,7 @@ export class UserApiService {
   }
   async saveHealthData(healthData: HealthDataRequest): Promise<RegisterResponse> {
     const httpRequest = http.createHttp();
+    console.info(`心情数字: ${healthData.current_mood}`)
 
     try {
       const response = await httpRequest.request(`${this.baseUrl}/health-data`, {
@@ -696,10 +864,95 @@ export class UserApiService {
     }
   }
 
+
+  // 添加积分
+  async addPoints(userId: number, points: number, sourceType: string = 'manual', sourceData: string = ''): Promise<RegisterResponse> {
+    const httpRequest = http.createHttp();
+    try {
+      console.info(`[积分系统] 为用户${userId}添加${points}积分`);
+
+      const requestData: AddPointsRequest = {
+        user_id: userId,
+        points: points,
+        source_type: sourceType,
+        source_data: sourceData
+      };
+
+      const response = await httpRequest.request(`${this.baseUrl}/add-points`, {
+        method: http.RequestMethod.POST,
+        header: { 'Content-Type': 'application/json' },
+        extraData: JSON.stringify(requestData),
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      const responseText: string = response.result as string;
+      const result: RegisterResponse = JSON.parse(responseText) as RegisterResponse;
+      console.info(`[积分系统] 积分添加结果: ${result.success}`);
+      return result;
+    } catch (error) {
+      console.error('[积分系统] 添加积分异常:', error);
+      return { success: false, message: '网络连接失败' };
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
+  // 获取用户积分
+  async getUserPoints(userId: number): Promise<UserPointsResponse> {
+    const httpRequest = http.createHttp();
+    try {
+      console.info(`[积分系统] 获取用户${userId}的积分`);
+
+      const response = await httpRequest.request(`${this.baseUrl}/user-points/${userId}`, {
+        method: http.RequestMethod.GET,
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      const responseText: string = response.result as string;
+      const result: UserPointsResponse = JSON.parse(responseText) as UserPointsResponse;
+      console.info(`[积分系统] 积分获取结果: ${result.success}`);
+      return result;
+    } catch (error) {
+      console.error('[积分系统] 获取积分异常:', error);
+      return { success: false, message: '网络连接失败' };
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
+  // 获取积分排行榜
+  async getPointsRanking(limit: number = 100): Promise<PointsRankingResponse> {
+    const httpRequest = http.createHttp();
+    try {
+      console.info(`[积分系统] 获取积分排行榜，限制${limit}条`);
+
+      const response = await httpRequest.request(`${this.baseUrl}/points-ranking?limit=${limit}`, {
+        method: http.RequestMethod.GET,
+        connectTimeout: 10000,
+        readTimeout: 10000
+      });
+
+      const responseText: string = response.result as string;
+      const result: PointsRankingResponse = JSON.parse(responseText) as PointsRankingResponse;
+      console.info(`[积分系统] 排行榜获取结果: ${result.success}`);
+      return result;
+    } catch (error) {
+      console.error('[积分系统] 获取排行榜异常:', error);
+      return { success: false, message: '网络连接失败' };
+    } finally {
+      httpRequest.destroy();
+    }
+  }
+
   async saveRealtimeData(realtimeData: RealtimeDataRequest): Promise<RegisterResponse> {
     const httpRequest = http.createHttp();
 
     try {
+      const currentTime = new Date().toISOString().slice(0, 16).replace('T', ' ');
+      console.info(`[${currentTime}] 发送实时数据: 用户${realtimeData.user_id}, 时间${realtimeData.time_stamp}, 类型${realtimeData.data_type}, 数值${realtimeData.value}`);
+
       const response = await httpRequest.request(`${this.baseUrl}/realtime-data`, {
         method: http.RequestMethod.POST,
         header: {
@@ -741,7 +994,8 @@ export class UserApiService {
 
       // 根据参数决定是否过滤今日数据
       if (onlyToday && result.success && result.data) {
-        const today: string = new Date().toISOString().split('T')[0];
+        const todayDate = new Date();
+        const today: string = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
         console.info(`[健康数据服务] 过滤今日数据，日期: ${today}`);
 
         const todayData: HealthDataRequest[] = result.data.filter((item: HealthDataRequest) => {
@@ -1130,3 +1384,4 @@ export class UserApiService {
 
 
 export const userApiService: UserApiService = new UserApiService();
+export const stepsApiService: StepsApiService = new StepsApiService();

@@ -126,21 +126,34 @@ export struct BloodOxygenPage {
 
     try {
       console.info(`[血氧数据] === 开始加载血氧数据，用户ID: ${this.userId} ===`);
-      let oxygenResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 1, true);
+      let oxygenResponse: HealthDataResponse = await userApiService.getHealthData(this.userId, 7, false);
       console.info(`[血氧数据] === 血氧数据响应: ${JSON.stringify(oxygenResponse)} ===`);
 
       if (oxygenResponse.success && oxygenResponse.data && oxygenResponse.data.length > 0) {
-        let todayData: HealthDataRequest = oxygenResponse.data[0];
-        console.info(`[血氧数据] === 今日数据: ${JSON.stringify(todayData)} ===`);
+        // 过滤今日数据用于当前血氧显示
+        const todayDate = new Date();
+        const today: string = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
+        const todayData: HealthDataRequest | undefined = oxygenResponse.data.find((item: HealthDataRequest) => {
+          const itemDate: string = (item.record_date || '').replace(/'/g, '');
+          return itemDate === today;
+        });
 
-        this.currentOxygen = todayData.current_blood_oxygen || 0;
-        this.minOxygen = todayData.min_blood_oxygen || 0;
-        this.avgOxygen = todayData.avg_blood_oxygen || 0;
-        this.maxOxygen = todayData.max_blood_oxygen || 0;
-
-        console.info(`[血氧数据] === 血氧统计: 当前=${this.currentOxygen}%, 最低=${this.minOxygen}%, 平均=${this.avgOxygen}%, 最高=${this.maxOxygen}% ===`);
+        if (todayData) {
+          console.info(`[血氧数据] === 找到今日数据: ${JSON.stringify(todayData)} ===`);
+          this.currentOxygen = todayData.current_blood_oxygen || 0;
+          this.minOxygen = todayData.min_blood_oxygen || 0;
+          this.avgOxygen = todayData.avg_blood_oxygen || 0;
+          this.maxOxygen = todayData.max_blood_oxygen || 0;
+          console.info(`[血氧数据] === 血氧统计: 当前=${this.currentOxygen}%, 最低=${this.minOxygen}%, 平均=${this.avgOxygen}%, 最高=${this.maxOxygen}% ===`);
+        } else {
+          console.warn('[血氧数据] === 今日血氧数据为空，使用默认值 ===');
+          this.currentOxygen = 0;
+          this.minOxygen = 0;
+          this.avgOxygen = 0;
+          this.maxOxygen = 0;
+        }
       } else {
-        console.warn('[血氧数据] === 今日血氧数据为空 ===');
+        console.warn('[血氧数据] === 血氧数据为空 ===');
       }
     } catch (error) {
       console.error(`[血氧数据] === 数据加载异常: ${error} ===`);

@@ -157,7 +157,7 @@ export struct MoodPage {
 
         for (let i: number = 0; i < realtimeResponse.data.length; i++) {
           let item: RealtimeDataRequest = realtimeResponse.data[i];
-          let moodValue: number = item.value || 5;
+          let moodValue: number = item.value !== undefined && item.value !== null ? item.value : 5;
           let mood: string = this.getMoodFromValue(moodValue);
           let color: string = this.getMoodColor(mood);
           let description: string = this.getMoodDescription(mood);
@@ -176,11 +176,28 @@ export struct MoodPage {
   }
 
   private getMoodFromValue(value: number): string {
-    if (value >= 8) return '开心';
-    if (value >= 6) return '满足';
-    if (value >= 4) return '平静';
-    if (value >= 2) return '疲惫';
-    if (value >= 0) return '焦虑';
+    console.info(`=== 情绪数值转换: ${value} ===`);
+    if (value >= 8) {
+      console.info('=== 返回: 开心 ===');
+      return '开心';
+    }
+    if (value >= 6) {
+      console.info('=== 返回: 满足 ===');
+      return '满足';
+    }
+    if (value >= 4) {
+      console.info('=== 返回: 平静 ===');
+      return '平静';
+    }
+    if (value >= 2) {
+      console.info('=== 返回: 疲惫 ===');
+      return '疲惫';
+    }
+    if (value >= 0) {
+      console.info('=== 返回: 焦虑 ===');
+      return '焦虑';
+    }
+    console.info('=== 返回: 无数据 ===');
     return '无数据';
   }
 

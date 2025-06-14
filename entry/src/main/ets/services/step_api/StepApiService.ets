@@ -17,6 +17,13 @@ export interface StepsSaveResponse {
   total_points?: number;
 }
 
+export interface AddPointsRequest {
+  user_id: number;
+  points: number;
+  source_type: string;
+  source_data: string;
+}
+
 // 步数历史记录项
 export interface StepsHistoryItem {
   id: number;
@@ -50,23 +57,22 @@ export interface UserPointsResponse {
 export class StepsApiService {
   private baseUrl: string = 'http://172.23.41.252:5000/api';
 
-  async saveSteps(userId: number, steps: number): Promise<StepsSaveResponse> {
+  async savePoints(userId: number, points: number, sourceType: string = 'manual'): Promise<StepsSaveResponse> {
     const httpRequest = http.createHttp();
 
     try {
-      console.info(`[步数服务] 保存用户${userId}的步数: ${steps}`);
+      console.info(`[积分服务] 为用户${userId}添加积分: ${points}`);
 
-      const requestData: StepsSaveRequest = {
+      const requestData: AddPointsRequest = {
         user_id: userId,
-        steps: steps,
-        record_date: new Date().toISOString().split('T')[0]
+        points: points,
+        source_type: sourceType,
+        source_data: `手动录入积分: ${points}`
       };
 
-      const response = await httpRequest.request(`${this.baseUrl}/steps-record`, {
+      const response = await httpRequest.request(`${this.baseUrl}/add-points`, {
         method: http.RequestMethod.POST,
-        header: {
-          'Content-Type': 'application/json'
-        },
+        header: { 'Content-Type': 'application/json' },
         extraData: JSON.stringify(requestData),
         connectTimeout: 10000,
         readTimeout: 10000
@@ -75,15 +81,11 @@ export class StepsApiService {
       const responseText: string = response.result as string;
       const result: StepsSaveResponse = JSON.parse(responseText) as StepsSaveResponse;
 
-      console.info(`[步数服务] 保存结果:`, JSON.stringify(result));
+      console.info(`[积分服务] 保存结果:`, JSON.stringify(result));
       return result;
     } catch (error) {
-      console.error('[步数服务] 保存步数异常:', error);
-      const errorResponse: StepsSaveResponse = {
-        success: false,
-        message: '网络连接失败，请检查网络设置'
-      };
-      return errorResponse;
+      console.error('[积分服务] 保存积分异常:', error);
+      return { success: false, message: '网络连接失败' };
     } finally {
       httpRequest.destroy();
     }

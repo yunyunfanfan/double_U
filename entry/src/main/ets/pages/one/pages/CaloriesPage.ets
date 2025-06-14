@@ -121,7 +121,8 @@ export struct CaloriesPage {
 
       if (calorieResponse.success && calorieResponse.data && calorieResponse.data.length > 0) {
         // 过滤今日数据用于当前热量显示
-        const today: string = new Date().toISOString().split('T')[0];
+        const todayDate = new Date();
+        const today: string = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
         const todayData: HealthDataRequest | undefined = calorieResponse.data.find((item: HealthDataRequest) => {
           const itemDate: string = (item.record_date || '').replace(/'/g, '');
           return itemDate === today;
@@ -130,7 +131,7 @@ export struct CaloriesPage {
         if (todayData) {
           console.info(`=== 找到今日数据: ${JSON.stringify(todayData)} ===`);
           this.activeCalories = todayData.active_calories || 0;
-          this.caloriesGoal = todayData.calories_goal || 2000;
+          this.caloriesGoal = todayData.calories_goal || 0;
           this.restingCalories = todayData.basic_metabolism_calories || 0;
           this.totalCalories = this.activeCalories + this.restingCalories;
           console.info(`=== 今日热量: 活动=${this.activeCalories}, 基础=${this.restingCalories}, 总计=${this.totalCalories} ===`);
