@@ -18,7 +18,7 @@ def init_database():
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
     
-    # 修改users表创建语句，直接包含avatar_url字段
+    # 修改users表创建语句，直接包含avatar_url字段, 用于存储用户头像URL
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,7 +47,7 @@ def init_database():
         )
     ''')
 
-    # 面对面加好友临时表
+    # 面对面加成员临时表
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS friend_radar (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -96,6 +96,7 @@ def init_database():
         )
     ''')
 
+    # 实时数据表（用于存储实时健康数据）
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS realtime_data (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

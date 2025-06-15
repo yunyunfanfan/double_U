@@ -5326,6 +5326,14 @@
     {
       "name": "ranking",
       "value": "ranking"
+    },
+    {
+      "name": "password_resets_success",
+      "value": "Password reset successful"
+    },
+    {
+      "name": "password_resets_failed",
+      "value": "Password reset failed, please try again later"
     }
   ]
 }

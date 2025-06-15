@@ -37,7 +37,17 @@ struct CodeLoginPage {
   @State resendText: string = ''
   @State registerBtnText: string = ''
 
-  aboutToAppear(): void {
+  aboutToAppear() {
+    this.loadLanguageResources()
+  }
+
+  onPageShow(): void {
+    console.info('[LoginPage] 页面显示，重新加载语言资源')
+    this.loadLanguageResources()
+  }
+
+
+  private loadLanguageResources(): void {
     this.getCodeText = getContext(this).resourceManager.getStringSync($r('app.string.get_code_text'))
     this.resendText = getContext(this).resourceManager.getStringSync($r('app.string.resend_code_text'))
     this.registerBtnText = getContext(this).resourceManager.getStringSync($r('app.string.register_and_login_btn'))

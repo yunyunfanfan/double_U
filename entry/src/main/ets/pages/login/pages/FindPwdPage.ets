@@ -19,7 +19,16 @@ struct FindPwdPage {
   @State resetButtonText: string = ''
   @State resettingText: string = ''
 
-  aboutToAppear(): void {
+  aboutToAppear() {
+    this.loadLanguageResources()
+  }
+
+  onPageShow(): void {
+    console.info('[LoginPage] 页面显示，重新加载语言资源')
+    this.loadLanguageResources()
+  }
+
+  private loadLanguageResources(): void {
     this.titleText = getContext(this).resourceManager.getStringSync($r('app.string.reset_password_title'))
     this.usernameLabel = getContext(this).resourceManager.getStringSync($r('app.string.username_label'))
     this.passwordLabel = getContext(this).resourceManager.getStringSync($r('app.string.password_label'))
@@ -82,7 +91,7 @@ struct FindPwdPage {
       );
 
       if (resetResult.success) {
-        JhProgressHUD.showSuccess('密码重置成功');
+        JhProgressHUD.showSuccess($r('app.string.password_resets_success'));
         setTimeout((): void => {
           router.back();
         }, 1500);
@@ -90,7 +99,7 @@ struct FindPwdPage {
         JhProgressHUD.showError(resetResult.message);
       }
     } catch (error) {
-      JhProgressHUD.showError('重置密码失败，请稍后重试');
+      JhProgressHUD.showError($r('app.string.password_resets_failed'));
     }
   }
 }

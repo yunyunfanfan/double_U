@@ -10,7 +10,7 @@
     },
     {
       "name": "EntryAbility_label",
-      "value": "label"
+      "value": "健康精力助手"
     },
     {
       "name": "energy_assistant",
@@ -5287,6 +5287,14 @@
     {
       "name": "ranking",
       "value": "积分排行榜"
+    },
+    {
+      "name": "password_resets_success",
+      "value": "密码重置成功"
+    },
+    {
+      "name": "password_resets_failed",
+      "value": "重置密码失败，请稍后重试"
     }
   ]
 }

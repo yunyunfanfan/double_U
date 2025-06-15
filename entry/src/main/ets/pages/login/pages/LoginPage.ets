@@ -34,6 +34,15 @@ export struct LoginPage {
   @State loginFailedText: string = ''
 
   aboutToAppear() {
+    this.loadLanguageResources()
+  }
+
+  onPageShow(): void {
+    console.info('[LoginPage] 页面显示，重新加载语言资源')
+    this.loadLanguageResources()
+  }
+
+  private loadLanguageResources(): void {
     this.registerText = getContext(this).resourceManager.getStringSync($r('app.string.register_text'))
     this.usernamePlaceholder = getContext(this).resourceManager.getStringSync($r('app.string.username_placeholder'))
     this.passwordPlaceholder = getContext(this).resourceManager.getStringSync($r('app.string.password_placeholder'))
@@ -159,7 +168,7 @@ export struct LoginPage {
       } else {
         console.error('[LoginPage] 登录失败:', loginResult.message)
         JhProgressHUD.hide()
-        JhProgressHUD.showError(loginResult.message || this.loginFailedText)
+        JhProgressHUD.showError(this.loginFailedText)
       }
     } catch (异常) {
       console.error('[LoginPage] 登录异常:', 异常)
