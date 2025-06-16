@@ -1,24 +1,170 @@
-
-///服药提醒页面
-
 import router from '@ohos.router';
 import dataPreferences from '@ohos.data.preferences';
 import promptAction from '@ohos.promptAction';
 import common from '@ohos.app.ability.common';
+import { notificationManager } from '@kit.NotificationKit';
+import NotificationManager from '@ohos.notificationManager';
+import Base from '@ohos.base';
+import { hilog } from '@kit.PerformanceAnalysisKit';
 
-interface ReminderItem {
-  id: string;
-  name: string;
-  dose: string;
-  time: string;
-  repeatType: string;
-  priority: string;
-  sound: string;
-  taken: boolean;
+
+
+let requestEnableNotificationCallback = (err: Base.BusinessError): void => {
+  if (err) {
+    console.error(`requestEnableNotification failed, code is ${err.code}, message is ${err.message}`);
+  } else {
+    console.info("requestEnableNotification success");
+  }
+};
+
+
+
+function getRecentDays(): string[] {
+  const oneDay = 24 * 60 * 60 * 1000;
+  const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']; // 中文星期数组
+  const resultArray: string[] = [];
+
+  for (let i = 0; i <= 6; i++) {
+    const currentDate = new Date(Date.now() + i * oneDay);
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const day = String(currentDate.getDate()).padStart(2, "0");
+    const weekDay = weekDays[currentDate.getDay()]; // 获取星期索引(0-6)
+    const formattedDate:string = `${year}年${month}月${day}日 ${weekDay}`; // 添加星期显示
+    resultArray.push(formattedDate);
+  }
+  return resultArray;
 }
 
-interface SelectOption {
-  value: string;
+interface Yaowu {
+  name: string;
+  jiliang: string;
+  time: string;
+  remark: string;
+}
+
+
+@CustomDialog
+@Component
+struct  addDialog {
+
+  text: string = ''
+  controller?: CustomDialogController
+  clickChild: (str: string, str2: string,str3: string,str4: string,) => void = () => {}
+  // dbManager: relationalStore.RdbStore | null
+  @State username: string = ''
+  @State password: string = ''
+  @State selectedTime: Date = new Date('2022-07-22T08:00:00');
+  // @State img: string = ''
+  @State name: string = ''
+  @State jiliang: string = ''
+  // @State username: string = ''
+  @State remark: string = ''
+
+  aboutToAppear(): void {
+    // 申请通知权限
+    NotificationManager.requestEnableNotification(requestEnableNotificationCallback);
+  }
+  build() {
+    Column() {
+      Row() {
+        Button('取消')
+          .onClick(() => {
+            this.controller?.close()
+          })
+        Button('确定').onClick(() => {
+          let temp: Date = this.selectedTime
+          this.clickChild(this.name, this.jiliang, `${String(temp.getHours()).padStart(2, "0")}:${String(temp.getMinutes()).padStart(2, "0")}`, this.remark)
+          this.controller?.close()
+        })
+      }
+      .width('100%')
+      .margin({bottom: '20lpx'})
+      .justifyContent(FlexAlign.SpaceBetween)
+
+      // 名称 剂量（粒片ml） 时间（时分）  备注 是否服用 服用时间
+      Row() {
+        Text('药物名称').fontSize('28lpx').margin({ right: '2lpx' }).width('24%')
+        TextInput( {
+          placeholder: '请输入药物名称'
+        })
+          .width('70%')
+          .onChange(async(val: string) => {
+            this.name = val
+          })
+          .margin({bottom: '20lpx'})
+      }
+      .padding('20lpx')
+      .width('100%')
+      .alignItems(VerticalAlign.Top)
+      .justifyContent(FlexAlign.Start)
+      .margin({bottom: '20lpx'})
+
+
+      Row() {
+        Text('药物剂量').fontSize('28lpx').margin({ right: '2lpx' }).width('24%')
+        TextInput({
+          placeholder: '请输入药物剂量(如1片/2粒/5毫升)'
+        }).width('70%')
+          .onChange(async (val: string) => {
+            this.jiliang = val
+          })
+          .margin({ bottom: '20lpx' })
+      }
+      .padding('20lpx')
+      .width('100%')
+      .alignItems(VerticalAlign.Top)
+      .justifyContent(FlexAlign.Start)
+      .margin({bottom: '20lpx'})
+
+
+      Row() {
+        Text('预约时间').fontSize('28lpx').margin({right: '2lpx'}).width('24%')
+        Column() {
+          Row() {
+            TimePicker({
+              selected: this.selectedTime
+            }).width('70%')
+              .disappearTextStyle({ color: '#004aaf', font: { size: 24, weight: FontWeight.Lighter } })
+              .textStyle({ color: Color.Black, font: { size: 26, weight: FontWeight.Normal } })
+              .selectedTextStyle({ color: Color.Blue, font: { size: 30, weight: FontWeight.Bolder } })
+              .onChange((value: TimePickerResult) => {
+                if (value.hour >= 0) {
+                  this.selectedTime.setHours(value.hour, value.minute);
+                  console.info('select current date is: ' + JSON.stringify(value));
+                }
+              })
+          }
+          .width('100%')
+        }
+      }
+      .padding('20lpx')
+      .width('100%')
+      .alignItems(VerticalAlign.Top)
+      .justifyContent(FlexAlign.Start)
+      .margin({bottom: '20lpx'})
+
+
+      Row() {
+        Text('备注').fontSize('28lpx').margin({ right: '2lpx' }).width('24%')
+        TextInput( {
+          placeholder: '请输入备注'
+        }).width('70%')
+          .onChange(async(val: string) => {
+            this.remark = val
+          })
+          .margin({bottom: '20lpx'})
+      }
+      .padding('20lpx')
+      .width('100%')
+      .alignItems(VerticalAlign.Top)
+      .justifyContent(FlexAlign.Start)
+      .margin({bottom: '20lpx'})
+
+
+    }
+    .padding('30lpx')
+  }
 }
 
 @Entry
@@ -29,46 +175,28 @@ struct MedicineReminder {
   @State hour: string = '00';
   @State minute: string = '00';
   @State reminders: Array<ReminderItem> = [];
-  @State repeatType: string = '';
-  @State priority: string = '';
+  @State repeatType: string = '每天';
+  @State priority: string = '中优先级';
   @State stock: string = '';
-  @State selectedSound: string = '';
-  @State repeatOptions: SelectOption[] = [];
-  @State priorityOptions: SelectOption[] = [];
-  @State soundOptions: SelectOption[] = [];
+  @State selectedSound: string = '默认铃声';
   private preferences: dataPreferences.Preferences | null = null;
   private readonly STORE_NAME = 'MedicineReminder';
   private readonly REMINDERS_KEY = 'reminders';
+  @State dateTime: string = ''
+  @State list: Yaowu[] = [
+
+  ]
+  @State showList: Yaowu[] = [
+  ]
+  @State searchIpt: string = ''
+  @State count: number = 1
 
   aboutToAppear() {
-    this.initOptions();
+    this.dateTime = getRecentDays()[0]
+    // 初始化数据
+    // this.showList = [...this.list]
     this.loadReminders();
-    this.startReminderCheck();
-  }
-
-  initOptions() {
-    this.repeatType = getContext(this).resourceManager.getStringSync($r('app.string.repeat_daily'));
-    this.priority = getContext(this).resourceManager.getStringSync($r('app.string.priority_medium'));
-    this.selectedSound = getContext(this).resourceManager.getStringSync($r('app.string.sound_default'));
-
-    this.repeatOptions = [
-      { value: getContext(this).resourceManager.getStringSync($r('app.string.repeat_daily')) },
-      { value: getContext(this).resourceManager.getStringSync($r('app.string.repeat_weekday')) },
-      { value: getContext(this).resourceManager.getStringSync($r('app.string.repeat_weekend')) },
-      { value: getContext(this).resourceManager.getStringSync($r('app.string.repeat_custom')) }
-    ];
-
-    this.priorityOptions = [
-      { value: getContext(this).resourceManager.getStringSync($r('app.string.priority_high')) },
-      { value: getContext(this).resourceManager.getStringSync($r('app.string.priority_medium')) },
-      { value: getContext(this).resourceManager.getStringSync($r('app.string.priority_low')) }
-    ];
-
-    this.soundOptions = [
-      { value: getContext(this).resourceManager.getStringSync($r('app.string.sound_default')) },
-      { value: getContext(this).resourceManager.getStringSync($r('app.string.sound_1')) },
-      { value: getContext(this).resourceManager.getStringSync($r('app.string.sound_2')) }
-    ];
+    // this.startReminderCheck();
   }
 
   async loadReminders() {
@@ -76,7 +204,21 @@ struct MedicineReminder {
       const context = getContext(this) as common.UIAbilityContext;
       this.preferences = await dataPreferences.getPreferences(context, this.STORE_NAME);
       const remindersStr = await this.preferences?.get(this.REMINDERS_KEY, '[]') ?? '[]';
-      this.reminders = JSON.parse(remindersStr as string);
+      let firstList:Yaowu[] = [{
+        name: '阿司匹林肠溶片',
+        jiliang: '剂量:100mgx1片',
+        time: '09:30',
+        remark: '每日一次'
+      }]
+      let list = JSON.parse(remindersStr as string) as Yaowu[]
+      if(Array.isArray(list) && list.length) {
+        this.list = list
+        this.showList = list
+      } else {
+        this.list = firstList
+        this.showList = firstList
+      }
+
     } catch (err) {
       console.error('Failed to load reminders:', err);
     }
@@ -84,7 +226,7 @@ struct MedicineReminder {
 
   async saveReminders() {
     try {
-      await this.preferences?.put(this.REMINDERS_KEY, JSON.stringify(this.reminders));
+      await this.preferences?.put(this.REMINDERS_KEY, JSON.stringify(this.list));
       await this.preferences?.flush();
     } catch (err) {
       console.error('Failed to save reminders:', err);
@@ -93,9 +235,7 @@ struct MedicineReminder {
 
   addReminder() {
     if (!this.medicineName || !this.dosage) {
-      promptAction.showToast({
-        message: getContext(this).resourceManager.getStringSync($r('app.string.medicine_name_hint_2'))
-      });
+      promptAction.showToast({ message: $r('app.string.medicine_name_hint') });
       return;
     }
 
@@ -113,22 +253,18 @@ struct MedicineReminder {
     this.reminders.push(reminder);
     this.saveReminders();
 
+    // 重置输入
     this.medicineName = '';
     this.dosage = '';
     this.hour = '00';
     this.minute = '00';
-    this.repeatType = getContext(this).resourceManager.getStringSync($r('app.string.repeat_daily'));
-    this.priority = getContext(this).resourceManager.getStringSync($r('app.string.priority_medium'));
-    this.selectedSound = getContext(this).resourceManager.getStringSync($r('app.string.sound_default'));
+    this.repeatType = '每天';
+    this.priority = '中优先级';
+    this.selectedSound = '默认铃声';
   }
 
   deleteReminder(index: number) {
     this.reminders.splice(index, 1);
-    this.saveReminders();
-  }
-
-  markAsTaken(index: number) {
-    this.reminders[index].taken = !this.reminders[index].taken;
     this.saveReminders();
   }
 
@@ -140,24 +276,88 @@ struct MedicineReminder {
       this.reminders.forEach(reminder => {
         if (reminder.time === currentTime) {
           promptAction.showDialog({
-            title: getContext(this).resourceManager.getStringSync($r('app.string.reminder_title')),
-            message: `${getContext(this).resourceManager.getStringSync($r('app.string.reminder_message'))}
+            title: $r('app.string.reminder_title'),
+            message: `${$r('app.string.reminder_message')}
 药物: ${reminder.name}
 剂量: ${reminder.dose}`,
-            buttons: [{
-              text: getContext(this).resourceManager.getStringSync($r('app.string.confirm_ok')),
-              color: '#4285F4'
-            }]
+            buttons: [{ text: $r('app.string.confirm'), color: $r('app.color.primary_color') }]
           });
         }
       });
     }, 60000);
   }
 
+  dialog: CustomDialogController = new CustomDialogController({
+    builder: addDialog({
+      clickChild: (name: string, jiliang: string, time: string, remark: string) => {
+        //
+        if(!name) {
+          promptAction.showToast({message: '名称不能为空'})
+          return;
+        }
+        if(!jiliang) {
+          promptAction.showToast({message: '剂量不能为空'})
+          return;
+        }
+        if(!time) {
+          promptAction.showToast({message: '时间不能为空'})
+          return;
+        }
+        if(!remark) {
+          promptAction.showToast({message: '备注不能为空'})
+          return;
+        }
+        //
+        let item: Yaowu = {
+          name,
+          jiliang,
+          time,
+          remark,
+        }
+        this.list = [...this.list, item ]
+        this.showList = [...this.showList, item ]
+        this.saveReminders()
+        //
+        // this.list2 = [item, ...this.list2]
+        // promptAction.showToast({message: this.list2.length+'添加成功数据'+JSON.stringify(item)})
+        this.dialog.close()
+        this.count++
+        let notificationRequest: NotificationManager.NotificationRequest = {
+          id: this.count,
+          content: {
+            notificationContentType: NotificationManager.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
+            normal: {
+              title: "该吃药了",
+              text: item.name,
+              additionalText: "1片"
+            }
+          }
+        }
+
+        NotificationManager.publish(notificationRequest, (err) => {
+          if (err) {
+            // 1600004	Notification is not enabled.
+            hilog.info(0x000, 'notification111', JSON.stringify(err))
+            console.error(`[ANS] failed to publish, error[${err}]`);
+            return;
+          }
+          hilog.info(0x000, 'notification111', '成功')
+          console.info(`[ANS] publish success`);
+        });
+
+      },
+    }),
+    alignment: DialogAlignment.Center,
+    width: '90%',
+    height: '80%',
+    maskColor: 'rgba(0,0,0,0.7)'
+  })
+
   build() {
     Column() {
+      // 顶部导航栏
       Row() {
-        Button({ type: ButtonType.Circle }) {
+        Button({ type: ButtonType.Circle, stateEffect: true }) {
           Image($r('app.media.ic_back'))
             .width(20)
             .height(20)
@@ -166,6 +366,7 @@ struct MedicineReminder {
           try {
             router.back();
           } catch (err) {
+            console.error('Failed to go back:', err);
             router.pushUrl({ url: 'pages/three/pages/WxDiscoverPage' });
           }
         })
@@ -174,7 +375,7 @@ struct MedicineReminder {
         .backgroundColor(Color.Transparent)
         .margin({ left: 10, top: 10, bottom: 20 })
         Blank().layoutWeight(1)
-        Text($r('app.string.medicine_reminder'))
+        Text('服药提醒')
           .fontSize(24)
           .fontWeight(FontWeight.Bold)
           .fontColor(Color.Black)
@@ -187,200 +388,218 @@ struct MedicineReminder {
       .justifyContent(FlexAlign.Center)
       .backgroundColor('#F8F8F8')
 
-      Scroll() {
-        Column() {
-          Column() {
-            Text($r('app.string.add_new_reminder'))
-              .fontSize(18)
-              .fontWeight(FontWeight.Bold)
-              .margin({ top: 20, bottom: 20 })
-              .fontColor('#333333')
-            TextInput({
-              placeholder: getContext(this).resourceManager.getStringSync($r('app.string.medicine_name_placeholder')),
-              text: this.medicineName
-            })
-              .onChange((value: string) => { this.medicineName = value; })
-              .margin({ bottom: 12 })
-              .width('90%')
-              .height(44)
-              .backgroundColor('#F5F5F5')
-              .borderRadius(8)
-              .padding({ left: 16, right: 16 })
-            TextInput({
-              placeholder: getContext(this).resourceManager.getStringSync($r('app.string.dosage_placeholder')),
-              text: this.dosage
-            })
-              .onChange((value: string) => { this.dosage = value; })
-              .margin({ bottom: 12 })
-              .width('90%')
-              .height(44)
-              .backgroundColor('#F5F5F5')
-              .borderRadius(8)
-              .padding({ left: 16, right: 16 })
-            Row() {
-              Select(this.repeatOptions)
-                .selected(this.repeatOptions.findIndex((option: SelectOption) => option.value === this.repeatType))
-                .value(this.repeatType)
-                .onSelect((index: number, value: string) => { this.repeatType = value; })
-                .width('45%')
-                .height(44)
-                .backgroundColor('#F5F5F5')
-                .borderRadius(8)
-              Select(this.priorityOptions)
-                .selected(this.priorityOptions.findIndex((option: SelectOption) => option.value === this.priority))
-                .value(this.priority)
-                .onSelect((index: number, value: string) => { this.priority = value; })
-                .width('45%')
-                .height(44)
-                .backgroundColor('#F5F5F5')
-                .borderRadius(8)
-            }
-            .width('90%')
-            .justifyContent(FlexAlign.SpaceBetween)
-            .margin({ bottom: 12 })
-            Row() {
-              Select(this.soundOptions)
-                .selected(this.soundOptions.findIndex((option: SelectOption) => option.value === this.selectedSound))
-                .value(this.selectedSound)
-                .onSelect((index: number, value: string) => { this.selectedSound = value; })
-                .width('45%')
-                .height(44)
-                .backgroundColor('#F5F5F5')
-                .borderRadius(8)
-              Row() {
-                Select([
-                  { value: '00' }, { value: '01' }, { value: '02' }, { value: '03' },
-                  { value: '04' }, { value: '05' }, { value: '06' }, { value: '07' },
-                  { value: '08' }, { value: '09' }, { value: '10' }, { value: '11' },
-                  { value: '12' }, { value: '13' }, { value: '14' }, { value: '15' },
-                  { value: '16' }, { value: '17' }, { value: '18' }, { value: '19' },
-                  { value: '20' }, { value: '21' }, { value: '22' }, { value: '23' }
-                ])
-                  .selected(['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23'].indexOf(this.hour))
-                  .value(this.hour)
-                  .onSelect((index: number, value: string) => { this.hour = value; })
-                  .width(60)
-                  .height(44)
-                  .backgroundColor('#F5F5F5')
-                  .borderRadius(8)
-                Text(':')
-                  .margin({ left: 5, right: 5 })
-                  .fontColor('#333333')
-                Select([
-                  { value: '00' }, { value: '05' }, { value: '10' }, { value: '15' },
-                  { value: '20' }, { value: '25' }, { value: '30' }, { value: '35' },
-                  { value: '40' }, { value: '45' }, { value: '50' }, { value: '55' }
-                ])
-                  .selected(['00','05','10','15','20','25','30','35','40','45','50','55'].indexOf(this.minute))
-                  .value(this.minute)
-                  .onSelect((index: number, value: string) => { this.minute = value; })
-                  .width(60)
-                  .height(44)
-                  .backgroundColor('#F5F5F5')
-                  .borderRadius(8)
-              }
-              .width('45%')
-            }
-            .width('90%')
-            .justifyContent(FlexAlign.SpaceBetween)
-            .margin({ bottom: 16 })
-            Button($r('app.string.add_reminder_btn'))
-              .onClick(() => this.addReminder())
-              .width('90%')
-              .height(44)
-              .margin({ bottom: 20 })
-              .backgroundColor('#4285F4')
-              .fontColor(Color.White)
-              .borderRadius(22)
-          }
-          .width('100%')
-          .backgroundColor(Color.White)
-          .borderRadius(16)
-          .margin({ top: 16, left: 16, right: 16 })
-          .shadow({ radius: 8, color: '#1A000000', offsetY: 4 })
-
-          Column() {
-            Text($r('app.string.reminder_list'))
-              .fontSize(18)
-              .fontWeight(FontWeight.Bold)
-              .margin({ top: 20, bottom: 20 })
-              .fontColor('#333333')
-            List() {
-              ForEach(this.reminders, (item: ReminderItem, index: number) => {
-                ListItem() {
-                  Row() {
-                    Row() {
-                      Circle()
-                        .width(14)
-                        .height(14)
-                        .backgroundColor(item.priority === getContext(this).resourceManager.getStringSync($r('app.string.priority_high')) ? '#FF4B4B' :
-                          (item.priority === getContext(this).resourceManager.getStringSync($r('app.string.priority_medium')) ? '#FFA500' : '#4CAF50'))
-                        .margin({ right: 12 })
-                      Column() {
-                        Text(item.name)
-                          .fontSize(20)
-                          .fontWeight(FontWeight.Bold)
-                          .fontColor('#222222')
-                        Text(`${getContext(this).resourceManager.getStringSync($r('app.string.dosage_label'))}: ${item.dose}`)
-                          .fontSize(13)
-                          .margin({ top: 6 })
-                          .fontColor('#888888')
-                        Row() {
-                          Text(`${getContext(this).resourceManager.getStringSync($r('app.string.time_label'))}: ${item.time}`)
-                            .fontSize(13)
-                            .fontColor('#888888')
-                          Text(`(${item.repeatType})`)
-                            .fontSize(13)
-                            .fontColor('#888888')
-                            .margin({ left: 8 })
-                        }
-                        .margin({ top: 4 })
-                      }
-                    }
-                    .alignItems(VerticalAlign.Center)
-                    .layoutWeight(1)
-                    Column() {
-                      Button({ type: ButtonType.Circle }) {
-                        Image($r('app.media.ic_delete'))
-                          .width(20)
-                          .height(20)
-                      }
-                      .onClick(() => this.deleteReminder(index))
-                      .width(40)
-                      .height(40)
-                      .backgroundColor('#FFE5E5')
-                      .margin({ bottom: 8 })
-                      Button({ type: ButtonType.Circle }) {
-                        Image($r('app.media.ic_reminder'))
-                          .width(20)
-                          .height(20)
-                      }
-                      .onClick(() => this.markAsTaken(index))
-                      .width(40)
-                      .height(40)
-                      .backgroundColor(item.taken ? '#E5FFE5' : '#F5F5F5')
-                    }
-                  }
-                  .width('100%')
-                  .padding(16)
-                  .backgroundColor(Color.White)
-                  .borderRadius(12)
-                  .margin({ bottom: 12 })
-                  .shadow({ radius: 4, color: '#1A000000', offsetY: 2 })
-                }
-              })
-            }
-            .width('100%')
-          }
-          .width('100%')
-          .padding({ left: 16, right: 16 })
+      // 服药计划卡片
+      Column() {
+        Row() {
+          Text('今日服药提醒').fontSize('38lpx').fontColor(Color.White).margin({right: '5lpx'})
+          Text(`${this.list.length}个提醒`).padding('5lpx').backgroundColor('#fff').borderRadius('20lpx').fontSize('28lpx').fontColor('#4086F6')
+          Blank()
+          Text(this.dateTime).fontSize('28lpx').fontColor(Color.White)
         }
+        .width('100%')
+        .padding('20lpx')
+        .justifyContent(FlexAlign.Center)
+        Row() {
+          Row() {
+            Image($r('app.media.reminder_yaowutitle')).width('70lpx').height('70lpx')
+          }.width('100lpx').height('100lpx').borderRadius('50%').backgroundColor('#fff')
+          .justifyContent(FlexAlign.Center).alignItems(VerticalAlign.Center)
+          .margin({right: '20lpx'})
+          Column() {
+            Text(this.list[0] && this.list[0].name).fontColor(Color.White).fontSize('38lpx').margin({bottom: '20lpx'})
+            Text(this.list[0] && this.list[0].jiliang).fontColor('#eee').fontSize('32lpx')
+          }
+          .layoutWeight(1)
+          .justifyContent(FlexAlign.Start)
+          Text(this.list[0] && this.list[0].time).fontWeight(FontWeight.Bold).fontColor(Color.White).fontSize('38lpx')
+        }.width('100%')
+        .padding('20lpx')
+        .backgroundColor('rgba(255,255,255,0.02)')
+      }.shadow({
+        radius: 8,
+        color: 'rgba(0,0,0,0.05)',
+        offsetX: 0,
+        offsetY: 3,
+      })
+      .margin({bottom: '10lpx'})
+      .backgroundColor('#4086F6')
+
+      // 搜索栏目
+      Row() {
+        TextInput({placeholder: "搜索药品名称"}).width('40%').onChange((str: string) => {
+          this.showList = this.list.filter(item => {
+            return item.name.includes(str)
+          })
+        })
+        Blank()
+        Row() {
+          Image($r('app.media.reminder_flag')).width('30lpx').height('30lpx').margin({right: '20lpx'})
+          Text('全部提醒').fontSize('32lpx')
+        }
+        .padding('10lpx')
+        .backgroundColor('#fff')
+        .borderRadius('20lpx')
+        .border({width: '1lpx', color: '#4086F6'})
+        .margin({right: '10lpx'})
+        .onClick(() => {
+          let requestEnableNotificationCallback = (err: Base.BusinessError): void => {
+            if (err) {
+              console.error(`requestEnableNotification failed, code is ${err.code}, message is ${err.message}`);
+            } else {
+              console.info("requestEnableNotification success");
+            }
+          };
+          // 申请通知权限
+          this.count++
+          let str2: string[] = []
+          this.list.forEach((item) => {
+            str2.push(item.name)
+          })
+          NotificationManager.requestEnableNotification(requestEnableNotificationCallback);
+          let notificationRequest: NotificationManager.NotificationRequest = {
+            id: this.count,
+            content: {
+              notificationContentType: NotificationManager.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
+              normal: {
+                title: "该吃药了",
+                text: str2.join('，'),
+                additionalText: "1片"
+              }
+            }
+          }
+          NotificationManager.publish(notificationRequest, (err) => {
+            if (err) {
+              // 1600004	Notification is not enabled.
+              hilog.info(0x000, 'notification111', JSON.stringify(err))
+              console.error(`[ANS] failed to publish, error[${err}]`);
+              return;
+            }
+            hilog.info(0x000, 'notification111', '成功')
+            console.info(`[ANS] publish success`);
+          });
+        })
+        Row() {
+          Image($r('app.media.reminder_add')).width('30lpx').height('30lpx').margin({right: '10lpx'})
+          Text('添加提醒').fontColor(Color.White).fontSize('32lpx')
+        }.backgroundColor('#4086F6').padding('10lpx')
+        .borderRadius('20lpx')
+        .onClick(async () => {
+          this.dialog.open()
+          let requestEnableNotificationCallback = (err: Base.BusinessError): void => {
+            if (err) {
+              console.error(`requestEnableNotification failed, code is ${err.code}, message is ${err.message}`);
+            } else {
+              console.info("requestEnableNotification success");
+            }
+          };
+          // 申请通知权限
+          NotificationManager.requestEnableNotification(requestEnableNotificationCallback);
+
+
+        })
       }
       .width('100%')
-      .layoutWeight(1)
+      .padding('20lpx')
+      .backgroundColor('#fff')
+      .borderRadius('10lpx')
+      .justifyContent(FlexAlign.Center)
+      .shadow({
+        radius: 8,
+        color: 'rgba(0,0,0,0.05)',
+        offsetX: 0,
+        offsetY: 3,
+      })
+      .margin({bottom: '10lpx'})
+
+      // 主要内容区域
+      Scroll() {
+        Column() {
+          ForEach(this.showList, (item: Yaowu) => {
+            Column() {
+              Row() {
+                Image($r('app.media.reminder_yaowumingcheng')).width('40lpx').height('40lpx').margin({right: '20lpx'})
+                Text(item.name).fontWeight(FontWeight.Bold).fontSize('38lpx')
+                Blank()
+                Text(item.time).backgroundColor('rgba(108, 92, 231, 0.08)').padding('20lpx').borderRadius('20lpx')
+              }
+              .width('100%')
+              .padding('20lpx')
+              .justifyContent(FlexAlign.Center)
+              Row() {
+                Image($r('app.media.reminder_jiliang2')).width('40lpx').height('40lpx').margin({right: '20lpx'})
+                Text(item.jiliang).fontColor(Color.Black).fontSize('32lpx')
+              }
+              .width('100%')
+              .padding('20lpx')
+              Row() {
+                Image($r('app.media.reminder_jiliang2')).width('40lpx').height('40lpx').margin({right: '20lpx'}).visibility(Visibility.Hidden)
+                Text(item.remark).fontColor(Color.Black).fontSize('32lpx')
+              }
+              .width('100%')
+              .padding('20lpx')
+
+              Row() {
+                Row() {
+                  Image($r('app.media.reminder_dagou')).width('30lpx').height('30lpx').margin({right: '20lpx'})
+                  Text('标记已服用').fontColor(Color.White).fontSize('32lpx')
+                }
+                .width('200lpx')
+                .height('40lpx')
+                .justifyContent(FlexAlign.Center)
+                .alignItems(VerticalAlign.Center)
+                .borderRadius('20lpx')
+              }
+              .position({bottom: '30lpx', right: '30lpx'})
+            }
+            .backgroundColor('#fff')
+            .borderRadius('10lpx')
+            .border({color: '#4086F6', width: {left: '6lpx'}})
+            .shadow({
+              radius: 8,
+              color: 'rgba(0,0,0,0.05)',
+              offsetX: 0,
+              offsetY: 3,
+            })
+            .margin({bottom: '20lpx'})
+          })
+        }.padding('20lpx')
+      }.layoutWeight(1)
+      .align(Alignment.Top)
+
     }
     .width('100%')
     .height('100%')
     .backgroundColor('#F0F0F0')
   }
+
+  private getRepeatTypeText(type: string): string {
+    switch (type) {
+      case 'daily':
+        return '每天';
+      case 'weekday':
+        return '工作日';
+      case 'weekend':
+        return '周末';
+      case 'custom':
+        return '自定义';
+      default:
+        return '每天';
+    }
+  }
+
+  private markAsTaken(index: number) {
+    this.reminders[index].taken = !this.reminders[index].taken;
+    this.saveReminders();
+  }
+}
+
+interface ReminderItem {
+  id: string;
+  name: string;
+  dose: string;
+  time: string;
+  repeatType: string;
+  priority: string;
+  sound: string;
+  taken: boolean;
 }

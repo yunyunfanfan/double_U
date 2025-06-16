@@ -62,13 +62,33 @@ export struct SetPage {
   }
 
   private exitLogin() {
+    console.info('[SetPage] 开始退出登录流程')
     const loadingText = getContext(this).resourceManager.getStringSync($r('app.string.logging_out').id)
     JhProgressHUD.showLoadingText(loadingText)
+
     setTimeout(() => {
-      JhAESPreferencesUtils.delete(kUserDefault_UserInfo)
-      router.pushUrl({ url: 'pages/login/pages/LoginPage' })
-      router.clear();
-      JhProgressHUD.hide()
+      try {
+        // 清除持久化存储中的用户信息
+        console.info('[SetPage] 清除持久化存储中的用户信息')
+        JhAESPreferencesUtils.delete(kUserDefault_UserInfo)
+
+        // 清除PersistentStorage中的用户信息
+        console.info('[SetPage] 清除PersistentStorage中的用户信息')
+        PersistentStorage.deleteProp('userInfo')
+
+        // 清除AppStorage中的用户信息
+        console.info('[SetPage] 清除AppStorage中的用户信息')
+        AppStorage.delete('userInfo')
+
+        console.info('[SetPage] 用户信息清除完成，跳转到登录页面')
+        router.pushUrl({ url: 'pages/login/pages/LoginPage' })
+        router.clear();
+        JhProgressHUD.hide()
+      } catch (error) {
+        console.error('[SetPage] 退出登录过程中发生错误:', error)
+        JhProgressHUD.hide()
+        JhProgressHUD.showError('退出登录失败')
+      }
     }, 1000)
   }
 
