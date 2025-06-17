@@ -1,4 +1,6 @@
-
+///  WxFriendsCirclePage.ets
+///
+///  Created by iotjin on 2024/11/28.
 ///  description: 健康圈 - 健康社区分享平台
 
 import { router } from '@kit.ArkUI';
@@ -149,7 +151,8 @@ struct WxFriendsCirclePage {
   @State inputContent: string = ''
   @State selectedPostType: HealthPostType = HealthPostType.EXERCISE
   @State inputTags: string = ''
-  @State postTypes: PostTypeOption[] = []
+  private tabs: string[] = ['动态', '挑战', '知识', '我的']
+  private postTypes: PostTypeOption[] = []
   scroller: Scroller = new Scroller()
 
   aboutToAppear() {
@@ -157,32 +160,40 @@ struct WxFriendsCirclePage {
     this.loadHealthData()
   }
 
+  // 初始化动态类型选项
   initPostTypes() {
     this.postTypes = [
-      { type: HealthPostType.EXERCISE, name: getContext(this).resourceManager.getStringSync($r('app.string.post_type_exercise')), icon: '🏃‍♂️' },
-      { type: HealthPostType.DIET, name: getContext(this).resourceManager.getStringSync($r('app.string.post_type_diet')), icon: '🥗' },
-      { type: HealthPostType.SLEEP, name: getContext(this).resourceManager.getStringSync($r('app.string.post_type_sleep')), icon: '😴' },
-      { type: HealthPostType.MOOD, name: getContext(this).resourceManager.getStringSync($r('app.string.post_type_mood')), icon: '😊' },
-      { type: HealthPostType.CHALLENGE, name: getContext(this).resourceManager.getStringSync($r('app.string.post_type_challenge')), icon: '🏆' },
-      { type: HealthPostType.KNOWLEDGE, name: getContext(this).resourceManager.getStringSync($r('app.string.post_type_knowledge')), icon: '📚' }
+      { type: HealthPostType.EXERCISE, name: '运动', icon: '🏃‍♂️' },
+      { type: HealthPostType.DIET, name: '饮食', icon: '🥗' },
+      { type: HealthPostType.SLEEP, name: '睡眠', icon: '😴' },
+      { type: HealthPostType.MOOD, name: '情绪', icon: '😊' },
+      { type: HealthPostType.CHALLENGE, name: '挑战', icon: '🏆' },
+      { type: HealthPostType.KNOWLEDGE, name: '知识', icon: '📚' }
     ]
   }
 
   build() {
     Stack() {
       Column() {
+        // 顶部导航栏
         this.buildNavigationBar()
+
+        // 标签页切换
         this.buildTabBar()
+
+        // 内容区域
         this.buildContentArea()
       }
       .width('100%')
       .height('100%')
       .backgroundColor('#F8F9FA')
 
+      // 发布动态弹窗
       if (this.showPostDialog) {
         this.buildPostDialog()
       }
 
+      // 挑战详情弹窗
       if (this.showChallengeDetailDialog && this.selectedChallenge) {
         this.buildChallengeDetailDialog()
       }
@@ -194,7 +205,7 @@ struct WxFriendsCirclePage {
   @Builder
   buildNavigationBar() {
     Row() {
-      Button({ type: ButtonType.Circle }) {
+      Button({ type: ButtonType.Circle, stateEffect: true }) {
         Image($r('app.media.ic_back'))
           .width(20)
           .height(20)
@@ -203,6 +214,7 @@ struct WxFriendsCirclePage {
         try {
           router.back();
         } catch (err) {
+          console.error('Failed to go back:', err);
           router.pushUrl({ url: 'pages/three/pages/WxDiscoverPage' });
         }
       })
@@ -211,14 +223,15 @@ struct WxFriendsCirclePage {
       .backgroundColor(Color.Transparent)
       .margin({ left: 10 })
 
-      Text($r('app.string.health_circle_title'))
+      Text('健康圈')
         .fontSize(24)
         .fontWeight(FontWeight.Bold)
         .fontColor(Color.Black)
         .layoutWeight(1)
         .textAlign(TextAlign.Center)
 
-      Button({ type: ButtonType.Circle }) {
+      // 发布按钮
+      Button({ type: ButtonType.Circle, stateEffect: true }) {
         Text('✏️')
           .fontSize(20)
       }
@@ -246,84 +259,26 @@ struct WxFriendsCirclePage {
   @Builder
   buildTabBar() {
     Row() {
-      Column() {
-        Text($r('app.string.tab_dynamics'))
-          .fontSize(16)
-          .fontColor(this.selectedTab === 0 ? '#4CAF50' : '#666666')
-          .fontWeight(this.selectedTab === 0 ? FontWeight.Bold : FontWeight.Normal)
-          .padding({ top: 12, bottom: 8 })
+      ForEach(this.tabs, (tab: string, index: number) => {
+        Column() {
+          Text(tab)
+            .fontSize(16)
+            .fontColor(this.selectedTab === index ? '#4CAF50' : '#666666')
+            .fontWeight(this.selectedTab === index ? FontWeight.Bold : FontWeight.Normal)
+            .padding({ top: 12, bottom: 8 })
 
-        if (this.selectedTab === 0) {
-          Divider()
-            .width(30)
-            .height(3)
-            .color('#4CAF50')
-            .borderRadius(2)
+          if (this.selectedTab === index) {
+            Divider()
+              .width(30)
+              .height(3)
+              .color('#4CAF50')
+              .borderRadius(2)
+          }
         }
-      }
-      .layoutWeight(1)
-      .onClick(() => {
-        this.selectedTab = 0;
-      })
-
-      Column() {
-        Text($r('app.string.tab_challenges'))
-          .fontSize(16)
-          .fontColor(this.selectedTab === 1 ? '#4CAF50' : '#666666')
-          .fontWeight(this.selectedTab === 1 ? FontWeight.Bold : FontWeight.Normal)
-          .padding({ top: 12, bottom: 8 })
-
-        if (this.selectedTab === 1) {
-          Divider()
-            .width(30)
-            .height(3)
-            .color('#4CAF50')
-            .borderRadius(2)
-        }
-      }
-      .layoutWeight(1)
-      .onClick(() => {
-        this.selectedTab = 1;
-      })
-
-      Column() {
-        Text($r('app.string.tab_knowledge'))
-          .fontSize(16)
-          .fontColor(this.selectedTab === 2 ? '#4CAF50' : '#666666')
-          .fontWeight(this.selectedTab === 2 ? FontWeight.Bold : FontWeight.Normal)
-          .padding({ top: 12, bottom: 8 })
-
-        if (this.selectedTab === 2) {
-          Divider()
-            .width(30)
-            .height(3)
-            .color('#4CAF50')
-            .borderRadius(2)
-        }
-      }
-      .layoutWeight(1)
-      .onClick(() => {
-        this.selectedTab = 2;
-      })
-
-      Column() {
-        Text($r('app.string.tab_mine'))
-          .fontSize(16)
-          .fontColor(this.selectedTab === 3 ? '#4CAF50' : '#666666')
-          .fontWeight(this.selectedTab === 3 ? FontWeight.Bold : FontWeight.Normal)
-          .padding({ top: 12, bottom: 8 })
-
-        if (this.selectedTab === 3) {
-          Divider()
-            .width(30)
-            .height(3)
-            .color('#4CAF50')
-            .borderRadius(2)
-        }
-      }
-      .layoutWeight(1)
-      .onClick(() => {
-        this.selectedTab = 3;
+        .layoutWeight(1)
+        .onClick(() => {
+          this.selectedTab = index;
+        })
       })
     }
     .width('100%')
@@ -346,12 +301,13 @@ struct WxFriendsCirclePage {
   }
 
   @Builder
-  //这是第一页的构建函数
   buildHealthPostsTab() {
     Scroll(this.scroller) {
       Column({ space: 12 }) {
+        // 今日健康概览卡片
         this.buildTodayHealthOverview()
 
+        // 健康动态列表
         ForEach(this.healthPosts, (post: HealthPost) => {
           this.buildHealthPostCard(post)
         })
@@ -366,27 +322,28 @@ struct WxFriendsCirclePage {
   buildTodayHealthOverview() {
     Column() {
       Row() {
-        Text($r('app.string.today_health_overview'))
+        Text('今日健康概览')
           .fontSize(18)
           .fontWeight(FontWeight.Bold)
           .fontColor('#333333')
 
         Blank()
 
-        Text($r('app.string.view_details'))
+        Text('查看详情 >')
           .fontSize(14)
           .fontColor('#4CAF50')
           .onClick(() => {
-            JhProgressHUD.showText(getContext(this).resourceManager.getStringSync($r('app.string.health_data_developing')));
+            // 暂时使用提示信息，避免跳转失败
+            JhProgressHUD.showText('健康数据详情功能开发中...');
           })
       }
       .width('100%')
       .margin({ bottom: 16 })
 
       Row({ space: 12 }) {
-        this.buildMetricCard(getContext(this).resourceManager.getStringSync($r('app.string.steps_label')), '8,756', getContext(this).resourceManager.getStringSync($r('app.string.steps')), '#2196F3', '🚶‍♂️')
-        this.buildMetricCard(getContext(this).resourceManager.getStringSync($r('app.string.calories_label')), '2,345', 'Kcal', '#FF9800', '🔥')
-        this.buildMetricCard(getContext(this).resourceManager.getStringSync($r('app.string.heart_rate_label')), '72', 'bpm', '#E91E63', '❤️')
+        this.buildMetricCard('步数', '8,756', '步', '#2196F3', '🚶‍♂️')
+        this.buildMetricCard('热量', '2,345', 'Kcal', '#FF9800', '🔥')
+        this.buildMetricCard('心率', '72', 'bpm', '#E91E63', '❤️')
       }
       .width('100%')
     }
@@ -433,6 +390,7 @@ struct WxFriendsCirclePage {
   @Builder
   buildHealthPostCard(post: HealthPost) {
     Column() {
+      // 用户信息行
       Row() {
         Row() {
           Text(post.authorName.substring(0, 1))
@@ -476,6 +434,7 @@ struct WxFriendsCirclePage {
       .width('100%')
       .margin({ bottom: 12 })
 
+      // 内容区域
       Column() {
         if (post.title) {
           Text(post.title)
@@ -496,10 +455,12 @@ struct WxFriendsCirclePage {
           .textOverflow({ overflow: TextOverflow.Ellipsis })
           .margin({ bottom: 12 })
 
+        // 健康数据展示
         if (post.healthData) {
           this.buildPostHealthData(post.healthData)
         }
 
+        // 标签
         if (post.tags.length > 0) {
           Row() {
             ForEach(post.tags, (tag: string) => {
@@ -518,6 +479,7 @@ struct WxFriendsCirclePage {
       }
       .width('100%')
 
+      // 互动区域
       Row() {
         Row() {
           Text(post.isLiked ? '❤️' : '🤍')
@@ -546,11 +508,11 @@ struct WxFriendsCirclePage {
 
         Blank()
 
-        Text($r('app.string.share_btn'))
+        Text('分享')
           .fontSize(14)
           .fontColor('#4CAF50')
           .onClick(() => {
-            JhProgressHUD.showText(getContext(this).resourceManager.getStringSync($r('app.string.share_feature_developing')));
+            JhProgressHUD.showText('分享功能开发中...');
           })
       }
       .width('100%')
@@ -612,7 +574,7 @@ struct WxFriendsCirclePage {
   buildChallengesTab() {
     Scroll() {
       Column({ space: 16 }) {
-        Text($r('app.string.health_challenges_title'))
+        Text('健康挑战')
           .fontSize(20)
           .fontWeight(FontWeight.Bold)
           .fontColor('#333333')
@@ -632,6 +594,7 @@ struct WxFriendsCirclePage {
   @Builder
   buildChallengeCard(challenge: HealthChallenge) {
     Column() {
+      // 头部信息
       Row() {
         Text(challenge.icon)
           .fontSize(32)
@@ -646,7 +609,8 @@ struct WxFriendsCirclePage {
 
             Blank()
 
-            Text(this.getDifficultyText(challenge.difficulty))
+            // 难度标签
+            Text(challenge.difficulty)
               .fontSize(12)
               .fontColor('#FFFFFF')
               .padding({ left: 8, right: 8, top: 4, bottom: 4 })
@@ -674,6 +638,7 @@ struct WxFriendsCirclePage {
       .width('100%')
       .margin({ bottom: 16 })
 
+      // 挑战统计信息
       Row() {
         Column() {
           Text(challenge.participants.toString())
@@ -681,7 +646,7 @@ struct WxFriendsCirclePage {
             .fontWeight(FontWeight.Bold)
             .fontColor('#4CAF50')
 
-          Text($r('app.string.participants_count'))
+          Text('参与人数')
             .fontSize(11)
             .fontColor('#999999')
         }
@@ -693,7 +658,7 @@ struct WxFriendsCirclePage {
             .fontWeight(FontWeight.Bold)
             .fontColor('#FF9800')
 
-          Text($r('app.string.challenge_duration'))
+          Text('挑战时长')
             .fontSize(11)
             .fontColor('#999999')
         }
@@ -705,7 +670,7 @@ struct WxFriendsCirclePage {
             .fontWeight(FontWeight.Bold)
             .fontColor('#E91E63')
 
-          Text($r('app.string.reward_points'))
+          Text('奖励积分')
             .fontSize(11)
             .fontColor('#999999')
         }
@@ -717,7 +682,7 @@ struct WxFriendsCirclePage {
             .fontWeight(FontWeight.Bold)
             .fontColor('#2196F3')
 
-          Text($r('app.string.my_progress'))
+          Text('我的进度')
             .fontSize(11)
             .fontColor('#999999')
         }
@@ -727,6 +692,7 @@ struct WxFriendsCirclePage {
       .justifyContent(FlexAlign.SpaceAround)
       .margin({ bottom: 16 })
 
+      // 进度条
       Progress({
         value: challenge.progress,
         total: 100,
@@ -738,9 +704,10 @@ struct WxFriendsCirclePage {
         .backgroundColor('#F0F0F0')
         .margin({ bottom: 16 })
 
+      // 主要好处（显示前3个）
       if (challenge.benefits.length > 0) {
         Column() {
-          Text($r('app.string.main_benefits'))
+          Text('主要好处')
             .fontSize(14)
             .fontWeight(FontWeight.Medium)
             .fontColor('#333333')
@@ -748,7 +715,7 @@ struct WxFriendsCirclePage {
             .textAlign(TextAlign.Start)
             .margin({ bottom: 8 })
 
-          ForEach(challenge.benefits.slice(0, 3), (benefit: string) => {
+          ForEach(challenge.benefits.slice(0, 3), (benefit: string, index: number) => {
             Row() {
               Text('✓')
                 .fontSize(12)
@@ -768,35 +735,32 @@ struct WxFriendsCirclePage {
         .margin({ bottom: 16 })
       }
 
+      // 操作按钮区域
       Row() {
-        Button() {
-          Text($r('app.string.view_details_btn'))
-            .fontSize(14)
-            .fontColor('#4CAF50')
-        }
-        .width('45%')
-        .height(36)
-        .backgroundColor('#E8F5E8')
-        .borderRadius(18)
-        .onClick(() => {
-          this.selectedChallenge = challenge;
-          this.showChallengeDetailDialog = true;
-        })
+        Button('查看详情')
+          .width('45%')
+          .height(36)
+          .fontSize(14)
+          .fontColor('#4CAF50')
+          .backgroundColor('#E8F5E8')
+          .borderRadius(18)
+          .onClick(() => {
+            this.selectedChallenge = challenge;
+            this.showChallengeDetailDialog = true;
+          })
 
         Blank()
 
-        Button() {
-          Text(challenge.progress > 0 ? $r('app.string.continue_challenge') : $r('app.string.join_challenge'))
-            .fontSize(14)
-            .fontColor('#FFFFFF')
-        }
-        .width('45%')
-        .height(36)
-        .backgroundColor(challenge.progress > 0 ? '#FF9800' : '#4CAF50')
-        .borderRadius(18)
-        .onClick(() => {
-          this.joinChallenge(challenge);
-        })
+        Button(challenge.progress > 0 ? '继续挑战' : '参与挑战')
+          .width('45%')
+          .height(36)
+          .fontSize(14)
+          .fontColor('#FFFFFF')
+          .backgroundColor(challenge.progress > 0 ? '#FF9800' : '#4CAF50')
+          .borderRadius(18)
+          .onClick(() => {
+            this.joinChallenge(challenge);
+          })
       }
       .width('100%')
     }
@@ -812,36 +776,29 @@ struct WxFriendsCirclePage {
     })
   }
 
+  // 获取难度对应的颜色
   getDifficultyColor(difficulty: string): string {
-    if (difficulty === getContext(this).resourceManager.getStringSync($r('app.string.difficulty_easy'))) {
-      return '#4CAF50'
-    } else if (difficulty === getContext(this).resourceManager.getStringSync($r('app.string.difficulty_medium'))) {
-      return '#FF9800'
-    } else if (difficulty === getContext(this).resourceManager.getStringSync($r('app.string.difficulty_hard'))) {
-      return '#F44336'
-    }
-    return '#9E9E9E'
-  }
-
-  getDifficultyText(originalDifficulty: string): Resource {
-    switch (originalDifficulty) {
+    switch (difficulty) {
       case '简单':
-        return $r('app.string.difficulty_easy')
+        return '#4CAF50'
       case '中等':
-        return $r('app.string.difficulty_medium')
+        return '#FF9800'
       case '困难':
-        return $r('app.string.difficulty_hard')
+        return '#F44336'
       default:
-        return $r('app.string.difficulty_medium')
+        return '#9E9E9E'
     }
   }
 
+  // 参与挑战
   joinChallenge(challenge: HealthChallenge) {
     if (challenge.progress > 0) {
-      JhProgressHUD.showText(getContext(this).resourceManager.getStringSync($r('app.string.continue_progress_msg')).replace('%s', `${challenge.progress}%`));
+      JhProgressHUD.showText(`继续加油！你已经完成了${challenge.progress}%的进度`);
     } else {
-      JhProgressHUD.showText(getContext(this).resourceManager.getStringSync($r('app.string.join_success_msg')).replace('%s', challenge.title));
-      challenge.participants += 1;
+      JhProgressHUD.showText(`成功参与${challenge.title}！让我们开始这个健康之旅吧！`);
+      // 这里可以添加实际的参与逻辑
+      challenge.progress = 5; // 模拟开始进度
+      challenge.participants += 1; // 增加参与人数
     }
   }
 
@@ -849,6 +806,7 @@ struct WxFriendsCirclePage {
   buildChallengeDetailDialog() {
     if (this.selectedChallenge) {
       Stack() {
+        // 遮罩层
         Column()
           .width('100%')
           .height('100%')
@@ -858,16 +816,18 @@ struct WxFriendsCirclePage {
             this.selectedChallenge = null;
           })
 
+        // 弹窗内容
         Column() {
+          // 弹窗标题栏
           Row() {
-            Text($r('app.string.challenge_details'))
+            Text('挑战详情')
               .fontSize(20)
               .fontWeight(FontWeight.Bold)
               .fontColor('#333333')
 
             Blank()
 
-            Button({ type: ButtonType.Circle }) {
+            Button({ type: ButtonType.Circle, stateEffect: true }) {
               Text('✕')
                 .fontSize(18)
                 .fontColor('#666666')
@@ -887,8 +847,10 @@ struct WxFriendsCirclePage {
             color: '#F0F0F0'
           })
 
+          // 滚动内容区域
           Scroll() {
             Column() {
+              // 挑战头部信息
               Row() {
                 Text(this.selectedChallenge.icon)
                   .fontSize(48)
@@ -910,7 +872,7 @@ struct WxFriendsCirclePage {
                       .backgroundColor('#E8F5E8')
                       .borderRadius(10)
 
-                    Text(this.getDifficultyText(this.selectedChallenge.difficulty))
+                    Text(this.selectedChallenge.difficulty)
                       .fontSize(12)
                       .fontColor('#FFFFFF')
                       .padding({ left: 8, right: 8, top: 4, bottom: 4 })
@@ -926,8 +888,9 @@ struct WxFriendsCirclePage {
               .width('100%')
               .margin({ bottom: 20 })
 
+              // 挑战描述
               Column() {
-                Text($r('app.string.challenge_intro'))
+                Text('挑战介绍')
                   .fontSize(16)
                   .fontWeight(FontWeight.Bold)
                   .fontColor('#333333')
@@ -948,8 +911,9 @@ struct WxFriendsCirclePage {
               .borderRadius(12)
               .margin({ bottom: 16 })
 
+              // 挑战时间
               Column() {
-                Text($r('app.string.challenge_time'))
+                Text('📅 挑战时间')
                   .fontSize(16)
                   .fontWeight(FontWeight.Bold)
                   .fontColor('#333333')
@@ -959,7 +923,7 @@ struct WxFriendsCirclePage {
 
                 Row() {
                   Column() {
-                    Text($r('app.string.start_time'))
+                    Text('开始时间')
                       .fontSize(12)
                       .fontColor('#999999')
                       .margin({ bottom: 4 })
@@ -973,7 +937,7 @@ struct WxFriendsCirclePage {
                   .alignItems(HorizontalAlign.Start)
 
                   Column() {
-                    Text($r('app.string.end_time'))
+                    Text('结束时间')
                       .fontSize(12)
                       .fontColor('#999999')
                       .margin({ bottom: 4 })
@@ -987,7 +951,7 @@ struct WxFriendsCirclePage {
                   .alignItems(HorizontalAlign.Start)
 
                   Column() {
-                    Text($r('app.string.duration'))
+                    Text('持续时间')
                       .fontSize(12)
                       .fontColor('#999999')
                       .margin({ bottom: 4 })
@@ -1012,8 +976,9 @@ struct WxFriendsCirclePage {
               })
               .margin({ bottom: 16 })
 
+              // 健康好处
               Column() {
-                Text($r('app.string.health_benefits'))
+                Text('💪 健康好处')
                   .fontSize(16)
                   .fontWeight(FontWeight.Bold)
                   .fontColor('#333333')
@@ -1021,7 +986,7 @@ struct WxFriendsCirclePage {
                   .textAlign(TextAlign.Start)
                   .margin({ bottom: 12 })
 
-                ForEach(this.selectedChallenge.benefits, (benefit: string) => {
+                ForEach(this.selectedChallenge.benefits, (benefit: string, index: number) => {
                   Row() {
                     Text('✓')
                       .fontSize(14)
@@ -1045,8 +1010,9 @@ struct WxFriendsCirclePage {
               .borderRadius(12)
               .margin({ bottom: 16 })
 
+              // 每日目标
               Column() {
-                Text($r('app.string.daily_goals'))
+                Text('🎯 每日目标')
                   .fontSize(16)
                   .fontWeight(FontWeight.Bold)
                   .fontColor('#333333')
@@ -1082,8 +1048,9 @@ struct WxFriendsCirclePage {
               .borderRadius(12)
               .margin({ bottom: 16 })
 
+              // 实用技巧
               Column() {
-                Text($r('app.string.practical_tips'))
+                Text('💡 实用技巧')
                   .fontSize(16)
                   .fontWeight(FontWeight.Bold)
                   .fontColor('#333333')
@@ -1091,7 +1058,7 @@ struct WxFriendsCirclePage {
                   .textAlign(TextAlign.Start)
                   .margin({ bottom: 12 })
 
-                ForEach(this.selectedChallenge.tips, (tip: string) => {
+                ForEach(this.selectedChallenge.tips, (tip: string, index: number) => {
                   Row() {
                     Text('💡')
                       .fontSize(14)
@@ -1119,37 +1086,34 @@ struct WxFriendsCirclePage {
           .padding({ left: 20, right: 20 })
           .scrollBar(BarState.Off)
 
+          // 底部操作按钮
           Row() {
-            Button() {
-              Text($r('app.string.close_btn'))
-                .fontSize(16)
-                .fontColor('#666666')
-            }
-            .width('30%')
-            .height(44)
-            .backgroundColor('#F5F5F5')
-            .borderRadius(22)
-            .onClick(() => {
-              this.showChallengeDetailDialog = false;
-              this.selectedChallenge = null;
-            })
+            Button('关闭')
+              .width('30%')
+              .height(44)
+              .fontSize(16)
+              .fontColor('#666666')
+              .backgroundColor('#F5F5F5')
+              .borderRadius(22)
+              .onClick(() => {
+                this.showChallengeDetailDialog = false;
+                this.selectedChallenge = null;
+              })
 
             Blank()
 
-            Button() {
-              Text(this.selectedChallenge.progress > 0 ? $r('app.string.continue_challenge') : $r('app.string.join_now'))
-                .fontSize(16)
-                .fontColor('#FFFFFF')
-            }
-            .width('60%')
-            .height(44)
-            .backgroundColor(this.selectedChallenge.progress > 0 ? '#FF9800' : '#4CAF50')
-            .borderRadius(22)
-            .onClick(() => {
-              this.joinChallenge(this.selectedChallenge!);
-              this.showChallengeDetailDialog = false;
-              this.selectedChallenge = null;
-            })
+            Button(this.selectedChallenge.progress > 0 ? '继续挑战' : '立即参与')
+              .width('60%')
+              .height(44)
+              .fontSize(16)
+              .fontColor('#FFFFFF')
+              .backgroundColor(this.selectedChallenge.progress > 0 ? '#FF9800' : '#4CAF50')
+              .borderRadius(22)
+              .onClick(() => {
+                this.joinChallenge(this.selectedChallenge!);
+                this.showChallengeDetailDialog = false;
+                this.selectedChallenge = null;
+              })
           }
           .width('100%')
           .padding({ left: 20, right: 20, top: 16, bottom: 20 })
@@ -1181,17 +1145,17 @@ struct WxFriendsCirclePage {
   @Builder
   buildKnowledgeTab() {
     Column({ space: 12 }) {
-      Text($r('app.string.health_knowledge'))
+      Text('健康知识')
         .fontSize(20)
         .fontWeight(FontWeight.Bold)
         .fontColor('#333333')
         .width('100%')
         .textAlign(TextAlign.Start)
 
-      this.buildKnowledgeCard(getContext(this).resourceManager.getStringSync($r('app.string.exercise_health')), getContext(this).resourceManager.getStringSync($r('app.string.scientific_exercise')), getContext(this).resourceManager.getStringSync($r('app.string.exercise_health_desc')), '#2196F3')
-      this.buildKnowledgeCard(getContext(this).resourceManager.getStringSync($r('app.string.nutrition_diet')), getContext(this).resourceManager.getStringSync($r('app.string.balanced_nutrition')), getContext(this).resourceManager.getStringSync($r('app.string.nutrition_diet_desc')), '#4CAF50')
-      this.buildKnowledgeCard(getContext(this).resourceManager.getStringSync($r('app.string.sleep_management')), getContext(this).resourceManager.getStringSync($r('app.string.quality_sleep_full')), getContext(this).resourceManager.getStringSync($r('app.string.sleep_management_desc')), '#9C27B0')
-      this.buildKnowledgeCard(getContext(this).resourceManager.getStringSync($r('app.string.mental_health')), getContext(this).resourceManager.getStringSync($r('app.string.emotional_balance')), getContext(this).resourceManager.getStringSync($r('app.string.mental_health_desc')), '#FF5722')
+      this.buildKnowledgeCard('🏃‍♂️ 运动健康', '科学运动，健康生活', '了解正确的运动方式和频率，让运动成为健康生活的一部分。', '#2196F3')
+      this.buildKnowledgeCard('🥗 营养饮食', '均衡营养，合理搭配', '学习营养知识，掌握健康饮食的原则和技巧。', '#4CAF50')
+      this.buildKnowledgeCard('😴 睡眠管理', '优质睡眠，精力充沛', '改善睡眠质量，建立良好的睡眠习惯。', '#9C27B0')
+      this.buildKnowledgeCard('🧘‍♀️ 心理健康', '情绪管理，心理平衡', '关注心理健康，学会情绪调节和压力管理。', '#FF5722')
     }
     .width('100%')
     .height('100%')
@@ -1253,21 +1217,18 @@ struct WxFriendsCirclePage {
     })
   }
 
+  // 导航到健康知识详情页面
   navigateToKnowledgeDetail(title: string) {
-    let knowledgeType = 'exercise';
+    let knowledgeType = '';
 
-    const exerciseText = getContext(this).resourceManager.getStringSync($r('app.string.exercise_health'));
-    const nutritionText = getContext(this).resourceManager.getStringSync($r('app.string.nutrition_diet'));
-    const sleepText = getContext(this).resourceManager.getStringSync($r('app.string.sleep_management'));
-    const mentalText = getContext(this).resourceManager.getStringSync($r('app.string.mental_health'));
-
-    if (title.includes(exerciseText) || title.includes('运动健康')) {
+    // 根据标题确定知识类型
+    if (title.includes('运动健康')) {
       knowledgeType = 'exercise';
-    } else if (title.includes(nutritionText) || title.includes('营养饮食')) {
+    } else if (title.includes('营养饮食')) {
       knowledgeType = 'nutrition';
-    } else if (title.includes(sleepText) || title.includes('睡眠管理')) {
+    } else if (title.includes('睡眠管理')) {
       knowledgeType = 'sleep';
-    } else if (title.includes(mentalText) || title.includes('心理健康')) {
+    } else if (title.includes('心理健康')) {
       knowledgeType = 'mental';
     }
 
@@ -1279,15 +1240,21 @@ struct WxFriendsCirclePage {
         }
       });
     } catch (err) {
-      JhProgressHUD.showText(getContext(this).resourceManager.getStringSync($r('app.string.nav_failed_retry')));
+      console.error('Failed to navigate to knowledge detail:', err);
+      JhProgressHUD.showText('页面跳转失败，请稍后重试');
     }
   }
 
   @Builder
   buildMyTab() {
     Column({ space: 12 }) {
+      // 个人健康档案
       this.buildPersonalHealthProfile()
+
+      // 我的动态
       this.buildMyPosts()
+
+      // 我的挑战
       this.buildMyChallenges()
     }
     .width('100%')
@@ -1303,7 +1270,7 @@ struct WxFriendsCirclePage {
     Column() {
       Row() {
         Row() {
-          Text(getContext(this).resourceManager.getStringSync($r('app.string.user_name_sample')).substring(0, 1))
+          Text('李')
             .fontSize(20)
             .fontColor('#FFFFFF')
             .textAlign(TextAlign.Center)
@@ -1315,17 +1282,17 @@ struct WxFriendsCirclePage {
         .margin({ right: 16 })
 
         Column() {
-          Text($r('app.string.user_name_sample'))
+          Text('李逸飞')
             .fontSize(18)
             .fontWeight(FontWeight.Bold)
             .fontColor('#333333')
 
-          Text($r('app.string.health_expert_level'))
+          Text('健康达人 Lv.5')
             .fontSize(14)
             .fontColor('#4CAF50')
             .margin({ top: 4 })
 
-          Text($r('app.string.consecutive_checkin'))
+          Text('连续打卡 15 天')
             .fontSize(12)
             .fontColor('#999999')
             .margin({ top: 2 })
@@ -1336,11 +1303,12 @@ struct WxFriendsCirclePage {
       .width('100%')
       .margin({ bottom: 16 })
 
+      // 健康统计
       Row() {
-        this.buildStatItem(getContext(this).resourceManager.getStringSync($r('app.string.posts_count')), '23')
-        this.buildStatItem(getContext(this).resourceManager.getStringSync($r('app.string.following_count')), '156')
-        this.buildStatItem(getContext(this).resourceManager.getStringSync($r('app.string.followers_count')), '89')
-        this.buildStatItem(getContext(this).resourceManager.getStringSync($r('app.string.points_count')), '2,340')
+        this.buildStatItem('动态', '23')
+        this.buildStatItem('关注', '156')
+        this.buildStatItem('粉丝', '89')
+        this.buildStatItem('积分', '2,340')
       }
       .width('100%')
       .justifyContent(FlexAlign.SpaceAround)
@@ -1378,21 +1346,21 @@ struct WxFriendsCirclePage {
   buildMyPosts() {
     Column() {
       Row() {
-        Text($r('app.string.my_dynamics'))
+        Text('我的动态')
           .fontSize(16)
           .fontWeight(FontWeight.Bold)
           .fontColor('#333333')
 
         Blank()
 
-        Text($r('app.string.view_all_ex'))
+        Text('查看全部 >')
           .fontSize(14)
           .fontColor('#4CAF50')
       }
       .width('100%')
       .margin({ bottom: 12 })
 
-      Text($r('app.string.no_recent_posts'))
+      Text('最近还没有发布动态，快来分享你的健康生活吧！')
         .fontSize(14)
         .fontColor('#999999')
         .width('100%')
@@ -1416,14 +1384,14 @@ struct WxFriendsCirclePage {
   buildMyChallenges() {
     Column() {
       Row() {
-        Text($r('app.string.my_challenges'))
+        Text('我的挑战')
           .fontSize(16)
           .fontWeight(FontWeight.Bold)
           .fontColor('#333333')
 
         Blank()
 
-        Text($r('app.string.view_all_ex'))
+        Text('查看全部 >')
           .fontSize(14)
           .fontColor('#4CAF50')
       }
@@ -1436,14 +1404,14 @@ struct WxFriendsCirclePage {
           .margin({ right: 12 })
 
         Column() {
-          Text($r('app.string.walking_challenge_30days'))
+          Text('30天步行挑战')
             .fontSize(14)
             .fontWeight(FontWeight.Medium)
             .fontColor('#333333')
             .width('100%')
             .textAlign(TextAlign.Start)
 
-          Text($r('app.string.progress_days'))
+          Text('进度: 15/30 天')
             .fontSize(12)
             .fontColor('#999999')
             .width('100%')
@@ -1476,6 +1444,7 @@ struct WxFriendsCirclePage {
     .margin({ bottom: 0 })
   }
 
+  // 获取动态类型图标
   getPostTypeIcon(type: HealthPostType): string {
     switch (type) {
       case HealthPostType.EXERCISE:
@@ -1495,172 +1464,175 @@ struct WxFriendsCirclePage {
     }
   }
 
+  // 加载健康数据
   loadHealthData() {
+    // 模拟健康动态数据
     this.healthPosts = [
       new HealthPost(
         '1',
-        getContext(this).resourceManager.getStringSync($r('app.string.health_expert_name')),
+        '健康小达人',
         '',
-        getContext(this).resourceManager.getStringSync($r('app.string.health_expert_title')),
+        '健康达人',
         HealthPostType.EXERCISE,
-        getContext(this).resourceManager.getStringSync($r('app.string.today_exercise_checkin')),
-        getContext(this).resourceManager.getStringSync($r('app.string.exercise_post_content')),
+        '今日运动打卡',
+        '今天完成了5公里晨跑，感觉精神状态特别好！坚持运动真的能让人充满活力。',
         [],
         new HealthMetrics(8756, 420, 75, undefined, undefined),
-        getContext(this).resourceManager.getStringSync($r('app.string.hours_ago_2')),
+        '2小时前',
         23,
         5,
         false,
-        [getContext(this).resourceManager.getStringSync($r('app.string.tag_morning_run')), getContext(this).resourceManager.getStringSync($r('app.string.tag_healthy_life')), getContext(this).resourceManager.getStringSync($r('app.string.tag_exercise_checkin'))]
+        ['晨跑', '健康生活', '运动打卡']
       ),
       new HealthPost(
         '2',
-        getContext(this).resourceManager.getStringSync($r('app.string.nutritionist_name')),
+        '营养师小王',
         '',
-        getContext(this).resourceManager.getStringSync($r('app.string.nutrition_expert_title')),
+        '营养专家',
         HealthPostType.DIET,
-        getContext(this).resourceManager.getStringSync($r('app.string.healthy_diet_share')),
-        getContext(this).resourceManager.getStringSync($r('app.string.diet_post_content')),
+        '健康饮食分享',
+        '今天为大家分享一个营养均衡的早餐搭配：燕麦粥+水煮蛋+蔬菜沙拉，既美味又健康！',
         [],
         new HealthMetrics(undefined, 350, undefined, undefined, undefined),
-        getContext(this).resourceManager.getStringSync($r('app.string.hours_ago_4')),
+        '4小时前',
         45,
         12,
         true,
-        [getContext(this).resourceManager.getStringSync($r('app.string.tag_healthy_diet')), getContext(this).resourceManager.getStringSync($r('app.string.tag_nutrition_match')), getContext(this).resourceManager.getStringSync($r('app.string.tag_breakfast'))]
+        ['健康饮食', '营养搭配', '早餐']
       ),
       new HealthPost(
         '3',
-        getContext(this).resourceManager.getStringSync($r('app.string.sleep_expert_name')),
+        '睡眠专家',
         '',
-        getContext(this).resourceManager.getStringSync($r('app.string.sleep_consultant_title')),
+        '睡眠顾问',
         HealthPostType.SLEEP,
-        getContext(this).resourceManager.getStringSync($r('app.string.quality_sleep_tips')),
-        getContext(this).resourceManager.getStringSync($r('app.string.sleep_post_content')),
+        '优质睡眠心得',
+        '分享一个改善睡眠质量的小技巧：睡前1小时不看手机，听听轻音乐，效果很不错！',
         [],
         new HealthMetrics(undefined, undefined, undefined, 8.5, undefined),
-        getContext(this).resourceManager.getStringSync($r('app.string.yesterday')),
+        '昨天',
         67,
         18,
         false,
-        [getContext(this).resourceManager.getStringSync($r('app.string.tag_sleep_quality')), getContext(this).resourceManager.getStringSync($r('app.string.tag_healthy_habits')), getContext(this).resourceManager.getStringSync($r('app.string.tag_life_tips'))]
+        ['睡眠质量', '健康习惯', '生活技巧']
       )
     ]
 
+    // 模拟健康挑战数据
     this.healthChallenges = [
       new HealthChallenge(
         '1',
-        getContext(this).resourceManager.getStringSync($r('app.string.walking_challenge_30days')),
-        getContext(this).resourceManager.getStringSync($r('app.string.walking_challenge_desc')),
-        getContext(this).resourceManager.getStringSync($r('app.string.walking_challenge_detail')),
+        '30天步行挑战',
+        '每天完成8000步，坚持30天',
+        '通过30天的坚持步行，养成良好的运动习惯。每天8000步是世界卫生组织推荐的基础运动量，能够有效提高心肺功能，增强下肢肌肉力量，促进新陈代谢，帮助控制体重。这个挑战适合所有年龄段的人群，无需特殊装备，随时随地都可以进行。',
         '🚶‍♂️',
         1234,
-        getContext(this).resourceManager.getStringSync($r('app.string.duration_30days')),
+        '30天',
         '500',
         50,
-        getContext(this).resourceManager.getStringSync($r('app.string.category_exercise_health')),
-        getContext(this).resourceManager.getStringSync($r('app.string.difficulty_medium')),
+        '运动健康',
+        '中等',
         [
-          getContext(this).resourceManager.getStringSync($r('app.string.benefit_cardio')),
-          getContext(this).resourceManager.getStringSync($r('app.string.benefit_circulation')),
-          getContext(this).resourceManager.getStringSync($r('app.string.benefit_muscle_strength')),
-          getContext(this).resourceManager.getStringSync($r('app.string.benefit_weight_control')),
-          getContext(this).resourceManager.getStringSync($r('app.string.benefit_sleep_quality')),
-          getContext(this).resourceManager.getStringSync($r('app.string.benefit_mental_state'))
+          '提高心肺功能，增强体质',
+          '促进血液循环，预防心血管疾病',
+          '增强下肢肌肉力量和骨密度',
+          '帮助控制体重，燃烧多余脂肪',
+          '改善睡眠质量，缓解压力',
+          '提升精神状态，增强自信心'
         ],
         [
-          getContext(this).resourceManager.getStringSync($r('app.string.goal_daily_steps')),
-          getContext(this).resourceManager.getStringSync($r('app.string.goal_record_data')),
-          getContext(this).resourceManager.getStringSync($r('app.string.goal_different_routes')),
-          getContext(this).resourceManager.getStringSync($r('app.string.goal_steady_pace')),
-          getContext(this).resourceManager.getStringSync($r('app.string.goal_comfortable_shoes')),
-          getContext(this).resourceManager.getStringSync($r('app.string.goal_hydration'))
+          '每天步行8000步以上',
+          '记录每日步数和运动时长',
+          '选择不同路线，增加趣味性',
+          '保持匀速步行，避免过度疲劳',
+          '穿着舒适的运动鞋',
+          '适当补充水分'
         ],
         [
-          getContext(this).resourceManager.getStringSync($r('app.string.tip_multiple_sessions')),
-          getContext(this).resourceManager.getStringSync($r('app.string.tip_commute_walking')),
-          getContext(this).resourceManager.getStringSync($r('app.string.tip_invite_friends')),
-          getContext(this).resourceManager.getStringSync($r('app.string.tip_use_apps')),
-          getContext(this).resourceManager.getStringSync($r('app.string.tip_scenic_routes')),
-          getContext(this).resourceManager.getStringSync($r('app.string.tip_indoor_alternatives'))
+          '可以分多次完成，如早中晚各走一段',
+          '利用上下班时间步行，一举两得',
+          '邀请朋友家人一起参与，互相监督',
+          '使用计步器或手机APP记录进度',
+          '选择风景优美的路线，享受过程',
+          '雨天可在室内走楼梯或原地踏步'
         ],
         '2024-11-01',
         '2024-11-30'
       ),
       new HealthChallenge(
         '2',
-        getContext(this).resourceManager.getStringSync($r('app.string.healthy_diet_21days')),
-        getContext(this).resourceManager.getStringSync($r('app.string.diet_challenge_desc')),
-        getContext(this).resourceManager.getStringSync($r('app.string.diet_challenge_detail')),
+        '健康饮食21天',
+        '21天健康饮食习惯养成',
+        '科学研究表明，21天是养成一个新习惯的最短周期。通过21天的健康饮食实践，帮助你建立科学的营养搭配观念，学会合理控制热量摄入，增加蔬菜水果的比例，减少高糖高脂食物，培养清淡饮食的习惯，为长期的健康生活奠定基础。',
         '🥗',
         856,
-        getContext(this).resourceManager.getStringSync($r('app.string.duration_21days')),
+        '21天',
         '300',
         0,
-        getContext(this).resourceManager.getStringSync($r('app.string.category_nutrition_diet')),
-        getContext(this).resourceManager.getStringSync($r('app.string.difficulty_easy')),
+        '营养饮食',
+        '简单',
         [
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_benefit_structure')),
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_benefit_weight')),
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_benefit_nutrition')),
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_benefit_digestion')),
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_benefit_blood_sugar')),
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_benefit_skin'))
+          '建立科学的饮食结构和习惯',
+          '控制体重，预防肥胖相关疾病',
+          '提供充足营养，增强免疫力',
+          '改善肠道健康，促进消化',
+          '稳定血糖，预防糖尿病',
+          '提升皮肤状态，延缓衰老'
         ],
         [
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_goal_balanced_meals')),
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_goal_vegetables_fruits')),
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_goal_whole_grains')),
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_goal_low_salt_oil')),
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_goal_regular_meals')),
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_goal_hydration'))
+          '每餐包含蛋白质、碳水化合物、蔬菜',
+          '每天摄入5-7份不同颜色的蔬果',
+          '选择全谷物食品，减少精制糖',
+          '控制油盐摄入，清淡饮食',
+          '规律用餐，避免暴饮暴食',
+          '每天饮水1500-2000ml'
         ],
         [
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_tip_plan_ahead')),
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_tip_read_labels')),
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_tip_small_plates')),
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_tip_chew_slowly')),
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_tip_water_before_meals')),
-          getContext(this).resourceManager.getStringSync($r('app.string.diet_tip_healthy_snacks'))
+          '提前规划一周的菜谱，避免临时决定',
+          '学习看食品营养标签，选择健康食品',
+          '用小盘子盛饭，有助于控制食量',
+          '细嚼慢咽，每口咀嚼20-30次',
+          '饭前喝一杯水，增加饱腹感',
+          '准备健康零食，如坚果、水果'
         ],
         '2024-11-01',
         '2024-11-21'
       ),
       new HealthChallenge(
         '3',
-        getContext(this).resourceManager.getStringSync($r('app.string.early_sleep_challenge')),
-        getContext(this).resourceManager.getStringSync($r('app.string.sleep_challenge_desc')),
-        getContext(this).resourceManager.getStringSync($r('app.string.sleep_challenge_detail')),
+        '早睡早起挑战',
+        '连续14天23:00前睡觉，7:00前起床',
+        '现代人普遍存在睡眠不足和作息不规律的问题。通过14天的早睡早起挑战，帮助你重新调整生物钟，建立健康的睡眠模式。充足的睡眠是身体修复和大脑整理记忆的重要时间，规律的作息能显著提升生活质量和工作效率。',
         '😴',
         567,
-        getContext(this).resourceManager.getStringSync($r('app.string.duration_14days')),
+        '14天',
         '200',
         25,
-        getContext(this).resourceManager.getStringSync($r('app.string.category_sleep_health')),
-        getContext(this).resourceManager.getStringSync($r('app.string.difficulty_easy')),
+        '睡眠健康',
+        '简单',
         [
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_benefit_circadian')),
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_benefit_memory')),
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_benefit_immunity')),
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_benefit_mood')),
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_benefit_productivity')),
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_benefit_growth_hormone'))
+          '调整生物钟，建立规律作息',
+          '提高睡眠质量，增强记忆力',
+          '增强免疫系统，预防疾病',
+          '改善情绪状态，减少焦虑',
+          '提升工作效率和专注力',
+          '促进生长激素分泌，延缓衰老'
         ],
         [
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_goal_bedtime')),
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_goal_wake_time')),
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_goal_duration')),
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_goal_no_devices')),
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_goal_environment')),
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_goal_record_quality'))
+          '每晚23:00前上床睡觉',
+          '每天7:00前起床，不赖床',
+          '保证7-8小时的睡眠时间',
+          '睡前1小时不使用电子设备',
+          '创造舒适的睡眠环境',
+          '记录睡眠质量和起床感受'
         ],
         [
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_tip_no_exercise')),
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_tip_relaxing_music')),
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_tip_temperature')),
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_tip_blackout_curtains')),
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_tip_bedtime_routine')),
-          getContext(this).resourceManager.getStringSync($r('app.string.sleep_tip_weekend_consistency'))
+          '睡前2小时避免剧烈运动',
+          '可以听轻柔音乐或冥想放松',
+          '保持卧室温度在18-22度',
+          '使用遮光窗帘，营造黑暗环境',
+          '建立固定的睡前仪式',
+          '周末也要保持相同的作息时间'
         ],
         '2024-11-01',
         '2024-11-14'
@@ -1668,10 +1640,11 @@ struct WxFriendsCirclePage {
     ]
   }
 
+  // 发布动态弹窗
   @Builder
-  //这是创建新的挑战的渲染函数
   buildPostDialog() {
     Stack() {
+      // 遮罩层
       Column()
         .width('100%')
         .height('100%')
@@ -1681,9 +1654,11 @@ struct WxFriendsCirclePage {
           this.resetPostForm();
         })
 
+      // 弹窗内容
       Column() {
+        // 弹窗标题
         Row() {
-          Text($r('app.string.cancel_btn'))
+          Text('取消')
             .fontSize(16)
             .fontColor('#666666')
             .onClick(() => {
@@ -1693,14 +1668,14 @@ struct WxFriendsCirclePage {
 
           Blank()
 
-          Text($r('app.string.publish_post'))
+          Text('发布动态')
             .fontSize(18)
             .fontWeight(FontWeight.Bold)
             .fontColor('#333333')
 
           Blank()
 
-          Text($r('app.string.publish_btn'))
+          Text('发布')
             .fontSize(16)
             .fontColor('#4CAF50')
             .fontWeight(FontWeight.Bold)
@@ -1715,8 +1690,9 @@ struct WxFriendsCirclePage {
           color: '#F0F0F0'
         })
 
+        // 动态类型选择
         Column() {
-          Text($r('app.string.select_post_type'))
+          Text('选择动态类型')
             .fontSize(16)
             .fontWeight(FontWeight.Medium)
             .fontColor('#333333')
@@ -1732,17 +1708,10 @@ struct WxFriendsCirclePage {
                   .margin({ bottom: 4 })
 
                 Text(postType.name)
-                  .minFontSize(5)
-                  .maxFontSize(14)
+                  .fontSize(12)
                   .fontColor(this.selectedPostType === postType.type ? '#4CAF50' : '#666666')
-                  .maxLines(1)
-                  .textOverflow({ overflow: TextOverflow.Ellipsis })
-                  .width('100%')
-                  .textAlign(TextAlign.Center)
               }
-              .width('15%')
-              .height(70)
-              .padding(6)
+              .padding(8)
               .backgroundColor(this.selectedPostType === postType.type ? '#E8F5E8' : '#F8F9FA')
               .borderRadius(8)
               .border({
@@ -1764,8 +1733,9 @@ struct WxFriendsCirclePage {
           color: '#F0F0F0'
         })
 
+        // 标题输入
         Column() {
-          Text($r('app.string.post_title'))
+          Text('动态标题')
             .fontSize(16)
             .fontWeight(FontWeight.Medium)
             .fontColor('#333333')
@@ -1773,7 +1743,7 @@ struct WxFriendsCirclePage {
             .textAlign(TextAlign.Start)
             .margin({ bottom: 8 })
 
-          TextInput({ placeholder: getContext(this).resourceManager.getStringSync($r('app.string.title_placeholder')), text: this.inputTitle })
+          TextInput({ placeholder: '请输入动态标题（可选）', text: this.inputTitle })
             .width('100%')
             .height(40)
             .fontSize(14)
@@ -1794,8 +1764,9 @@ struct WxFriendsCirclePage {
           color: '#F0F0F0'
         })
 
+        // 内容输入
         Column() {
-          Text($r('app.string.post_content'))
+          Text('动态内容')
             .fontSize(16)
             .fontWeight(FontWeight.Medium)
             .fontColor('#333333')
@@ -1803,7 +1774,7 @@ struct WxFriendsCirclePage {
             .textAlign(TextAlign.Start)
             .margin({ bottom: 8 })
 
-          TextArea({ placeholder: getContext(this).resourceManager.getStringSync($r('app.string.content_placeholder')), text: this.inputContent })
+          TextArea({ placeholder: '分享你的健康生活...', text: this.inputContent })
             .width('100%')
             .height(100)
             .fontSize(14)
@@ -1824,8 +1795,9 @@ struct WxFriendsCirclePage {
           color: '#F0F0F0'
         })
 
+        // 标签输入
         Column() {
-          Text($r('app.string.add_tags'))
+          Text('添加标签')
             .fontSize(16)
             .fontWeight(FontWeight.Medium)
             .fontColor('#333333')
@@ -1833,7 +1805,7 @@ struct WxFriendsCirclePage {
             .textAlign(TextAlign.Start)
             .margin({ bottom: 8 })
 
-          TextInput({ placeholder: getContext(this).resourceManager.getStringSync($r('app.string.tags_placeholder')), text: this.inputTags })
+          TextInput({ placeholder: '请输入标签，用空格分隔', text: this.inputTags })
             .width('100%')
             .height(40)
             .fontSize(14)
@@ -1847,7 +1819,7 @@ struct WxFriendsCirclePage {
               this.inputTags = value;
             })
 
-          Text($r('app.string.tags_example'))
+          Text('例如：运动 健康 打卡')
             .fontSize(12)
             .fontColor('#999999')
             .margin({ top: 4 })
@@ -1872,6 +1844,7 @@ struct WxFriendsCirclePage {
     .zIndex(1000)
   }
 
+  // 重置发布表单
   resetPostForm() {
     this.inputTitle = '';
     this.inputContent = '';
@@ -1879,37 +1852,46 @@ struct WxFriendsCirclePage {
     this.selectedPostType = HealthPostType.EXERCISE;
   }
 
+  // 发布动态
   publishPost() {
     if (!this.inputContent.trim()) {
-      JhProgressHUD.showText(getContext(this).resourceManager.getStringSync($r('app.string.input_content_required')));
+      JhProgressHUD.showText('请输入动态内容');
       return;
     }
 
+    // 处理标签
     const tags = this.inputTags.trim() ? this.inputTags.trim().split(' ').filter((tag: string) => tag.length > 0) : [];
 
+    // 创建新动态
     const newPost = new HealthPost(
       Date.now().toString(),
-      getContext(this).resourceManager.getStringSync($r('app.string.user_name_sample')),
+      '李逸飞', // 当前用户名
       '',
-      getContext(this).resourceManager.getStringSync($r('app.string.health_expert_level')),
+      '健康达人',
       this.selectedPostType,
       this.inputTitle.trim(),
       this.inputContent.trim(),
       [],
-      new HealthMetrics(8756, 420, 72, 7.5, undefined),
-      getContext(this).resourceManager.getStringSync($r('app.string.just_now')),
+      new HealthMetrics(8756, 420, 72, 7.5, undefined), // 模拟当前健康数据
+      '刚刚',
       0,
       0,
       false,
       tags
     );
 
+    // 添加到动态列表顶部
     this.healthPosts.unshift(newPost);
+
+    // 关闭弹窗并重置表单
     this.showPostDialog = false;
     this.resetPostForm();
-    JhProgressHUD.showText(getContext(this).resourceManager.getStringSync($r('app.string.publish_success')));
+
+    // 显示成功提示
+    JhProgressHUD.showText('动态发布成功！');
   }
 
+  // 切换动态点赞状态
   togglePostLike(post: HealthPost) {
     post.isLiked = !post.isLiked;
     post.likes += post.isLiked ? 1 : -1;

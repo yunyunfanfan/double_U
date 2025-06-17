@@ -1902,7 +1902,7 @@
     },
     {
       "name": "tab_device",
-      "value": "设备"
+      "value": "功能"
     },
     {
       "name": "tab_mine",
@@ -2058,7 +2058,7 @@
     },
     {
       "name": "device_and_others_title",
-      "value": "设备及其他"
+      "value": "其他功能"
     },
     {
       "name": "health_circle",
